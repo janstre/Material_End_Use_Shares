@@ -4,9 +4,8 @@ File to calculate the destination of crude materials (e.g. apparent consumption 
 
 0.0) The Python script contained in this repository first reads the prepared matrices from Excel files (also in this repository) and 
      derives technology matrix A_icc, total requirements L_icc and total commodity output x_icc from those.
-     
      Afterwards, three different methodologies are applied to calculate product end-uses:
-  
+#
 1.1) Consumption-based approach to product end-uses - methodology as applied to calculate footprints
  
 1.2) WIO-MFA approach to product end-uses - Waste Input-Output Approach to Material Flow Analysis - here the technology matrix A_icc is filtered to represent only physical flows
