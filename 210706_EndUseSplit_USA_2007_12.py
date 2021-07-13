@@ -17,6 +17,7 @@ Z_icc = pd.read_excel('2007_2012_USA_SUT_497industries/Z_icc_2007_ImpNoExpNoCII_
 A_icc_label = pd.read_excel('2007_2012_USA_SUT_497industries/A_icc_2007_ImpNoExpNoCII_ExtAgg.xlsx',index_col=[0],header=[0]) # technology matrix: commodity x commodity with industry technology
 final_demand = pd.read_excel('2007_2012_USA_SUT_497industries/FinalDemand_2007_ImpNoExpNoCII_ExtAgg.xlsx',index_col=[0]) # final demand vector (treatment of imports, exports and CII as specified in file name)
 
+#calculate technology matrix A_icc, total requirements L_icc and total commodity output x_icc
 A_icc = A_icc_label.to_numpy()
 I = np.eye(A_icc.shape[0])
 L_icc = np.linalg.inv(I-A_icc)
@@ -46,6 +47,8 @@ finalDemand_diag = np.zeros_like(Z_icc)
 np.fill_diagonal(finalDemand_diag, final_demand)
 
 initiator = np.dot(mult_diag,L_icc)  
+
+#calculate the material deliveries for final demand
 Cons_split = pd.DataFrame(np.dot(initiator,finalDemand_diag),index=Z_icc.index, columns=Z_icc.columns)
 Cons_split_colsum = Cons_split.sum(axis=1) # check if all of extension's 'mass' delivered to final demand
 
@@ -57,7 +60,7 @@ Cons_sum = Cons_split_sectors.sum(axis=1)
 Cons_split_shares = Cons_split_sectors.divide(Cons_sum,axis=0).transpose()*100
 #ratio_fd_x_ind =   final_demand.iloc[:,0].values / x_SUT.iloc[:401]   
 
-#aggregate to level specified in Filter Settings
+#aggregate to level specified in filter_matrix
 construction_agg = filter_matrix.loc[:,(['End-Use Category'],['Construction'])].iloc[:,0].to_numpy()#
 machinery_agg = filter_matrix.loc[:,(['End-Use Category'],['Machinery'])].iloc[:,0].to_numpy()#
 vehicles_agg = filter_matrix.loc[:,(['End-Use Category'],['Motor vehicles'])].iloc[:,0].to_numpy()#
@@ -151,13 +154,14 @@ mult_diag = pd.DataFrame(np.zeros_like(Z_icc), index=Z_icc.index, columns=Z_icc.
 np.fill_diagonal(mult_diag.values, mult)
 finalDemand_diag = np.zeros_like(Z_icc)
 np.fill_diagonal(finalDemand_diag, final_demand)
-
 initiator = np.dot(mult_diag,C) 
+
+#calculate the material deliveries for final demand
 WIO_split = pd.DataFrame(np.dot(initiator,finalDemand_diag),index=Z_icc.index, columns=Z_icc.columns)
 WIO_split_colsum = WIO_split.sum(axis=1)
 
+#filter for only the sectors we are interested in and calculate end-use shares
 extension_sectors = filter_matrix.loc[filter_matrix[('All','Materials')]== 1].index.get_level_values(0).to_list()
-
 WIO_split_sectors = WIO_split.iloc[extension_sectors,:]
 WIO_sum = WIO_split_sectors.sum(axis=1)
 WIO_split_shares = WIO_split_sectors.divide(WIO_sum,axis=0).transpose()*100
@@ -184,9 +188,10 @@ WIO_agg_split = pd.DataFrame({'Construction': WIO_split_shares[construction_agg 
     
 WIO_agg_split['Sum'] = WIO_agg_split.sum(axis=1)
 
+
 ''' 1.2.4) Recalculate Results with Hypothetical Extraction Method (HEM) for Packaging Sector'''
 
-#set rows of packaging commodities to zero in technology matries A_mp, A_pp
+#set rows of packaging commodities to zero in technology matries A_mp, A_pp (packaging commodities as defined in line 179; coming from the filter_matrix)
 packaging_rowCol = np.argwhere(packaging_agg== 1).tolist()
 filt_Amp_noPack = filt_Amp
 filt_Amp_noPack[packaging_rowCol,:] = 0
@@ -204,10 +209,13 @@ I = np.eye(A_icc.shape[0])
 C_noPack = np.dot(Amp_filt_noPack,np.linalg.inv(I-App_filt_noPack))
 C_noPack_label = pd.DataFrame(data = (C_noPack), index = Z_icc.index, columns = Z_icc.index)
 
-
+#diagonalize new final demand vector without packaging final demand
 finalDemand_noPack_diag = np.zeros_like(Z_icc)
 np.fill_diagonal(finalDemand_noPack_diag , final_demand_noPack)
 
+#calculate end-use split with rows for packaging in A mtrices and final demand as zero; multiplier not recalculated but
+# taken from row 146 --> this way multiplier based on 'full model' - the difference between the mass_dummy (line 144)
+# and the deliveries to final demand for WIO_split_no paPack are the deliveries of material contained in packaging
 initiator = np.dot(mult_diag,C_noPack) 
 WIO_split_noPack = pd.DataFrame(np.dot(initiator,finalDemand_noPack_diag),index=Z_icc.index, columns=Z_icc.columns)
 WIO_split_noPack_colsum = WIO_split_noPack.sum(axis=1)
