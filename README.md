@@ -15,6 +15,8 @@ A.2) WIO-MFA approach to product end-uses - Waste Input-Output Approach to Mater
    A.2.1-A.2.2) intermediate steps (see script)
    #
    A.2.3) application of WIO-MFA together with HEM (Hypothetical Extraction Method), in order to determine intermediate processing stages contained in products delivered to final           demand
+   #
+   A.2.4) New method idea: try to transfer rows of intermediate demand for packaging (as proof-of-concept) sector to final demand (not well thought through yet)
 #   
 B) Ghosh-type approach
 #
