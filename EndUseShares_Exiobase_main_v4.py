@@ -19,7 +19,7 @@ sys.path.insert(0, module_path)
 data_path = os.path.join(main_path, 'input_data/')
 exio_path = 'C:/Users/jstreeck/Desktop/EndUse_shortTermSave/Exiobase/' 
 
-from EndUseShares_functions_v3 import hypothetical_transfer, calc_WIO_noYieldCorr, save_to_excel, create_WIOMassFilter_plain,\
+from EndUseShares_functions_v3 import hypothetical_transfer_exio, calc_WIO_noYieldCorr, save_to_excel, create_WIOMassFilter_plain,\
     create_WIOMassFilter_withServiceRawMatInput, calc_CBA
 
 
@@ -112,26 +112,7 @@ for year in years:
 
 
 
-years = list(range(1995,2012))
-filter_matrix = pd.read_excel('Filter_Exiobase_Base_v2.xlsx',index_col=[0],header=[0,1],sheet_name='mass_&_aggreg') # (mass) filter and aggregation matrix 
-aggregation_matrix = filter_matrix.iloc[:,4:-2].T # select aggregation matrix from filter matrix
-yield_filter_single = pd.read_excel('Filter_Exiobase_Base_v2.xlsx',index_col=[1],header=[1],sheet_name='yield').iloc[1:,1:].replace(0,1)
-yield_filter_all = pd.concat([yield_filter_single]*49, axis=1, ignore_index=False)          
-
-### 2 - derive items required for WIO-MFA filters and Hypothetical Transfer
-# items for WIO filter
-raw_materials = filter_matrix.loc[:,(['All'],['Not_stockbuilding'])]
-materials  = filter_matrix.loc[:,(['All'],['Materials'])]
-intermediates = filter_matrix.loc[:,(['All'],['Intermediates_only'])]
-products = filter_matrix.loc[:,(['All'],['Products'])]
-non_service = materials.to_numpy() + intermediates.to_numpy() + products.to_numpy() + raw_materials.to_numpy() 
-        
-# define transfer filter for Hypothetical Transfer (ones for transactions that shall be transferred from Z to Y)
-filt_prod2service = pd.DataFrame(data=np.ones_like(yield_filter_single), index= yield_filter_single.index, columns=yield_filter_single.columns)
-filt_prod2service = (filt_prod2service  * non_service.T).replace(1,2).replace(0,1).replace(2,0) * non_service #non-service are the items not identified as material, intermediate or product in filter_matrix; NOT as defined in aggregation column
-filter_transf_single = filt_prod2service.replace(2,1)
-filter_transf_all =  pd.concat([filter_transf_single ]*49, axis=1, ignore_index=False)                                                                                                                               # define transfer filter for Hypothetical Transfer (ones for transactions that shall be transferred from Z to Y)
-                                                                                                                             filt_prod2service = pd.DataFrame(data=np.ones_like(Z), index= A.index, columns=A.columns)
+                                                                                                                   filt_prod2service = pd.DataFrame(data=np.ones_like(Z), index= A.index, columns=A.columns)
 
 
 '''idea: no need of any loops:
@@ -151,14 +132,152 @@ filter_transf_all =  pd.concat([filter_transf_single ]*49, axis=1, ignore_index=
  - group D_WIO_abs by region and calculate shares
  '''
 
+years = list(range(1995,2012))
+filter_matrix = pd.read_excel(data_path + 'Filter_Exiobase_Base_v2.xlsx',index_col=[0],header=[0,1],sheet_name='mass_&_aggreg') # (mass) filter and aggregation matrix 
+aggregation_matrix = filter_matrix.iloc[:,4:-2].T # select aggregation matrix from filter matrix
+yield_filter_single = pd.read_excel(data_path + 'Filter_Exiobase_Base_v2.xlsx',index_col=[1],header=[1],sheet_name='yield').iloc[1:,1:].replace(0,1)
+yield_filter_all =  pd.concat([pd.concat([yield_filter_single]*49, axis=1)]*49, axis=0)
 
-                                                                                                                             filt_prod2service = (filt_prod2service  * non_service.T).replace(1,2).replace(0,1).replace(2,0) * non_service #non-service are the items not identified as material, intermediate or product in filter_matrix; NOT as defined in aggregation column
-                                                                                                                             filter_transf = filt_prod2service.replace(2,1)
+## neeed to make sure that the sequence of sectors is correct?
+
+def match_multiIndex(target_df, index_source):
+    # Convert index to dataframe
+    old_idx = target_df.index.to_frame()
+    old_col = target_df.columns.to_frame().rename(columns={0:'sector'})
+    # Insert new level at specified location
+    old_idx.insert(0, 'region', index_source.index.get_level_values('region'))
+    old_col.insert(0, 'region', index_source.columns.get_level_values('region'))
+    # Convert back to MultiIndex
+    target_df.index = pd.MultiIndex.from_frame(old_idx)
+    target_df.columns = pd.MultiIndex.from_frame(old_col)
+    return target_df
+    ##--> repeat with columns
+    ## --> if done so no need for putting yield filter to numpy as indices should match
+    
+# def match_multiIndex_col(target_df, index_source):
+#     # Convert index to dataframe
+#     old_col = target_df.columns.to_frame().rename(columns={0:'sector'})
+#     # Insert new level at specified location
+#     old_col.insert(0, 'region', index_source.columns.get_level_values('region'))
+#     # Convert back to MultiIndex
+#     target_df.columns = pd.MultiIndex.from_frame(old_col)
+#     return target_df
+
+### 2 - derive items required for WIO-MFA filters and Hypothetical Transfer
+# items for WIO filter
+raw_materials = filter_matrix.loc[:,(['All'],['Not_stockbuilding'])]
+materials  = filter_matrix.loc[:,(['All'],['Materials'])]
+intermediates = filter_matrix.loc[:,(['All'],['Intermediates_only'])]
+products = filter_matrix.loc[:,(['All'],['Products'])]
+non_service = materials.to_numpy() + intermediates.to_numpy() + products.to_numpy() + raw_materials.to_numpy() 
+
+
+# define transfer filter for Hypothetical Transfer (ones for transactions that shall be transferred from Z to Y)
+filt_prod2service = pd.DataFrame(data=np.ones_like(yield_filter_single), index= yield_filter_single.index, columns=yield_filter_single.columns)
+filt_prod2service = (filt_prod2service  * non_service.T).replace(1,2).replace(0,1).replace(2,0) * non_service #non-service are the items not identified as material, intermediate or product in filter_matrix; NOT as defined in aggregation column
+filter_transf_single = filt_prod2service.replace(2,1)
+filter_transf_all =  pd.concat([pd.concat([filter_transf_single]*49, axis=1 ,ignore_index=False)]*49, axis=0 ,ignore_index=False) 
+
+#check if 
+filter_transf_all_dim0 = filter_transf_all.iloc[:201,:].sum(axis=0)  
+filter_transf_all_dim1 = filter_transf_all.iloc[:,:201].sum(axis=1)                                                                                                                            # define transfer filter for Hypothetical Transfer (ones for transactions that shall be transferred from Z to Y)
+
+filt_Amp, filt_App, filt_Amp_label, filt_App_label = create_WIOMassFilter_plain(filter_transf_single,raw_materials, materials,products,intermediates, non_service)
+
+filt_Amp_label_all = pd.concat([pd.concat([filt_Amp_label]*49, axis=1 ,ignore_index=False)]*49, axis=0 ,ignore_index=False) 
+filt_Amp_label_all = match_multiIndex(filt_Amp_label_all, filter_transf_all)
+filt_App_label_all = pd.concat([pd.concat([filt_App_label]*49, axis=1 ,ignore_index=False)]*49, axis=0 ,ignore_index=False) 
+filt_App_label_all = match_multiIndex(filt_App_label_all, filter_transf_all)
+###--> again check if these are correct
+                                                                                                                         
 for year in years:
     exio3 = pymrio.parse_exiobase3(path= exio_path + str(year) +'_pxp.zip')AT
     
+    # load Z and Y, drop three Y elements and sum per region, remove negatives from Z, Y and replace with 0
     Z_full = exio3.Z
-    Z_sector = Z_full.groupby('sector').sum()
+    Z_full.clip(lower=0, inplace=True) #remove negative values
+    Y_full = exio3.Y #.xs(region ,level='region',axis=1) # filter regional Y matrix from MRIO
+    Y_full_dom = Y_full.drop(['Changes in inventories', 'Changes in valuables','Exports: Total (fob)'], level = 'category',axis=1) #only keep items for domestic use for indicated year
+    Y_full_regions = Y_full_dom.T.groupby('region').sum().T
+    Y_full_regions.clip(lower=0, inplace=True) #remove negative values
+    
+    #derive new x 
+    x = Z_full.sum(axis=1) + Y_full_regions.sum(axis=1)
+    #x_diag = np.zeros_like(Z_full)
+    #np.fill_diagonal(x_diag, x)
+    #x_diag_inv = np.linalg.inv(x_diag)
+    #A = pd.DataFrame(np.dot(Z_full,x_diag_inv),Z_full.index,Z_full.columns)
+    yield_filter_all = match_multiIndex(yield_filter_all, Z_full)
+    filter_transf_all = match_multiIndex(filter_transf_all, Z_full)
+
+    # hypothetical transfer
+    Y_transferred, Z_transferred, A_ht = hypothetical_transfer_exio(Z_full, Y_full_regions, x, filter_transf_all, yield_filter_all)
+
+    ##next: 
+      #-->check if A_ht from this is equivalent to calculating for one region with domestic tech fron loop above    
+    for region in regions:
+        Y_region = Y_transferred.xs(region,axis=1)
+        #A_ht_srio = A_ht.groupby('sector').sum()
+        
+        
+        ##define filter matrices --> already done above
+        
+        '''transfer to own function calc_WIO_noYield'''
+        ####calc_WIO_noYieldCorr --> needs to be adjusted
+        # filter technology matrix A according to WIO-MFA mass filters and partition into Amp (materials --> products), App (products --> products)
+        Amp_filt = A_ht * filt_Amp_label_all 
+        App_filt = A_ht * filt_App_label_all                  
+        
+        # calculate material composition matrix C from Amp, App
+        I = np.eye(A_ht.shape[0])
+        C = np.dot(Amp_filt,np.linalg.inv(I-App_filt))
+        C_label = pd.DataFrame(data = (C), index = A_ht.index, columns = A_ht.index)
+        C_label_srio = C_label.groupby('sector').sum()
+        
+        # calculate the absolute material deliveries to final demand (C*diag(Y))
+        Y_diag = np.zeros_like(C_label)
+        np.fill_diagonal(Y_diag, Y_region)
+        WIO_split_raw = pd.DataFrame(np.dot(C_label_srio,Y_diag),index=C_label_srio.index, columns=C_label_srio.columns)
+        WIO_split_raw_srio = WIO_split_raw.T.groupby('sector').sum().T
+        
+        # filter for materials of interest (extension_products) and calculate end-use share matrix D_wio by dividing WIO_split_raw by row-sum
+        WIO_split = WIO_split_raw_srio.loc[extension_products]
+        D_wio = WIO_split.divide(WIO_split.sum(axis=1),axis=0).transpose()*100
+            
+        # aggregate to product-groups specified in aggregation_matrix
+        D_wio_aggregated = aggregation_matrix.dot(D_wio)
+        check_wio = D_wio_aggregated.sum(axis=0) # check if all shares sum up to 100%
+        
+        
+    
+        D_wio_region,D_wio_region_aggregated,WIO_split_region,check_wio_region = calc_WIO_noYieldCorr(A_ht_srio, Y_region , filt_Amp, filt_App, filter_matrix, aggregation_matrix, extension_products)
+
+
+
+    Z_yield = Z_full * yield_filter_all
+    waste = Z_full - Z_yield
+    # apply the pre-definied transfer filter to Z and Y, indicating the values that shall be transferred from Z to Y
+    Z_transfer = Z_yield * filter_transf_all
+    Z_transfer =  Z_transfer.T.groupby('region').sum().T
+    Y_transferred = Y_full_regions + Z_transfer
+    Z_transferred = Z_yield * filter_transf_all.replace(1,2).replace(0,1).replace(2,0).to_numpy() #delete transferred items in Z_yield
+    
+    #check if transferred item sum equal to original
+    Y_transferred.sum().sum() + Z_transferred.sum().sum() + waste.sum().sum() -  x.sum().sum()
+    #--> alter so that it throws wARNING when not close to 0
+    
+    # calculate new A; use original x as it does not change by transfer
+    
+    
+    x_inv_raw = np.divide(np.ones(len(x)), x.to_numpy())
+    x_inv = np.where(x_inv_raw == np.inf, 0, x_inv_raw)
+    x_inv_diag = np.zeros_like(Z_full)
+    np.fill_diagonal(x_inv_diag, x_inv )
+    
+    A_ht = pd.DataFrame(np.dot(Z_transferred,x_inv_diag), index = Y_full.index, columns = Y_full.index)
+    
+
+    #Z_sector = Z_full.groupby('sector').sum()
     .reindex(sector_order) 
     #I_full = np.eye(Z_full.shape[0])
     #L_full = np.linalg.inv((I_full -A_full ))
@@ -169,17 +288,15 @@ for year in years:
     #L_full_sector = L_full_label.groupby('sector').sum().reindex(sector_order) 
     #L_full_sector_region = L_full_sector.xs(region,level='region',axis=1)
 
-    Y_full = exio3.Y #.xs(region ,level='region',axis=1) # filter regional Y matrix from MRIO
-    Y_full_dom = Y_full.drop(['Changes in inventories', 'Changes in valuables','Exports: Total (fob)'], level = 'category',axis=1) #only keep items for domestic use for indicated year
-    Y_full_regions = Y_full_dom.T.groupby('region').sum().T
-    Y_full_region = Y_full_regions.T.xs(region,axis=0).T
+
+    #Y_full_region = Y_full_regions.T.xs(region,axis=0).T
 
     Y_full_regions_diag = np.multiply(np.eye(200),Y_full_regions[:,np.newaxis])
 
     Y_full_region_diag = np.zeros_like(A_full)
     np.fill_diagonal(Y_full_region_diag, Y_full_region)
     
-    Y_transferred, Z_transferred, A_ht = hypothetical_transfer(Z_full, Y, A, x, filter_transf, yield_filter)
+
     ##--> one line has to be changed in function
     #-->     Z_transfer = pd.DataFrame(data = Z_transfer.sum(axis=1), columns = Y.columns), needs to be a groupby
     #          not a sum()

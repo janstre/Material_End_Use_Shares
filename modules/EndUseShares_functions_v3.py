@@ -292,6 +292,33 @@ def hypothetical_transfer(Z, Y, A, x, filter_transf, yield_filter):
 
     return Y_transferred, Z_transferred, A_ht
 
+# calculate new Z and Y matrices by transferring intermediate to final demand for selected sectoral output that is intermediate in MIOTs but end-use in MFA (e.g. packaging)
+def hypothetical_transfer_exio(Z, Y, x, filter_transf, yield_filter):
+    
+    #apply the pre-definied yield filter to Z so that no waste flows transferred to final demand
+    Z_yield = Z * yield_filter
+    waste = Z - Z_yield
+    # apply the pre-definied transfer filter to Z and Y, indicating the values that shall be transferred from Z to Y
+    Z_transfer = Z_yield * filter_transf
+    Z_transfer =  Z_transfer.T.groupby('region').sum().T
+    Y_transferred = Y + Z_transfer
+    Z_transferred = Z_yield * filter_transf.replace(1,2).replace(0,1).replace(2,0) #delete transferred items in Z_yield
+    
+    #check if transferred item sum equal to original
+    if (Y_transferred.sum().sum() + Z_transferred.sum().sum() + waste.sum().sum() -  x.sum().sum()) > 0.01:
+        print ('WARNING: the sum of Y/Z_transferred does not match the original Y/Z')
+    
+    # calculate inverse of x, but here not via matrix inverse due non-existent inverse and computing time for pseudoinverse
+    x_inv_raw = np.divide(np.ones(len(x)), x.to_numpy())
+    x_inv = np.where(x_inv_raw == np.inf, 0, x_inv_raw)
+    x_inv_diag = np.zeros_like(Z)
+    np.fill_diagonal(x_inv_diag, x_inv)
+    
+    # calculate new A; use original x as it does not change by transfer
+    A_ht = pd.DataFrame(np.dot(Z_transferred,x_inv_diag), index = Z.index, columns = Z.columns)
+
+    return Y_transferred, Z_transferred, A_ht
+
 
 # calculate WIO-MFA end-use share matrix D_wio INCLUDING HYPOTHETICAL TRANSFER using mass filter matrices defined in prior functions (equ. 1-3 in Streeck et al. 2022, part I)
 # no yield correction here, as this already occured during function hypothetical_transfer
