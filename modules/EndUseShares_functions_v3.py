@@ -159,6 +159,7 @@ def create_GhoshIoAmcMassFilter_delServiceRawMat(Z, Y, raw_materials, materials,
 # calculate Ghosh-IO AMC end-use share matrix D_Ghosh (equ. 7-9 in Streeck et al. 2022, part I; slightly different conduct)
 def calc_GhoshIO_AMC(Z, Y, x, filter_matrix, filt_Ghosh_Z, filt_Ghosh_Y, aggregation_matrix, extension_products):       
     
+    
     # apply pre-defined mass filter matrices to transaction matrix Z and final demand Y
     Z_filt = Z.copy() * filt_Ghosh_Z
     Y_filt = Y.copy() * filt_Ghosh_Y
@@ -197,8 +198,9 @@ def calc_GhoshIO_AMC(Z, Y, x, filter_matrix, filt_Ghosh_Z, filt_Ghosh_Y, aggrega
     D_Ghosh = D_Ghosh_raw_label.loc[extension_products]
     
     # aggregate to product-groups specified in aggregation_matrix
-    aggregation_matrix.drop(indices_zero, axis=1, inplace=True) #drop the rows/columns that were removed in second calc step above
-    D_Ghosh_aggregated = aggregation_matrix.dot(D_Ghosh.T) 
+    aggregation_matrix_ghosh = aggregation_matrix.copy()
+    aggregation_matrix_ghosh.drop(indices_zero, axis=1, inplace=True) #drop the rows/columns that were removed in second calc step above
+    D_Ghosh_aggregated = aggregation_matrix_ghosh.dot(D_Ghosh.T) 
     check_Ghosh = D_Ghosh_aggregated.sum(axis=0) #check if all shares sum up to 100%
 
     return D_Ghosh,D_Ghosh_aggregated, QR_check_unity, check_Ghosh 

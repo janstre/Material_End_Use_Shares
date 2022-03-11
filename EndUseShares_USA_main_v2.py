@@ -15,7 +15,7 @@ module_path = os.path.join(main_path, 'modules')
 sys.path.insert(0, module_path)
 data_path = os.path.join(main_path, 'input_data/')
 
-from EndUseSplit_USA_functions_v3 import calc_CBA,create_WIOMassFilter_plain, create_WIOMassFilter_withServiceRawMatInput,\
+from EndUseShares_functions_v3 import calc_CBA,create_WIOMassFilter_plain, create_WIOMassFilter_withServiceRawMatInput,\
      calc_WIO, create_GhoshIoAmcMassFilter_plain, create_GhoshIoAmcMassFilter_delServiceRawMat, calc_GhoshIO_AMC, \
      create_GhoshIoAmcMassFilter_delServiceOutput, create_PartialGhoshIO_filter_plain, create_PartialGhoshIO_filter_noServiceInput, \
      calc_PartialGhoshIO, hypothetical_transfer, calc_WIO_noYieldCorr, save_to_excel
@@ -163,7 +163,7 @@ fileName_PartialGhosh= 'PartialGhoshIO_plain_' + year + extension
 save_to_excel(fileName_PartialGhosh,D=D_ParGhosh,D_aggregated=D_ParGhosh_agg,massFilterName=filter_matrix,\
               MarketShares=Q_interm, filt_ParGhosh=filt_ParGhosh_label, check = check_ParGhosh)
     
-del filt_ParGhosh, filt_ParGhosh_label, D_ParGhosh, D_ParGhosh_agg, check_ParGhosh, Q_interm
+del fileName_PartialGhosh, filt_ParGhosh, filt_ParGhosh_label, D_ParGhosh, D_ParGhosh_agg, check_ParGhosh, Q_interm
 
 
 
@@ -176,7 +176,7 @@ fileName_PartialGhosh= 'PartialGhoshIO_noServiceInput_' + year + extension
 save_to_excel(fileName_PartialGhosh,D=D_ParGhosh,D_aggregated=D_ParGhosh_agg,massFilterName=filter_matrix,\
                  MarketShares=Q_interm, filt_ParGhosh=filt_ParGhosh_label, check = check_ParGhosh)
 
-del filt_ParGhosh, filt_ParGhosh_label, D_ParGhosh, D_ParGhosh_agg, check_ParGhosh, Q_interm
+del fileName_PartialGhosh, filt_ParGhosh, filt_ParGhosh_label, D_ParGhosh, D_ParGhosh_agg, check_ParGhosh, Q_interm
 
 
 
@@ -199,5 +199,5 @@ save_to_excel(fileName_HTWIOMF,D=D_ht_WIO,D_aggregated=D_ht_WIO_aggregated,total
               massFilterName=filter_matrix,   Ztransferred=pd.DataFrame(), Ytransferred=pd.DataFrame(), 
               filter_transf=filter_transf, check = check_ht_WIO)
                 
-del filt_packaging, filt_prod2service, filter_transf, Y_transferred, Z_transferred, A_ht, filt_Amp, filt_App, filt_Amp_label, filt_App_label,\
+del fileName_HTWIOMF, filt_packaging, filt_prod2service, filter_transf, Y_transferred, Z_transferred, A_ht, filt_Amp, filt_App, filt_Amp_label, filt_App_label,\
     D_ht_WIO,D_ht_WIO_aggregated,HT_WIO_split,check_ht_WIO
