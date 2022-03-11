@@ -5,13 +5,21 @@ Created on Tue Mar  8 13:41:20 2022
 @author: jstreeck
 """
 
+import os
+import sys
 import numpy as np
 import pandas as pd
+
+main_path = os.getcwd()
+module_path = os.path.join(main_path, 'modules')
+sys.path.insert(0, module_path)
+data_path = os.path.join(main_path, 'input_data/')
+
 from EndUseSplit_USA_functions_v3 import calc_CBA,create_WIOMassFilter_plain, create_WIOMassFilter_withServiceRawMatInput,\
      calc_WIO, create_GhoshIoAmcMassFilter_plain, create_GhoshIoAmcMassFilter_delServiceRawMat, calc_GhoshIO_AMC, \
      create_GhoshIoAmcMassFilter_delServiceOutput, create_PartialGhoshIO_filter_plain, create_PartialGhoshIO_filter_noServiceInput, \
      calc_PartialGhoshIO, hypothetical_transfer, calc_WIO_noYieldCorr, save_to_excel
-         
+
 
 ##--> for def create_GhoshIoAmcMassFilter_delServiceRawMat think about whether to delete only outputs of services , raw materials? 
 
@@ -25,13 +33,13 @@ from EndUseSplit_USA_functions_v3 import calc_CBA,create_WIOMassFilter_plain, cr
 year = '2012' # year has to be a string
 extension = '_Base' # choose scenario out of ['_Base','_ExtAgg']; _Base = Z,A,Y matrices as derived from Information of US BEA, _ExtAgg = in comparison to _Base, some IOT sectors were aggregated  (e.g. paper mills + paperboard mills), filter matrix _Base
 
-Z_orig = pd.read_excel('Z_' + year + '_ImpNoExpNoCII' + extension + '.xlsx',index_col=[0,1],header=[0,1]) #commodity x commodity transaction matrix
-A_orig = pd.read_excel('A_' + year + '_ImpNoExpNoCII' + extension + '.xlsx',index_col=[0,1],header=[0,1]) # technology matrix: commodity x commodity with industry technology
-Y_orig = pd.read_excel('Y_' + year + '_ImpNoExpNoCII' + extension + '.xlsx',index_col=[0,1]) # final demand vector (treatment of imports, exports and CII as specified in file name)
+Z_orig = pd.read_excel(data_path + 'Z_' + year + '_ImpNoExpNoCII' + extension + '.xlsx',index_col=[0,1],header=[0,1]) #commodity x commodity transaction matrix
+A_orig = pd.read_excel(data_path + 'A_' + year + '_ImpNoExpNoCII' + extension + '.xlsx',index_col=[0,1],header=[0,1]) # technology matrix: commodity x commodity with industry technology
+Y_orig = pd.read_excel(data_path + 'Y_' + year + '_ImpNoExpNoCII' + extension + '.xlsx',index_col=[0,1]) # final demand vector (treatment of imports, exports and CII as specified in file name)
 # make sure multiindex and multiindex names of A,Y,Z, filter_matrix are matching (also their formats in Excel files); if code not working and in doubt why, check content overlap and copy multiindex of matrices to filter matrix
 
-filter_matrix = pd.read_excel('Filter_' + year  + extension + '.xlsx',index_col=[0,1],header=[0,1],sheet_name='filter') # filter and aggregation matrix
-yield_filter_df = pd.read_excel('WIOMF_YieldFilter_' + year + extension + '.xlsx',index_col=[0,1],header=[0,1])
+filter_matrix = pd.read_excel(data_path + 'Filter_' + year  + extension + '.xlsx',index_col=[0,1],header=[0,1],sheet_name='filter') # filter and aggregation matrix
+yield_filter_df = pd.read_excel(data_path + 'WIOMF_YieldFilter_' + year + extension + '.xlsx',index_col=[0,1],header=[0,1])
 yield_filter = yield_filter_df.to_numpy()
 aggregation_matrix = filter_matrix.iloc[:,6:-2].T # get only the end-use aggregation categories from the filter_matrix 
 extension_products = filter_matrix.loc[filter_matrix[('All','Materials')]== 1].index.get_level_values(0).to_list() # the sectors that are considered for distributing material extensions
@@ -60,7 +68,6 @@ L = pd.DataFrame(np.linalg.pinv(I-A),Z.index,Z.columns)
 #check difference of new x,A to original to x,A
 print('The sum of x is ' + str(round(x.sum(),4)) + ', the sum of L*Y is ' +str(round(np.dot(L, Y).sum(),4)) + ', the difference is ' +str(abs(x.sum()-np.dot(L, Y).sum())))
 print('The sum of A is ' + str(round(A.sum().sum(),4)) + ', the sum of A_orig is ' +str(round(A_orig.sum().sum(),4)) + ', the difference is ' +str(abs(A.sum().sum()-A_orig.sum().sum())))
-
 
 
 '''
@@ -162,7 +169,7 @@ del filt_ParGhosh, filt_ParGhosh_label, D_ParGhosh, D_ParGhosh_agg, check_ParGho
 
 '''Partial Ghosh-IO no service input'''
 filt_ParGhosh, filt_ParGhosh_label  = create_PartialGhoshIO_filter_noServiceInput(Z, materials, intermediates, products_p1, non_service)
-D_ParGhosh, D_ParGhosh_agg, Q_interm, check_ParGhosh  = calc_PartialGhoshIO(Z, filter_matrix, filt_ParGhosh, filt_ParGhosh_label,aggregation_matrix)
+D_ParGhosh, D_ParGhosh_agg, Q_interm, check_ParGhosh  = calc_PartialGhoshIO(Z, filter_matrix, filt_ParGhosh, filt_ParGhosh_label,aggregation_matrix,extension_products)
 
 # save
 fileName_PartialGhosh= 'PartialGhoshIO_noServiceInput_' + year + extension
