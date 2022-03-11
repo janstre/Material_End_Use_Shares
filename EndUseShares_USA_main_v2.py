@@ -104,7 +104,7 @@ filt_Amp, filt_App, filt_Amp_label, filt_App_label = create_WIOMassFilter_withSe
 D_wio,D_wio_aggregated,WIO_split,check_wio = calc_WIO(A, Y, yield_filter, filt_Amp, filt_App,filter_matrix,aggregation_matrix,extension_products)
 
 # save
-fileName_WIO = 'WIO__withServiceInput_' + year + extension
+fileName_WIO = 'WIO_withServiceInput_' + year + extension
 save_to_excel(fileName_WIO,D=D_wio,D_aggregated=D_wio_aggregated,total_split=WIO_split,\
               yieldFilterName=yield_filter_df,filt_Amp=filt_Amp_label,filt_App=filt_App_label, check = check_wio)
     

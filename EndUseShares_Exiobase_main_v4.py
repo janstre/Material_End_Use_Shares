@@ -8,22 +8,25 @@ Created on Fri Nov 13 13:28:46 2020
 import pymrio
 import numpy as np
 import pandas as pd
-
-
 import os
-os.chdir('C:/Users/jstreeck/Desktop/EndUse_shortTermSave/2020_NationalOfficial_IOSUT/USA/Benchmark_SUTIO/_NewResults/')
+import sys
+import numpy as np
+import pandas as pd
 
-from EndUseSplit_USA_functions_v3 import hypothetical_transfer, calc_WIO_noYieldCorr, save_to_excel, create_WIOMassFilter_plain,\
+main_path = os.getcwd()
+module_path = os.path.join(main_path, 'modules')
+sys.path.insert(0, module_path)
+data_path = os.path.join(main_path, 'input_data/')
+exio_path = 'C:/Users/jstreeck/Desktop/EndUse_shortTermSave/Exiobase/' 
+
+from EndUseShares_functions_v3 import hypothetical_transfer, calc_WIO_noYieldCorr, save_to_excel, create_WIOMassFilter_plain,\
     create_WIOMassFilter_withServiceRawMatInput, calc_CBA
 
-os.chdir('C:/Users/jstreeck/Desktop/EndUse_shortTermSave/Exiobase/')
-
-exio_path = 'C:/Users/jstreeck/Desktop/EndUse_shortTermSave/Exiobase/IOT_' 
 
 years = list(range(1995,2012))
-filter_matrix = pd.read_excel('Filter_Exiobase_Base_v2.xlsx',index_col=[0],header=[0,1],sheet_name='mass_&_aggreg') # (mass) filter and aggregation matrix 
+filter_matrix = pd.read_excel(data_path + 'Filter_Exiobase_Base_v2.xlsx',index_col=[0],header=[0,1],sheet_name='mass_&_aggreg') # (mass) filter and aggregation matrix 
 aggregation_matrix = filter_matrix.iloc[:,4:-2].T # select aggregation matrix from filter matrix
-yield_filter = pd.read_excel('Filter_Exiobase_Base_v2.xlsx',index_col=[1],header=[1],sheet_name='yield').iloc[1:,1:].replace(0,1) #yield filter for WIO-MFA
+yield_filter = pd.read_excel(data_path + 'Filter_Exiobase_Base_v2.xlsx',index_col=[1],header=[1],sheet_name='yield').iloc[1:,1:].replace(0,1) #yield filter for WIO-MFA
 extension_products = filter_matrix.loc[filter_matrix[('All','Materials')]== 1].index.get_level_values(0).to_list() # the sectors that are considered for distributing material extensions
 
 regions = ['AT',  'AU', 'BE', 'BG', 'BR', 'CA', 'CH', 'CN', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FI', 'FR', 'GB', 'GR', 'HR', 'HU', 'ID', 'IE', 'IN', 'IT', 'JP',\
@@ -34,11 +37,11 @@ region = 'US'
 import pickle
 #with open(os.path.join( 'exio3_2000'), 'wb') as handle:
 #    pickle.dump(exio3, handle, protocol=pickle.HIGHEST_PROTOCOL)
-with open('exio3_2000','rb') as f:
+with open(exio_path + 'exio3_2000','rb') as f:
         exio3 = pickle.load(f)
 
 for year in years:
-    exio3 = pymrio.parse_exiobase3(path= exio_path + str(year) +'_pxp.zip')
+    exio3 = pymrio.parse_exiobase3(path= exio_path + 'IOT_str' + (year) +'_pxp.zip')
     for region in regions:
         
         ### 1 - derive basic MIOT items
@@ -106,6 +109,8 @@ for year in years:
             Z, Y, A, x, yield_filter, x_diag, L, I, Y_srio_dom_sum_pos, Y_srio_dom_sum, Y_srio_dom, Y_srio, A_srio_pos, A_srio, sector_order, A_mrio,\
             region, year, exio3
             
+
+
 
 years = list(range(1995,2012))
 filter_matrix = pd.read_excel('Filter_Exiobase_Base_v2.xlsx',index_col=[0],header=[0,1],sheet_name='mass_&_aggreg') # (mass) filter and aggregation matrix 
