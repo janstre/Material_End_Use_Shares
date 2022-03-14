@@ -15,7 +15,7 @@ module_path = os.path.join(main_path, 'modules')
 sys.path.insert(0, module_path)
 data_path = os.path.join(main_path, 'input_data/')
 
-from EndUseShares_functions_v3 import calc_CBA,create_WIOMassFilter_plain, create_WIOMassFilter_withServiceRawMatInput,\
+from EndUseShares_functions_v4 import calc_CBA,create_WIOMassFilter_plain, create_WIOMassFilter_withServiceRawMatInput,\
      calc_WIO, create_GhoshIoAmcMassFilter_plain, create_GhoshIoAmcMassFilter_delServiceRawMat, calc_GhoshIO_AMC, \
      create_GhoshIoAmcMassFilter_delServiceOutput, create_PartialGhoshIO_filter_plain, create_PartialGhoshIO_filter_noServiceInput, \
      calc_PartialGhoshIO, hypothetical_transfer, calc_WIO_noYieldCorr, save_to_excel
@@ -61,6 +61,7 @@ Z = Z_orig.astype(float)
 x = Z.sum(axis=1) + Y.sum(axis=1)
 x_diag = np.zeros_like(Z)
 np.fill_diagonal(x_diag, x)
+
 A = pd.DataFrame(np.dot(Z, np.linalg.pinv(x_diag)),Z.index,Z.columns)
 I = np.eye(A.shape[0])
 L = pd.DataFrame(np.linalg.pinv(I-A),Z.index,Z.columns)
@@ -189,7 +190,7 @@ filt_prod2service = (filt_prod2service  * non_service.T).replace(1,2).replace(0,
 filter_transf = (np.ones_like(Z) * filt_packaging).T
 filter_transf = (filter_transf + filt_prod2service).replace(2,1)
 
-Y_transferred, Z_transferred, A_ht = hypothetical_transfer(Z, Y, A, x, filter_transf, yield_filter)
+Y_transferred, Z_transferred, A_ht = hypothetical_transfer(Z, Y, A, filter_transf, yield_filter)
 filt_Amp, filt_App, filt_Amp_label, filt_App_label = create_WIOMassFilter_plain(A,raw_materials, materials,products,intermediates, non_service)
 D_ht_WIO,D_ht_WIO_aggregated,HT_WIO_split,check_ht_WIO = calc_WIO_noYieldCorr(A_ht, Y_transferred, filt_Amp, filt_App, filter_matrix,aggregation_matrix,extension_products)
 

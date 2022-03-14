@@ -273,7 +273,7 @@ def calc_PartialGhoshIO(Z, filter_matrix, filt_ParGhosh, filt_ParGhosh_label, ag
 '''
 
 # calculate new Z and Y matrices by transferring intermediate to final demand for selected sectoral output that is intermediate in MIOTs but end-use in MFA (e.g. packaging)
-def hypothetical_transfer(Z, Y, A, x, filter_transf, yield_filter):
+def hypothetical_transfer(Z, Y, A, filter_transf, yield_filter):
     
     #apply the pre-definied yield filter to Z so that no waste flows transferred to final demand
     Z_yield = Z * yield_filter
@@ -284,7 +284,9 @@ def hypothetical_transfer(Z, Y, A, x, filter_transf, yield_filter):
     Y_transferred = Y + Z_transfer
     Z_transferred = Z_yield * filter_transf.replace(1,2).replace(0,1).replace(2,0) #delete transferred items in Z_yield
     
-    # calculate new A; use original x as it does not change by transfer
+    # calculate new x (yield correction) and A
+    x = pd.DataFrame(data = Z_transferred.sum(axis=1), columns = Y.columns) + Y_transferred
+    
     x_diag = np.zeros_like(Z)
     np.fill_diagonal(x_diag, x)
     A_ht = pd.DataFrame(np.dot(Z_transferred,np.linalg.pinv(x_diag)), index = Y.index, columns = Y.index)
@@ -293,7 +295,7 @@ def hypothetical_transfer(Z, Y, A, x, filter_transf, yield_filter):
     return Y_transferred, Z_transferred, A_ht
 
 # calculate new Z and Y matrices by transferring intermediate to final demand for selected sectoral output that is intermediate in MIOTs but end-use in MFA (e.g. packaging)
-def hypothetical_transfer_exio(Z, Y, x, filter_transf, yield_filter):
+def hypothetical_transfer_exio(Z, Y, filter_transf, yield_filter):
     
     #apply the pre-definied yield filter to Z so that no waste flows transferred to final demand
     Z_yield = Z * yield_filter
@@ -314,6 +316,8 @@ def hypothetical_transfer_exio(Z, Y, x, filter_transf, yield_filter):
     else:
         print('The sum of Y/Z_transferred matches the original Y/Z')
     
+    # calculate new x (yield correction) and A
+    x = Z_transferred.sum(axis=1) + Y_transferred.sum(axis=1)
     # calculate inverse of x, but here not via matrix inverse due non-existent inverse and computing time for pseudoinverse
     x_inv_raw = np.divide(np.ones(len(x)), x.to_numpy())
     x_inv = np.where(x_inv_raw == np.inf, 0, x_inv_raw)
