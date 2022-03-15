@@ -18,7 +18,7 @@ data_path = os.path.join(main_path, 'input_data/')
 from EndUseShares_functions_v4 import calc_CBA,create_WIOMassFilter_plain, create_WIOMassFilter_withServiceRawMatInput,\
      calc_WIO, create_GhoshIoAmcMassFilter_plain, create_GhoshIoAmcMassFilter_delServiceRawMat, calc_GhoshIO_AMC, \
      create_GhoshIoAmcMassFilter_delServiceOutput, create_PartialGhoshIO_filter_plain, create_PartialGhoshIO_filter_noServiceInput, \
-     calc_PartialGhoshIO, hypothetical_transfer, calc_WIO_noYieldCorr, save_to_excel
+     calc_PartialGhoshIO, hypothetical_transfer, calc_WIO_noYieldCorr, assemble_yield_filter, save_to_excel
 
 
 ##--> for def create_GhoshIoAmcMassFilter_delServiceRawMat think about whether to delete only outputs of services , raw materials? 
@@ -30,7 +30,7 @@ from EndUseShares_functions_v4 import calc_CBA,create_WIOMassFilter_plain, creat
 
 '''
 
-year = '2012' # year has to be a string
+year = '2007' # year has to be a string
 extension = '_Base' # choose scenario out of ['_Base','_ExtAgg']; _Base = Z,A,Y matrices as derived from Information of US BEA, _ExtAgg = in comparison to _Base, some IOT sectors were aggregated  (e.g. paper mills + paperboard mills), filter matrix _Base
 
 Z_orig = pd.read_excel(data_path + 'Z_' + year + '_ImpNoExpNoCII' + extension + '.xlsx',index_col=[0,1],header=[0,1]) #commodity x commodity transaction matrix
@@ -38,11 +38,15 @@ A_orig = pd.read_excel(data_path + 'A_' + year + '_ImpNoExpNoCII' + extension + 
 Y_orig = pd.read_excel(data_path + 'Y_' + year + '_ImpNoExpNoCII' + extension + '.xlsx',index_col=[0,1]) # final demand vector (treatment of imports, exports and CII as specified in file name)
 # make sure multiindex and multiindex names of A,Y,Z, filter_matrix are matching (also their formats in Excel files); if code not working and in doubt why, check content overlap and copy multiindex of matrices to filter matrix
 
-filter_matrix = pd.read_excel(data_path + 'Filter_' + year  + extension + '.xlsx',index_col=[0,1],header=[0,1],sheet_name='mass_&_aggr') # filter and aggregation matrix
-yield_filter_df = pd.read_excel(data_path + 'WIOMF_YieldFilter_' + year + extension + '.xlsx',index_col=[0,1],header=[0,1])
-yield_filter = yield_filter_df.to_numpy()
+filter_matrix = pd.read_excel(data_path + 'Filter_' + year  + extension + '.xlsx',index_col=[0,1],header=[0,1],sheet_name='mass_&_aggreg') # filter and aggregation matrix
+raw_yield_df = pd.read_excel(data_path + 'Filter_' + year  + extension + '.xlsx',index_col=[0,1],header=[0],sheet_name='yield')
+yield_filter = pd.DataFrame(np.zeros((len(Z_orig),len(Z_orig))), index =Z_orig.index, columns = Z_orig.columns.get_level_values(1))
 aggregation_matrix = filter_matrix.iloc[:,6:-2].T # get only the end-use aggregation categories from the filter_matrix 
 extension_products = filter_matrix.loc[filter_matrix[('All','Materials')]== 1].index.get_level_values(0).to_list() # the sectors that are considered for distributing material extensions
+
+#assemble yield filter
+yield_filter = assemble_yield_filter(aggregation_matrix, raw_yield_df, Z_orig, yield_filter).replace(0,1)
+#yield_filter = np.ones_like(Z_orig)
 
 #define the filter settings for different materials/product groups that are used in method functions
 raw_materials = filter_matrix.loc[:,(['All'],['Raw_materials'])]
@@ -94,7 +98,7 @@ D_wio,D_wio_aggregated,WIO_split,check_wio = calc_WIO(A, Y, yield_filter, filt_A
 # save
 fileName_WIO = 'WIO_plain_' + year + extension
 save_to_excel(fileName_WIO,D=D_wio,D_aggregated=D_wio_aggregated,total_split=WIO_split,\
-              yieldFilterName=yield_filter_df,filt_Amp=filt_Amp_label,filt_App=filt_App_label, check = check_wio)
+              yieldFilterName=yield_filter ,filt_Amp=filt_Amp_label,filt_App=filt_App_label, check = check_wio)
    
 del filt_Amp, filt_App, filt_Amp_label, filt_App_label, D_wio,D_wio_aggregated,WIO_split,check_wio
 
@@ -107,7 +111,7 @@ D_wio,D_wio_aggregated,WIO_split,check_wio = calc_WIO(A, Y, yield_filter, filt_A
 # save
 fileName_WIO = 'WIO_withServiceInput_' + year + extension
 save_to_excel(fileName_WIO,D=D_wio,D_aggregated=D_wio_aggregated,total_split=WIO_split,\
-              yieldFilterName=yield_filter_df,filt_Amp=filt_Amp_label,filt_App=filt_App_label, check = check_wio)
+              yieldFilterName=yield_filter ,filt_Amp=filt_Amp_label,filt_App=filt_App_label, check = check_wio)
     
 del filt_Amp, filt_App, filt_Amp_label, filt_App_label, D_wio,D_wio_aggregated,WIO_split,check_wio
 

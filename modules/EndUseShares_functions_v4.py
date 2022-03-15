@@ -59,6 +59,23 @@ def create_WIOMassFilter_withServiceRawMatInput(A, raw_materials, materials, pro
 
     return filt_Amp, filt_App, filt_Amp_label, filt_App_label
 
+# assemble yield filter from aggregate information in filter excel sheets for USA
+def assemble_yield_filter(aggregation_matrix, raw_yield_df, Z_orig, yield_filter):    
+    S = aggregation_matrix.droplevel(0).T.droplevel(0).T.replace(0,np.nan)
+    sector_aggretation_labels = pd.DataFrame(S.stack().reset_index(level=1).groupby(level=0, sort=False)['level_1'].apply(list))
+    
+    for i, row in raw_yield_df.iterrows():
+        for j, row2 in sector_aggretation_labels.iterrows():
+            yield_filter.loc[[i],[sector_aggretation_labels.loc[j]['level_1']][0]] = raw_yield_df.loc[i][j]
+        
+        
+    index_to_dict = Z_orig.reset_index()
+    index_dict = index_to_dict.set_index(Z_orig.index.names[1]).iloc[:,0].to_dict()
+
+    new_index = pd.MultiIndex.from_tuples(zip(yield_filter.columns, yield_filter.columns.map(index_dict)))
+    yield_filter.columns = new_index.swaplevel()
+    return yield_filter
+
 
 # calculate WIO-MFA end-use share matrix D_wio using mass filter matrices defined in prior functions (equ. 1-3 in Streeck et al. 2022, part I)
 def calc_WIO(A, Y, yield_filter, filt_Amp, filt_App, filter_matrix, aggregation_matrix, extension_products):
