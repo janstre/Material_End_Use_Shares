@@ -434,15 +434,16 @@ def calc_WIO_noYieldCorr_exio(A, Y, filt_Amp, filt_App, filter_matrix, aggregati
 
 def match_multiIndex(target_df, index_source):
     # convert index to dataframe
-    old_idx = target_df.index.to_frame()
-    old_col = target_df.columns.to_frame().rename(columns={0:'sector'})
+    new_df = target_df.copy()
+    old_idx = new_df.index.to_frame()
+    old_col = new_df.columns.to_frame().rename(columns={0:'sector'})
     # insert new level to index
     old_idx.insert(0, 'region', index_source.index.get_level_values('region'))
     old_col.insert(0, 'region', index_source.columns.get_level_values('region'))
     # convert to .ultiIndex
-    target_df.index = pd.MultiIndex.from_frame(old_idx)
-    target_df.columns = pd.MultiIndex.from_frame(old_col)
-    return target_df
+    new_df.index = pd.MultiIndex.from_frame(old_idx)
+    new_df.columns = pd.MultiIndex.from_frame(old_col)
+    return new_df
 
 ''' 
   # 7  SAVE RESULTS

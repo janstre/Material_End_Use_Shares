@@ -39,9 +39,10 @@ from EndUseShares_functions_v4 import hypothetical_transfer_exio, create_WIOMass
 
 '''
 ### 1 - general variables
-years = list(range(1995,2012))
-regions = ['AT',  'AU', 'BE', 'BG', 'BR', 'CA', 'CH', 'CN', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FI', 'FR', 'GB', 'GR', 'HR', 'HU', 'ID', 'IE', 'IN', 'IT', 'JP',\
-           'KR', 'LT', 'LU', 'LV', 'MT', 'MX', 'NL', 'NO', 'PL', 'PT', 'RO', 'RU', 'SE', 'SI', 'SK', 'TR', 'TW', 'US', 'WA', 'WE', 'WF', 'WL', 'WM', 'ZA']
+years = list(range(1997,2012))
+# regions = ['AT',  'AU', 'BE', 'BG', 'BR', 'CA', 'CH', 'CN', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FI', 'FR', 'GB', 'GR', 'HR', 'HU', 'ID', 'IE', 'IN', 'IT', 'JP',\
+#            'KR', 'LT', 'LU', 'LV', 'MT', 'MX', 'NL', 'NO', 'PL', 'PT', 'RO', 'RU', 'SE', 'SI', 'SK', 'TR', 'TW', 'US', 'WA', 'WE', 'WF', 'WL', 'WM', 'ZA']
+regions = ['US']
 
 filter_matrix = pd.read_excel(data_path + 'Filter_Exiobase_Base_v2.xlsx',index_col=[0],header=[0,1],sheet_name='mass_&_aggreg') # (mass) filter and aggregation matrix 
 aggregation_matrix = filter_matrix.iloc[:,4:-2].T # select aggregation matrix from filter matrix
@@ -52,13 +53,13 @@ yield_filter_all =  pd.concat([pd.concat([yield_filter_single]*49, axis=1)]*49, 
 
 
 # if using pickeld exiobase for single year
-year = 2000
-region = 'US'
-import pickle
+#year = 2000
+#region = 'US'
+#import pickle
 #with open(os.path.join( 'exio3_2000'), 'wb') as handle:
 #    pickle.dump(exio3, handle, protocol=pickle.HIGHEST_PROTOCOL)
-with open(exio_path + 'exio3_2000','rb') as f:
-        exio3 = pickle.load(f)
+#with open(exio_path + 'exio3_2000','rb') as f:
+#       exio3 = pickle.load(f)
 
 
       
@@ -90,7 +91,7 @@ filt_App_label_all = pd.concat([pd.concat([filt_App_label_single]*49, axis=1 ,ig
                   
 # loop over years to conduct hypothetical transfer, afterwards loop over regions to calculate D per region and year                                                                                
 for year in years:
-    exio3 = pymrio.parse_exiobase3(path= exio_path + str(year) +'_pxp.zip')
+    exio3 = pymrio.parse_exiobase3(path = exio_path + 'IOT_' + str(year) +'_pxp.zip')
     
     # load Y, drop three Y elements (CII,CIV,exports) and sum per region, remove negatives from Z, Y and replace with 0
     Y_full = exio3.Y 
@@ -121,7 +122,7 @@ for year in years:
     filter_transf = match_multiIndex(filter_transf_all, Z_full)
     filt_Amp_label = match_multiIndex(filt_Amp_label_all, filter_transf)
     filt_App_label = match_multiIndex(filt_App_label_all, filter_transf)
-    
+
     # calculate hypothetical transfer
     Y_transferred, Z_transferred, A_ht = hypothetical_transfer_exio(Z_full, Y_full_regions, filter_transf, yield_filter)
       
