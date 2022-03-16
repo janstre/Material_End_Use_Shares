@@ -134,7 +134,7 @@ for year in years:
         D_ht_wio_region, D_ht_wio_region_aggregated, HTWIO_split_region, check_wio_ht_region = calc_WIO_noYieldCorr_exio(A_ht, Y_region , filt_Amp_label , filt_App_label , filter_matrix, aggregation_matrix, extension_products)
 
         # save
-        fileName_HTWIOMF= 'Exio_HT_WIOMF_' + str(year) + '_' + region
+        fileName_HTWIOMF= 'Exiobase/Exio_HT_WIOMF_' + str(year) + '_' + region
         save_to_excel(fileName_HTWIOMF,D=D_ht_wio_region,D_aggregated=D_ht_wio_region_aggregated,total_split = HTWIO_split_region, \
                       massFilterName=filter_matrix, filter_transf= filter_transf_single, yieldFilterName=yield_filter_single,\
                       filt_Amp=filt_Amp_label_single, filt_App=filt_App_label_single, check = check_wio_ht_region)

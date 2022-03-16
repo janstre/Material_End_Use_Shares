@@ -13,7 +13,7 @@ import pandas as pd
 main_path = os.getcwd()
 module_path = os.path.join(main_path, 'modules')
 sys.path.insert(0, module_path)
-data_path = os.path.join(main_path, 'input_data/')
+data_path = os.path.join(main_path, 'input_data/USA/')
 
 from EndUseShares_functions_v4 import calc_CBA,create_WIOMassFilter_plain, create_WIOMassFilter_withServiceRawMatInput,\
      calc_WIO, create_GhoshIoAmcMassFilter_plain, create_GhoshIoAmcMassFilter_delServiceRawMat, calc_GhoshIO_AMC, \
@@ -31,7 +31,7 @@ from EndUseShares_functions_v4 import calc_CBA,create_WIOMassFilter_plain, creat
 '''
 
 year = '2007' # year has to be a string
-extension = '_Base' # choose scenario out of ['_Base','_ExtAgg']; _Base = Z,A,Y matrices as derived from Information of US BEA, _ExtAgg = in comparison to _Base, some IOT sectors were aggregated  (e.g. paper mills + paperboard mills), filter matrix _Base
+extension = '_ExtAgg' # choose scenario out of ['_Base','_ExtAgg']; _Base = Z,A,Y matrices as derived from Information of US BEA, _ExtAgg = in comparison to _Base, some IOT sectors were aggregated  (e.g. paper mills + paperboard mills), filter matrix _Base
 
 Z_orig = pd.read_excel(data_path + 'Z_' + year + '_ImpNoExpNoCII' + extension + '.xlsx',index_col=[0,1],header=[0,1]) #commodity x commodity transaction matrix
 A_orig = pd.read_excel(data_path + 'A_' + year + '_ImpNoExpNoCII' + extension + '.xlsx',index_col=[0,1],header=[0,1]) # technology matrix: commodity x commodity with industry technology
@@ -84,7 +84,7 @@ print('The sum of A is ' + str(round(A.sum().sum(),4)) + ', the sum of A_orig is
 ''' # CBA'''
 D_cba,D_cba_aggregated,CBA_split,check_cba = calc_CBA(L,Y,filter_matrix,aggregation_matrix,extension_products)
 
-fileName_CBA = 'CBA_' + year + extension
+fileName_CBA = 'USA/CBA_' + year + extension
 save_to_excel(fileName_CBA,D=D_cba,D_aggregated=D_cba_aggregated,total_split=CBA_split, check = check_cba)
 
 del D_cba,D_cba_aggregated,CBA_split,check_cba
@@ -96,7 +96,7 @@ filt_Amp, filt_App, filt_Amp_label, filt_App_label = create_WIOMassFilter_plain(
 D_wio,D_wio_aggregated,WIO_split,check_wio = calc_WIO(A, Y, yield_filter, filt_Amp, filt_App,filter_matrix,aggregation_matrix,extension_products)
 
 # save
-fileName_WIO = 'WIO_plain_' + year + extension
+fileName_WIO = 'USA/WIO_plain_' + year + extension
 save_to_excel(fileName_WIO,D=D_wio,D_aggregated=D_wio_aggregated,total_split=WIO_split,\
               yieldFilterName=yield_filter ,filt_Amp=filt_Amp_label,filt_App=filt_App_label, check = check_wio)
    
@@ -109,7 +109,7 @@ filt_Amp, filt_App, filt_Amp_label, filt_App_label = create_WIOMassFilter_withSe
 D_wio,D_wio_aggregated,WIO_split,check_wio = calc_WIO(A, Y, yield_filter, filt_Amp, filt_App,filter_matrix,aggregation_matrix,extension_products)
 
 # save
-fileName_WIO = 'WIO_withServiceInput_' + year + extension
+fileName_WIO = 'USA/WIO_withServiceInput_' + year + extension
 save_to_excel(fileName_WIO,D=D_wio,D_aggregated=D_wio_aggregated,total_split=WIO_split,\
               yieldFilterName=yield_filter ,filt_Amp=filt_Amp_label,filt_App=filt_App_label, check = check_wio)
     
@@ -122,7 +122,7 @@ filt_Ghosh_Z,filt_Ghosh_Y, filt_Ghosh_Z_label, filt_Ghosh_Y_label = create_Ghosh
 D_Ghosh,D_Ghosh_aggregated, QR_check_unity, check_Ghosh  = calc_GhoshIO_AMC(Z, Y, x, filter_matrix, filt_Ghosh_Z, filt_Ghosh_Y,aggregation_matrix,extension_products)
 
 # save
-fileName_GhoshIoAmc = 'GhoshAMC_plain_' + year + extension
+fileName_GhoshIoAmc = 'USA/GhoshAMC_plain_' + year + extension
 save_to_excel(fileName_GhoshIoAmc,D=D_Ghosh,D_aggregated=D_Ghosh_aggregated,massFilterName=filter_matrix,\
        GhoshZfilter=filt_Ghosh_Z_label,GhoshYfilter=filt_Ghosh_Y_label, check = check_Ghosh)
     
@@ -136,7 +136,7 @@ filt_Ghosh_Z,filt_Ghosh_Y, filt_Ghosh_Z_label, filt_Ghosh_Y_label = create_Ghosh
 D_Ghosh,D_Ghosh_aggregated, QR_check_unity, check_Ghosh  = calc_GhoshIO_AMC(Z, Y, x, filter_matrix, filt_Ghosh_Z, filt_Ghosh_Y,aggregation_matrix,extension_products)
 
 # save
-fileName_GhoshIoAmc = 'GhoshAMC_noServOutput_' + year + extension
+fileName_GhoshIoAmc = 'USA/GhoshAMC_noServOutput_' + year + extension
 save_to_excel(fileName_GhoshIoAmc,D=D_Ghosh,D_aggregated=D_Ghosh_aggregated,massFilterName=filter_matrix,\
        GhoshZfilter=filt_Ghosh_Z_label,GhoshYfilter=filt_Ghosh_Y_label, check = check_Ghosh)
     
@@ -150,7 +150,7 @@ filt_Ghosh_Z,filt_Ghosh_Y, filt_Ghosh_Z_label, filt_Ghosh_Y_label = create_Ghosh
 D_Ghosh,D_Ghosh_aggregated, QR_check_unity, check_Ghosh  = calc_GhoshIO_AMC(Z, Y, x, filter_matrix, filt_Ghosh_Z, filt_Ghosh_Y,aggregation_matrix,extension_products)
 
 # save
-fileName_GhoshIoAmc = 'GhoshAMC_noTransServRawMat_' + year + extension
+fileName_GhoshIoAmc = 'USA/GhoshAMC_noTransServRawMat_' + year + extension
 save_to_excel(fileName_GhoshIoAmc,D=D_Ghosh,D_aggregated=D_Ghosh_aggregated,massFilterName=filter_matrix,\
        GhoshZfilter=filt_Ghosh_Z_label,GhoshYfilter=filt_Ghosh_Y_label, check = check_Ghosh)
     
@@ -164,7 +164,7 @@ filt_ParGhosh, filt_ParGhosh_label  = create_PartialGhoshIO_filter_plain(Z, mate
 D_ParGhosh, D_ParGhosh_agg, Q_interm, check_ParGhosh  = calc_PartialGhoshIO(Z, filter_matrix, filt_ParGhosh, filt_ParGhosh_label,aggregation_matrix,extension_products)
 
 # save
-fileName_PartialGhosh= 'PartialGhoshIO_plain_' + year + extension
+fileName_PartialGhosh= 'USA/PartialGhoshIO_plain_' + year + extension
 save_to_excel(fileName_PartialGhosh,D=D_ParGhosh,D_aggregated=D_ParGhosh_agg,massFilterName=filter_matrix,\
               MarketShares=Q_interm, filt_ParGhosh=filt_ParGhosh_label, check = check_ParGhosh)
     
@@ -177,7 +177,7 @@ filt_ParGhosh, filt_ParGhosh_label  = create_PartialGhoshIO_filter_noServiceInpu
 D_ParGhosh, D_ParGhosh_agg, Q_interm, check_ParGhosh  = calc_PartialGhoshIO(Z, filter_matrix, filt_ParGhosh, filt_ParGhosh_label,aggregation_matrix,extension_products)
 
 # save
-fileName_PartialGhosh= 'PartialGhoshIO_noServiceInput_' + year + extension
+fileName_PartialGhosh= 'USA/PartialGhoshIO_noServiceInput_' + year + extension
 save_to_excel(fileName_PartialGhosh,D=D_ParGhosh,D_aggregated=D_ParGhosh_agg,massFilterName=filter_matrix,\
                  MarketShares=Q_interm, filt_ParGhosh=filt_ParGhosh_label, check = check_ParGhosh)
 
@@ -199,7 +199,7 @@ filt_Amp, filt_App, filt_Amp_label, filt_App_label = create_WIOMassFilter_plain(
 D_ht_WIO,D_ht_WIO_aggregated,HT_WIO_split,check_ht_WIO = calc_WIO_noYieldCorr(A_ht, Y_transferred, filt_Amp, filt_App, filter_matrix,aggregation_matrix,extension_products)
 
 # save
-fileName_HTWIOMF= 'HT_WIOMF_' + year + extension
+fileName_HTWIOMF= 'USA/HT_WIOMF_' + year + extension
 save_to_excel(fileName_HTWIOMF,D=D_ht_WIO,D_aggregated=D_ht_WIO_aggregated,total_split = HT_WIO_split, \
               massFilterName=filter_matrix,   Ztransferred=pd.DataFrame(), Ytransferred=pd.DataFrame(), 
               filter_transf=filter_transf, check = check_ht_WIO)
