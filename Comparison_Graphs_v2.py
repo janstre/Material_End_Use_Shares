@@ -34,18 +34,25 @@ for year in years:
         CBA_single = pd.read_excel(file, sheet_name='EndUse_shares_agg',index_col=[0,1],header=[0,1])
     CBA_dict[year] = CBA_single
     
-# CBA_ext_dict = {}
-# for year in years:
-#     for file in glob.glob(os.path.join((data_path_usa + 'CBA_' + str(year) +'_ExtAgg' + '*.xlsx'))):
-#         CBA_single = pd.read_excel(file, sheet_name='EndUse_shares_agg',index_col=[0,1],header=[0,1])
-#     CBA_ext_dict[year] = CBA_single
-    
+
 Wio_dict = {}
 for year in years:
     for file in glob.glob(os.path.join((data_path_usa + 'WIO_plain_' + str(year) + '_Base' + '*.xlsx'))):
         Wio_single = pd.read_excel(file, sheet_name='EndUse_shares_agg',index_col=[0,1],header=[0,1])
     Wio_dict[year] = Wio_single
     
+Wio_ext_dict = {}
+for year in years:
+    for file in glob.glob(os.path.join((data_path_usa + 'WIO_plain_' + str(year) + '_ExtAgg' + '*.xlsx'))):
+        Wio_single = pd.read_excel(file, sheet_name='EndUse_shares_agg',index_col=[0,1],header=[0,1])
+    Wio_ext_dict[year] = Wio_single
+
+Wio_withServiceInput_dict = {}
+for year in years:
+    for file in glob.glob(os.path.join((data_path_usa + 'WIO_withServiceInput_' + str(year) + '_Base' + '*.xlsx'))):
+        Wio_single = pd.read_excel(file, sheet_name='EndUse_shares_agg',index_col=[0,1],header=[0,1])
+    Wio_withServiceInput_dict[year] = Wio_single
+
 Ghosh_dict = {}
 for year in years:
     for file in glob.glob(os.path.join((data_path_usa + 'GhoshAMC_plain_' + str(year) + '_Base' + '*.xlsx'))):
@@ -66,7 +73,7 @@ for year in years:
     
 HTWio_ext_dict = {}
 for year in years:
-    for file in glob.glob(os.path.join((data_path_usa + 'HT_WIOMF_' + str(year) + '_Base' + '*.xlsx'))):
+    for file in glob.glob(os.path.join((data_path_usa + 'HT_WIOMF_' + str(year) + '_ExtAgg' + '*.xlsx'))):
         HTWio_single = pd.read_excel(file, sheet_name='EndUse_shares_agg',index_col=[0,1],header=[0,1])
     HTWio_ext_dict[year] = HTWio_single
     
@@ -143,8 +150,13 @@ for region in regions:
 
 
 
-methods = [CBA_dict, Wio_dict, Ghosh_dict, ParGhosh_dict, HTWio_dict]
-method_names = ['CBA', 'WIO', 'Ghosh', 'ParGhosh', 'HT-WIO']
+#methods = [CBA_dict, Wio_dict, Ghosh_dict, ParGhosh_dict, HTWio_dict] 
+#method_names = ['CBA', 'WIO-MFA', 'Ghosh-IO AMC', 'Partial Ghosh-IO', 'HT-WIO' ]
+
+#optionally with ExtAgg and WIO_filter diff
+methods = [ Wio_dict, Wio_ext_dict , Wio_withServiceInput_dict,  HTWio_dict, HTWio_ext_dict] 
+method_names = [ 'WIO-MFA', 'WIO-MFA_extAgg','WIO-MFA_filtDif', 'HT-WIO', 'HT-WIO_extAgg' ]
+
 years = [1963,1967,1972,1977,1982,1987,1992,1997,2002,2007,2012]
 #exio mat = ['steel', 'wood', 'Plastic', 'glass', 'alumin', 'tin', 'Copper']
 #exio_enduse
@@ -173,8 +185,8 @@ for method in methods:
 wood_construction_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
     wood_construction_df[method_name] = Wood_dict.get(method_name).loc['Residential'] + Wood_dict.get(method_name).loc['Non-Residential'] + Wood_dict.get(method_name).loc['Other buildings'] + Wood_dict.get(method_name ).loc['Infrastructure'] + Wood_dict.get(method_name).loc['Other construction']
-wood_construction_df['McKeever_constr.'] = phys_dict.get('pd_Wood').T.loc['Construction total']
-wood_construction_df['Exio_HTwio'] = region_dict.get('US').get('wood').loc['Construction']
+wood_construction_df['Shipment_1'] = phys_dict.get('pd_Wood').T.loc['Construction total']*100 #'McKeever_constr.
+wood_construction_df['Exio_HT-WIO'] = region_dict.get('US').get('wood').loc['Construction']
 wood_construction_df.plot(kind='line',marker='o', title= 'Wood in Construction', legend = False)
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
@@ -186,7 +198,7 @@ plt.show()
 wood_residential_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
     wood_residential_df[method_name] = Wood_dict.get(method_name).loc['Residential']
-wood_residential_df['McKeever_resid.build.new.'] = phys_dict.get('pd_Wood').T.loc['Total New Houses']*100
+wood_residential_df['Shipment_1'] = phys_dict.get('pd_Wood').T.loc['Total New Houses']*100 #'McKeever_resid.build.new.'
 wood_residential_df.plot( kind='line',marker='o', title= 'Wood in Residential')
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
@@ -197,7 +209,7 @@ plt.show()
 wood_nonresidential_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
     wood_nonresidential_df[method_name] = Wood_dict.get(method_name).loc['Non-Residential']
-wood_nonresidential_df['McKeever_non.resid.constr.'] = phys_dict.get('pd_Wood').T.loc['Nonres Total']*100
+wood_nonresidential_df['Shipment_1'] = phys_dict.get('pd_Wood').T.loc['Nonres Total']*100 #'McKeever_non.resid.constr.'
 wood_nonresidential_df.plot(kind='line',marker='o', title= 'Wood in Non-Residential')
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
@@ -208,8 +220,8 @@ plt.show()
 wood_furniture_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
     wood_furniture_df[method_name] = Wood_dict.get(method_name).loc['Furniture']
-wood_furniture_df['McKeever_furnit.'] = phys_dict.get('pd_Wood').T.loc['Furniture']*100
-wood_furniture_df['Exio_HTwio'] = region_dict.get('US').get('wood').loc['Furniture; other manufactured goods n.e.c.']
+wood_furniture_df['Shipment_1'] = phys_dict.get('pd_Wood').T.loc['Furniture']*100 #'McKeever_furnit.'
+wood_furniture_df['Exio_HT-WIO'] = region_dict.get('US').get('wood').loc['Furniture; other manufactured goods n.e.c.']
 wood_furniture_df.plot(kind='line',marker='o', title= 'Wood in Furniture' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
@@ -220,8 +232,8 @@ plt.show()
 wood_packaging_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
     wood_packaging_df[method_name] = Wood_dict.get(method_name).loc['Packaging']
-wood_packaging_df['McKeever_packag.'] = phys_dict.get('pd_Wood').T.loc['Packaging and shippling']*100
-wood_packaging_df['Exio_HTwio'] = region_dict.get('US').get('wood').loc['Food']
+wood_packaging_df['Shipment_1'] = phys_dict.get('pd_Wood').T.loc['Packaging and shippling']*100 #'McKeever_packag.'
+wood_packaging_df['Exio_HT-WIO'] = region_dict.get('US').get('wood').loc['Food']
 wood_packaging_df.plot(kind='line',marker='o', title= 'Wood in Packaging')
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
@@ -250,22 +262,22 @@ for method in methods:
 alu_construction_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
     alu_construction_df[method_name] = alu_dict.get(method_name).loc['Residential'] + alu_dict.get(method_name).loc['Non-Residential'] + alu_dict.get(method_name).loc['Other buildings'] + alu_dict.get(method_name ).loc['Infrastructure'] + alu_dict.get(method_name).loc['Other construction']
-alu_construction_df['USGS_constr.'] = phys_dict.get('pd_Alu').T.loc['USGS Construction']*100
-alu_construction_df['Liu_constr.'] = phys_dict.get('pd_Alu').T.loc['Liu Building & Construction']*100
-alu_construction_df['Exio_HTwio'] = region_dict.get('US').get('alumin').loc['Construction']
+alu_construction_df['Shipment_1'] = phys_dict.get('pd_Alu').T.loc['USGS Construction']*100
+alu_construction_df['Shipment_2'] = phys_dict.get('pd_Alu').T.loc['Liu Building & Construction']*100
+alu_construction_df['Exio_HT-WIO'] = region_dict.get('US').get('alumin').loc['Construction']
 alu_construction_df.plot(kind='line',marker='o', title= 'Aluminum in Construction' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
 plt.ylabel('%')
 plt.show()
 
-#transportation
+#transport
 alu_transport_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
     alu_transport_df[method_name] = alu_dict.get(method_name).loc['Motor vehicles'] + alu_dict.get(method_name).loc['Other transport equipment']
-alu_transport_df['USGS_transport.'] = phys_dict.get('pd_Alu').T.loc['USGS Transportation']*100
-alu_transport_df['Liu_transport.'] = phys_dict.get('pd_Alu').T.loc['Liu Transportation']*100
-alu_transport_df['Exio_HTwio'] = region_dict.get('US').get('alumin').loc['Motor vehicles, trailers and semi-trailers'] +\
+alu_transport_df['Shipment_1'] = phys_dict.get('pd_Alu').T.loc['USGS Transportation']*100
+alu_transport_df['Shipment_2'] = phys_dict.get('pd_Alu').T.loc['Liu Transportation']*100
+alu_transport_df['Exio_HT-WIO'] = region_dict.get('US').get('alumin').loc['Motor vehicles, trailers and semi-trailers'] +\
     region_dict.get('US').get('alumin').loc['Other transport equipment']
 alu_transport_df.plot(kind='line',marker='o', title= 'Aluminum in Transportation' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
@@ -278,9 +290,9 @@ plt.show()
 alu_packaging_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
     alu_packaging_df[method_name] = alu_dict.get(method_name).loc['Packaging'] + alu_dict.get(method_name).loc['Food products']
-alu_packaging_df['USGS_cont.&packag.'] = phys_dict.get('pd_Alu').T.loc['USGS Containers and packaging']*100
-alu_packaging_df['Liu_cont.&packag.'] = phys_dict.get('pd_Alu').T.loc['Liu Containers and packaging']*100
-alu_packaging_df['Exio_HTwio'] = region_dict.get('US').get('alumin').loc['Food']
+alu_packaging_df['Shipment_1'] = phys_dict.get('pd_Alu').T.loc['USGS Containers and packaging']*100
+alu_packaging_df['Shipment_2'] = phys_dict.get('pd_Alu').T.loc['Liu Containers and packaging']*100
+alu_packaging_df['Exio_HT-WIO'] = region_dict.get('US').get('alumin').loc['Food']
 alu_packaging_df.plot(kind='line',marker='o', title= 'Aluminum in Packaging' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
@@ -292,9 +304,9 @@ plt.show()
 alu_machinery_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
     alu_machinery_df[method_name] = alu_dict.get(method_name).loc['Electronic machinery'] + alu_dict.get(method_name).loc['Other machinery']
-alu_machinery_df['USGS_mach.&equipm.+electrical'] = phys_dict.get('pd_Alu').T.loc['USGS Electrical']*100 +phys_dict.get('pd_Alu').T.loc['USGS Machinery and equipment']*100
-alu_machinery_df['Liu_mach.&equipm.+electrical'] = phys_dict.get('pd_Alu').T.loc['Liu Electrical']*100 +phys_dict.get('pd_Alu').T.loc['Liu Machinery and equipment']*100
-alu_machinery_df['Exio_HTwio'] = region_dict.get('US').get('alumin').loc['Machinery and equipment n.e.c. '] +\
+alu_machinery_df['Shipment_1'] = phys_dict.get('pd_Alu').T.loc['USGS Electrical']*100 +phys_dict.get('pd_Alu').T.loc['USGS Machinery and equipment']*100 #USGS_mach.&equipm.+electrical'
+alu_machinery_df['Shipment_2'] = phys_dict.get('pd_Alu').T.loc['Liu Electrical']*100 +phys_dict.get('pd_Alu').T.loc['Liu Machinery and equipment']*100 #Liu_mach.&equipm.+electrical'
+alu_machinery_df['Exio_HT-WIO'] = region_dict.get('US').get('alumin').loc['Machinery and equipment n.e.c. '] +\
     region_dict.get('US').get('alumin').loc['Electrical machinery and apparatus n.e.c.']
 alu_machinery_df.plot(kind='line',marker='o', title= 'Aluminum in Machinery' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
@@ -306,8 +318,8 @@ plt.show()
 alu_machineryElectric_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
     alu_machineryElectric_df[method_name] = alu_dict.get(method_name).loc['Electronic machinery'] 
-alu_machineryElectric_df['USGS_electrical'] = phys_dict.get('pd_Alu').T.loc['USGS Electrical']*100 
-alu_machineryElectric_df['Liu_electrical'] = phys_dict.get('pd_Alu').T.loc['Liu Electrical']*100 
+alu_machineryElectric_df['Shipment_1'] = phys_dict.get('pd_Alu').T.loc['USGS Electrical']*100 
+alu_machineryElectric_df['Shipment_2'] = phys_dict.get('pd_Alu').T.loc['Liu Electrical']*100 
 alu_machineryElectric_df.plot(kind='line',marker='o', title= 'Aluminum in Electronic machinery' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
@@ -319,8 +331,8 @@ plt.show()
 alu_machineryOther_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
     alu_machineryOther_df[method_name] = alu_dict.get(method_name).loc['Other machinery']
-alu_machineryOther_df['USGS_mach.&equipm.'] = phys_dict.get('pd_Alu').T.loc['USGS Machinery and equipment']*100
-alu_machineryOther_df['Liu_mach.&equipm.'] = phys_dict.get('pd_Alu').T.loc['Liu Machinery and equipment']*100
+alu_machineryOther_df['Shipment_1'] = phys_dict.get('pd_Alu').T.loc['USGS Machinery and equipment']*100
+alu_machineryOther_df['Shipment_2'] = phys_dict.get('pd_Alu').T.loc['Liu Machinery and equipment']*100
 alu_machineryOther_df.plot(kind='line',marker='o', title= 'Aluminum in Other machinery' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
@@ -344,27 +356,27 @@ for method in methods:
 steel_construction_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
     steel_construction_df[method_name] = steel_dict.get(method_name).loc['Residential'] + steel_dict.get(method_name).loc['Non-Residential'] + steel_dict.get(method_name).loc['Other buildings'] + steel_dict.get(method_name).loc['Infrastructure'] + steel_dict.get(method_name).loc['Other construction']
-steel_construction_df['USGS_constr.'] = phys_dict.get('pd_IronSteel').T.loc['Construction USGS+Trade']*100
-steel_construction_df['YSTAFB_constr'] = phys_dict.get('pd_IronSteel').T.loc['Construction YSTAFB']*100
-steel_construction_df['Pauliuk_constr'] = phys_dict.get('pd_IronSteel').T.loc['Construction Pauliuk']*100
-steel_construction_df['Exio_HTwio'] = region_dict.get('US').get('steel').loc['Construction']
+steel_construction_df['Shipment_1'] = phys_dict.get('pd_IronSteel').T.loc['Construction USGS+Trade']*100
+steel_construction_df['Shipment_2'] = phys_dict.get('pd_IronSteel').T.loc['Construction YSTAFB']*100
+steel_construction_df['Shipment_3'] = phys_dict.get('pd_IronSteel').T.loc['Construction Pauliuk']*100
+steel_construction_df['Exio_HT-WIO'] = region_dict.get('US').get('steel').loc['Construction']
 steel_construction_df.plot(kind='line',marker='o', title= 'Steel in Construction' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
 plt.ylabel('%')
 plt.show()
 
-#transportation
-steel_transportation_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
+#transport
+steel_transport_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
-    steel_transportation_df[method_name] = steel_dict.get(method_name).loc['Motor vehicles'] + steel_dict.get(method_name).loc['Other transport equipment']
-steel_transportation_df['USGS_transport.'] = phys_dict.get('pd_IronSteel').T.loc['Transportation USGS+Trade']*100
-steel_transportation_df['Exio_HTwio'] = region_dict.get('US').get('steel').loc['Motor vehicles, trailers and semi-trailers'] +\
+    steel_transport_df[method_name] = steel_dict.get(method_name).loc['Motor vehicles'] + steel_dict.get(method_name).loc['Other transport equipment']
+steel_transport_df['Shipment_1'] = phys_dict.get('pd_IronSteel').T.loc['Transportation USGS+Trade']*100
+steel_transport_df['Exio_HT-WIO'] = region_dict.get('US').get('steel').loc['Motor vehicles, trailers and semi-trailers'] +\
     region_dict.get('US').get('steel').loc['Other transport equipment']
-steel_transportation_df['YSTAFB_transport.'] = phys_dict.get('pd_IronSteel').T.loc['Transport YSTAFB']*100
-steel_transportation_df['Pauliuk_transport.'] = phys_dict.get('pd_IronSteel').T.loc['Automotive Pauliuk']*100 + phys_dict.get('pd_IronSteel').T.loc['Rail Transportation Pauliuk']*100\
+steel_transport_df['Shipment_2'] = phys_dict.get('pd_IronSteel').T.loc['Transport YSTAFB']*100
+steel_transport_df['Shipment_3'] = phys_dict.get('pd_IronSteel').T.loc['Automotive Pauliuk']*100 + phys_dict.get('pd_IronSteel').T.loc['Rail Transportation Pauliuk']*100\
     + phys_dict.get('pd_IronSteel').T.loc['Shipbuilding Pauliuk']*100 +  + phys_dict.get('pd_IronSteel').T.loc['Aircraft Pauliuk']*100
-steel_transportation_df.plot(kind='line',marker='o', title= 'Steel in Transportation' )
+steel_transport_df.plot(kind='line',marker='o', title= 'Steel in Transportation' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
 plt.ylabel('%')
@@ -374,9 +386,9 @@ plt.show()
 steel_packaging_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
     steel_packaging_df[method_name] = steel_dict.get(method_name).loc['Packaging'] + steel_dict.get(method_name).loc['Food products']
-steel_packaging_df['USGS_containers'] = phys_dict.get('pd_IronSteel').T.loc['Containers USGS+Trade']*100
-steel_packaging_df['Exio_HTwio'] = region_dict.get('US').get('steel').loc['Food']
-steel_packaging_df['Pauliuk_containers'] = phys_dict.get('pd_IronSteel').T.loc['Containers, shipping materials Pauliuk']*100
+steel_packaging_df['Shipment_1'] = phys_dict.get('pd_IronSteel').T.loc['Containers USGS+Trade']*100
+steel_packaging_df['Exio_HT-WIO'] = region_dict.get('US').get('steel').loc['Food']
+steel_packaging_df['Shipment_3'] = phys_dict.get('pd_IronSteel').T.loc['Containers, shipping materials Pauliuk']*100
 steel_packaging_df.plot(kind='line',marker='o', title= 'Steel in Packaging' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
@@ -387,10 +399,10 @@ plt.show()
 steel_machinery_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
     steel_machinery_df[method_name] = steel_dict.get(method_name).loc['Other machinery']
-steel_machinery_df['YSTAFB_mach.&appl.)'] = phys_dict.get('pd_IronSteel').T.loc['Machinery & Appliances YSTAFB']*100
-steel_machinery_df['Exio_HTwio'] = region_dict.get('US').get('steel').loc['Machinery and equipment n.e.c. '] +\
+steel_machinery_df['Shipment_2'] = phys_dict.get('pd_IronSteel').T.loc['Machinery & Appliances YSTAFB']*100
+steel_machinery_df['Exio_HT-WIO'] = region_dict.get('US').get('steel').loc['Machinery and equipment n.e.c. '] +\
     region_dict.get('US').get('steel').loc['Electrical machinery and apparatus n.e.c.']
-steel_machinery_df['Pauliuk_mach.'] = phys_dict.get('pd_IronSteel').T.loc['Machinery Pauliuk']*100 + phys_dict.get('pd_IronSteel').T.loc['Rail Transportation Pauliuk']*100\
+steel_machinery_df['Shipment_3'] = phys_dict.get('pd_IronSteel').T.loc['Machinery Pauliuk']*100 + phys_dict.get('pd_IronSteel').T.loc['Rail Transportation Pauliuk']*100\
         + phys_dict.get('pd_IronSteel').T.loc['Electrical Equipment Pauliuk']*100 +  + phys_dict.get('pd_IronSteel').T.loc['Appliances Pauliuk']*100
 steel_machinery_df.plot(kind='line',marker='o', title= 'Steel in Machinery' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
@@ -405,10 +417,10 @@ for method_name in method_names:
     steel_dict.get(method_name).loc['Packaging'] + steel_dict.get(method_name).loc['Food products']+\
     steel_dict.get(method_name).loc['Motor vehicles'] + steel_dict.get(method_name).loc['Other transport equipment'] +\
     steel_dict.get(method_name).loc['Residential'] + steel_dict.get(method_name).loc['Non-Residential'] + steel_dict.get(method_name).loc['Other buildings'] + steel_dict.get(method_name).loc['Infrastructure'] + steel_dict.get(method_name).loc['Other construction'])
-steel_remainder_df['Shipment_USGS'] = phys_dict.get('pd_IronSteel').T.loc['Service centers and distributors USGS+Trade']*100 +\
+steel_remainder_df['Shipment_1'] = phys_dict.get('pd_IronSteel').T.loc['Service centers and distributors USGS+Trade']*100 +\
     phys_dict.get('pd_IronSteel').T.loc['Other USGS+Trade']*100 + phys_dict.get('pd_IronSteel').T.loc['Undistributed USGS+Trade']*100
-steel_remainder_df['Shipment_YSTAFB(M&A)'] = phys_dict.get('pd_IronSteel').T.loc['Other products YSTAFB']*100
-steel_remainder_df['Shipment_Pauliuk'] = 100 - (phys_dict.get('pd_IronSteel').T.loc['Containers, shipping materials Pauliuk']*100 +\
+steel_remainder_df['Shipment_2'] = phys_dict.get('pd_IronSteel').T.loc['Other products YSTAFB']*100
+steel_remainder_df['Shipment_3'] = 100 - (phys_dict.get('pd_IronSteel').T.loc['Containers, shipping materials Pauliuk']*100 +\
     phys_dict.get('pd_IronSteel').T.loc['Automotive Pauliuk']*100 + phys_dict.get('pd_IronSteel').T.loc['Rail Transportation Pauliuk']*100\
         + phys_dict.get('pd_IronSteel').T.loc['Shipbuilding Pauliuk']*100 +  + phys_dict.get('pd_IronSteel').T.loc['Aircraft Pauliuk']*100 +\
           phys_dict.get('pd_IronSteel').T.loc['Construction Pauliuk']*100 +  phys_dict.get('pd_IronSteel').T.loc['Machinery Pauliuk']*100 + phys_dict.get('pd_IronSteel').T.loc['Rail Transportation Pauliuk']*100\
@@ -455,9 +467,9 @@ for method in methods:
 copper_construction_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
     copper_construction_df[method_name] = copper_dict.get(method_name).loc['Residential'] + copper_dict.get(method_name).loc['Non-Residential'] + copper_dict.get(method_name).loc['Other buildings'] + copper_dict.get(method_name).loc['Infrastructure'] + copper_dict.get(method_name).loc['Other construction']
-copper_construction_df['Shipment'] = phys_dict.get('pd_Copper').T.loc['Building construction USGS+Trade']*100
-copper_construction_df['Shipment_CDA'] = phys_dict.get('pd_Copper').T.loc['Building construction CDA+Trade']*100
-copper_construction_df['Exio_HTwio'] = region_dict.get('US').get('Copper').loc['Construction']
+copper_construction_df['Shipment_1'] = phys_dict.get('pd_Copper').T.loc['Building construction USGS+Trade']*100
+copper_construction_df['Shipment_2'] = phys_dict.get('pd_Copper').T.loc['Building construction CDA+Trade']*100
+copper_construction_df['Exio_HT-WIO'] = region_dict.get('US').get('Copper').loc['Construction']
 copper_construction_df.plot(kind='line',marker='o', title= 'Copper in Construction' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
@@ -468,9 +480,9 @@ plt.show()
 copper_transport_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
     copper_transport_df[method_name] = copper_dict.get(method_name).loc['Motor vehicles'] + copper_dict.get(method_name).loc['Other transport equipment']
-copper_transport_df['Shipment'] = phys_dict.get('pd_Copper').T.loc['Transportation equipment USGS+Trade']*100
-copper_transport_df['Shipment_CDA'] = phys_dict.get('pd_Copper').T.loc['Transportation equipment CDA+Trade']*100
-copper_transport_df['Exio_HTwio'] = region_dict.get('US').get('Copper').loc['Motor vehicles, trailers and semi-trailers'] +\
+copper_transport_df['Shipment_1'] = phys_dict.get('pd_Copper').T.loc['Transportation equipment USGS+Trade']*100
+copper_transport_df['Shipment_2'] = phys_dict.get('pd_Copper').T.loc['Transportation equipment CDA+Trade']*100
+copper_transport_df['Exio_HT-WIO'] = region_dict.get('US').get('Copper').loc['Motor vehicles, trailers and semi-trailers'] +\
     region_dict.get('US').get('Copper').loc['Other transport equipment']
 copper_transport_df.plot(kind='line',marker='o', title= 'Copper in Transportation' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
@@ -482,9 +494,9 @@ plt.show()
 copper_machinery_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
     copper_machinery_df[method_name] = copper_dict.get(method_name).loc['Electronic machinery'] + copper_dict.get(method_name).loc['Other machinery']
-copper_machinery_df['Shipment_USGS'] = phys_dict.get('pd_Copper').T.loc['Electrical and electronic products USGS+Trade']*100 +phys_dict.get('pd_Copper').T.loc['Industrial machinery and equipment USGS+Trade']*100
-copper_machinery_df['Shipment_CDA'] = phys_dict.get('pd_Copper').T.loc['Electrical and electronic products CDA+Trade']*100 +phys_dict.get('pd_Copper').T.loc['Industrial machinery and equipment CDA+Trade']*100
-copper_machinery_df['Exio_HTwio'] = region_dict.get('US').get('Copper').loc['Machinery and equipment n.e.c. '] +\
+copper_machinery_df['Shipment_1'] = phys_dict.get('pd_Copper').T.loc['Electrical and electronic products USGS+Trade']*100 +phys_dict.get('pd_Copper').T.loc['Industrial machinery and equipment USGS+Trade']*100
+copper_machinery_df['Shipment_2'] = phys_dict.get('pd_Copper').T.loc['Electrical and electronic products CDA+Trade']*100 +phys_dict.get('pd_Copper').T.loc['Industrial machinery and equipment CDA+Trade']*100
+copper_machinery_df['Exio_HT-WIO'] = region_dict.get('US').get('Copper').loc['Machinery and equipment n.e.c. '] +\
     region_dict.get('US').get('Copper').loc['Electrical machinery and apparatus n.e.c.']
 copper_machinery_df.plot(kind='line',marker='o', title= 'Copper in Machinery' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
@@ -496,8 +508,8 @@ plt.show()
 copper_machineryElectric_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
     copper_machineryElectric_df[method_name] = copper_dict.get(method_name).loc['Electronic machinery'] 
-copper_machineryElectric_df['Shipment_USGS'] = phys_dict.get('pd_Copper').T.loc['Electrical and electronic products USGS+Trade']*100
-copper_machineryElectric_df['Shipment_CDA'] = phys_dict.get('pd_Copper').T.loc['Electrical and electronic products CDA+Trade']*100
+copper_machineryElectric_df['Shipment_1'] = phys_dict.get('pd_Copper').T.loc['Electrical and electronic products USGS+Trade']*100
+copper_machineryElectric_df['Shipment_2'] = phys_dict.get('pd_Copper').T.loc['Electrical and electronic products CDA+Trade']*100
 copper_machineryElectric_df.plot(kind='line',marker='o', title= 'Copper in Electronic machinery' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
@@ -508,8 +520,8 @@ plt.show()
 copper_machineryOther_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
     copper_machineryOther_df[method_name] = copper_dict.get(method_name).loc['Other machinery']
-copper_machineryOther_df['Shipment_USGS'] = phys_dict.get('pd_Copper').T.loc['Industrial machinery and equipment USGS+Trade']*100
-copper_machineryOther_df['Shipment_CDA'] = phys_dict.get('pd_Copper').T.loc['Industrial machinery and equipment CDA+Trade']*100
+copper_machineryOther_df['Shipment_1'] = phys_dict.get('pd_Copper').T.loc['Industrial machinery and equipment USGS+Trade']*100
+copper_machineryOther_df['Shipment_2'] = phys_dict.get('pd_Copper').T.loc['Industrial machinery and equipment CDA+Trade']*100
 copper_machineryOther_df.plot(kind='line',marker='o', title= 'Copper in Other machinery' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
@@ -533,9 +545,9 @@ for method in methods:
 cement_residential_df = pd.DataFrame([], index=list(range(1963,2017)), columns=method_names)
 for method_name in method_names:
     cement_residential_df[method_name] = cement_dict.get(method_name).loc['Residential']
-cement_residential_df['PCA_resid.buildings'] = phys_dict.get('pd_Cement').T.loc['Residential PCA']*100
-cement_residential_df['Cao_resid.building'] = phys_dict.get('pd_Cement').T.loc['Residential Cao']*100
-cement_residential_df['PCA Kapur__resid.buildings'] = phys_dict.get('pd_Cement').T.loc['Residential buildings PCA Kapur & web']*100
+cement_residential_df['Shipment_1'] = phys_dict.get('pd_Cement').T.loc['Residential PCA']*100 #'PCA_resid.buildings'
+cement_residential_df['Shipment_2'] = phys_dict.get('pd_Cement').T.loc['Residential Cao']*100 #'Cao_resid.building'
+cement_residential_df['Shipment_3'] = phys_dict.get('pd_Cement').T.loc['Residential buildings PCA Kapur & web']*100
 cement_residential_df.plot(kind='line',marker='o', title= 'Cement in Residential STRUCTURES' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
@@ -545,9 +557,9 @@ plt.show()
 cement_nonRes_df = pd.DataFrame([], index=list(range(1963,2017)), columns=method_names)
 for method_name in method_names:
     cement_nonRes_df[method_name] = cement_dict.get(method_name).loc['Non-Residential']
-cement_nonRes_df['PCA_nonres.buildings'] = phys_dict.get('pd_Cement').T.loc['Nonresidential buildings PCA']*100
-cement_nonRes_df['Cao_nonres.building'] = phys_dict.get('pd_Cement').T.loc['Non-Residential Cao']*100
-cement_nonRes_df['PCAKapur_comm.publ.build+farmConstr'] = phys_dict.get('pd_Cement').T.loc['Commercial buildings PCA Kapur & web']*100 + \
+cement_nonRes_df['Shipment_1'] = phys_dict.get('pd_Cement').T.loc['Nonresidential buildings PCA']*100 #'PCA_nonres.buildings
+cement_nonRes_df['Shipment_2'] = phys_dict.get('pd_Cement').T.loc['Non-Residential Cao']*100 #'Cao_nonres.building'
+cement_nonRes_df['Shipment_3'] = phys_dict.get('pd_Cement').T.loc['Commercial buildings PCA Kapur & web']*100 + \
     phys_dict.get('pd_Cement').T.loc['Public Buildings PCA Kapur & web']*100 + phys_dict.get('pd_Cement').T.loc['Farm construction PCA Kapur & web']*100
 cement_nonRes_df.plot(kind='line',marker='o', title= 'Cement in Non-residential STRUCTURES' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
@@ -558,11 +570,11 @@ plt.show()
 cement_CE_df = pd.DataFrame([], index=list(range(1963,2017)), columns=method_names)
 for method_name in method_names:
     cement_CE_df[method_name] = cement_dict.get(method_name).loc['Infrastructure'] + cement_dict.get(method_name).loc['Other construction']
-cement_CE_df['PCA_civ.eng+streets'] = phys_dict.get('pd_Cement').T.loc['Civil engineering/Infra']*100 + phys_dict.get('pd_Cement').T.loc['Highways & Streets']*100
-cement_CE_df['Cao_civ.eng'] = phys_dict.get('pd_Cement').T.loc['Civil Engineering Cao']*100
-cement_CE_df['PCAKapur_util.+streets+other'] = phys_dict.get('pd_Cement').T.loc['Utilities PCA Kapur & web']*100 + \
+cement_CE_df['Shipment_1'] = phys_dict.get('pd_Cement').T.loc['Civil engineering/Infra']*100 + phys_dict.get('pd_Cement').T.loc['Highways & Streets']*100 #'PCA_civ.eng+streets'
+cement_CE_df['Shipment_2'] = phys_dict.get('pd_Cement').T.loc['Civil Engineering Cao']*100
+cement_CE_df['Shipment_3'] = phys_dict.get('pd_Cement').T.loc['Utilities PCA Kapur & web']*100 + \
     phys_dict.get('pd_Cement').T.loc['Streets and Highways PCA Kapur & web']*100 + phys_dict.get('pd_Cement').T.loc['Others PCA Kapur & web']*100\
-        + phys_dict.get('pd_Cement').T.loc['Water and waste management PCA Kapur & web']*100
+        + phys_dict.get('pd_Cement').T.loc['Water and waste management PCA Kapur & web']*100 #'PCAKapur_util.+streets+other'
 cement_CE_df.plot(kind='line',marker='o', title= 'Cement in Civil Engineering' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
@@ -587,9 +599,9 @@ for method in methods:
 plastic_construction_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
     plastic_construction_df[method_name] = plastic_dict.get(method_name).loc['Residential'] + plastic_dict.get(method_name).loc['Non-Residential'] + plastic_dict.get(method_name).loc['Other buildings'] + plastic_dict.get(method_name).loc['Infrastructure'] + plastic_dict.get(method_name).loc['Other construction']
-plastic_construction_df['Euromap_constr'] = phys_dict.get('pd_Plastics').T.loc['Construction industry Euromap USA']*100
-plastic_construction_df['PlasticsEurope_EU_constr'] = phys_dict.get('pd_Plastics').T.loc['Building and construction PE']*100
-plastic_construction_df['Exio_HTwio'] = region_dict.get('US').get('Plastic').loc['Construction']
+plastic_construction_df['Shipment_1'] = phys_dict.get('pd_Plastics').T.loc['Construction industry Euromap USA']*100
+plastic_construction_df['Shipment_2'] = phys_dict.get('pd_Plastics').T.loc['Building and construction PE']*100 #'PlasticsEurope_EU_'
+plastic_construction_df['Exio_HT-WIO'] = region_dict.get('US').get('Plastic').loc['Construction']
 plastic_construction_df.plot(kind='line',marker='o', title= 'Plastics in Construction' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
@@ -602,9 +614,9 @@ plt.show()
 plastic_packaging_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
     plastic_packaging_df[method_name] = plastic_dict.get(method_name).loc['Packaging'] + plastic_dict.get(method_name).loc['Food products'] 
-plastic_packaging_df['Euromap_packag.'] = phys_dict.get('pd_Plastics').T.loc['Packaging Euromap USA']*100
-plastic_packaging_df['PlasticsEurope_EU_packag.'] = phys_dict.get('pd_Plastics').T.loc['Packaging PE']*100
-plastic_packaging_df['Exio_HTwio'] = region_dict.get('US').get('Plastic').loc['Food']
+plastic_packaging_df['Shipment_1'] = phys_dict.get('pd_Plastics').T.loc['Packaging Euromap USA']*100
+plastic_packaging_df['Shipment_2'] = phys_dict.get('pd_Plastics').T.loc['Packaging PE']*100 #'PlasticsEurope_EU_packag.'
+plastic_packaging_df['Exio_HT-WIO'] = region_dict.get('US').get('Plastic').loc['Food']
 plastic_packaging_df.plot(kind='line',marker='o', title= 'Plastics in Packaging/Food' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
@@ -617,9 +629,9 @@ plt.show()
 plastic_transport_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
     plastic_transport_df[method_name] = plastic_dict.get(method_name).loc['Motor vehicles'] + plastic_dict.get(method_name).loc['Other transport equipment'] 
-plastic_transport_df['Euromap_automotive'] = phys_dict.get('pd_Plastics').T.loc['Automotive Euromap USA']*100
-plastic_transport_df['PlasticsEurope_EU_autom.'] = phys_dict.get('pd_Plastics').T.loc['Automotive PE']*100
-plastic_transport_df['Exio_HTwio'] = region_dict.get('US').get('Plastic').loc['Motor vehicles, trailers and semi-trailers'] +\
+plastic_transport_df['Shipment_1'] = phys_dict.get('pd_Plastics').T.loc['Automotive Euromap USA']*100
+plastic_transport_df['Shipment_2'] = phys_dict.get('pd_Plastics').T.loc['Automotive PE']*100
+plastic_transport_df['Exio_HT-WIO'] = region_dict.get('US').get('Plastic').loc['Motor vehicles, trailers and semi-trailers'] +\
     region_dict.get('US').get('Plastic').loc['Other transport equipment']
 plastic_transport_df.plot(kind='line',marker='o', title= 'Plastics in Transport/Automotive' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
@@ -629,12 +641,12 @@ plt.show()
 
 
 #electronics (assuming that also material in 'food products' is transport)
-plastic_elect_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
+plastic_electrical_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 for method_name in method_names:
-    plastic_elect_df[method_name] = plastic_dict.get(method_name).loc['Electronic machinery']  
-plastic_elect_df['Euromap_electr.'] = phys_dict.get('pd_Plastics').T.loc['Electrical, electronics & telecom Euromap USA']*100
-plastic_elect_df['PlasticsEurope_EU_electr.'] = phys_dict.get('pd_Plastics').T.loc['Electrical&Electronic PE']*100
-plastic_elect_df.plot(kind='line',marker='o', title= 'Plastics in Electronics' )
+    plastic_electrical_df[method_name] = plastic_dict.get(method_name).loc['Electronic machinery']  
+plastic_electrical_df['Shipment_1'] = phys_dict.get('pd_Plastics').T.loc['Electrical, electronics & telecom Euromap USA']*100
+plastic_electrical_df['Shipment_2'] = phys_dict.get('pd_Plastics').T.loc['Electrical&Electronic PE']*100
+plastic_electrical_df.plot(kind='line',marker='o', title= 'Plastics in Electronics' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
 plt.ylabel('%')
@@ -661,20 +673,18 @@ alu_machinery_df
 alu_machineryElectric_df
 alu_machineryOther_df
 
-cement_residential_df
-cement_nonRes_df
-cement_CE_df 
+
 
 copper_construction_df
 copper_transport_df
 copper_machinery_df
-copper_machineryElectric_df 
-copper_machineryOther_df
+
 
 steel_construction_df
-steel_transportation_df
+steel_transport_df
 steel_packaging_df
 steel_machinery_df
+
 steel_remainder_df
 
 wood_construction_df
@@ -684,216 +694,297 @@ wood_furniture_df
 wood_packaging_df
 
 
+##OPTIONAL: add ext_agg and differnt filter design to matrices:
+    
+Wio_withServiceInput_dict = {}
+Wio_ext_dict = {}
+HTWio_ext_dict = {}
+
+
+'''PLOT: high sector aggregation'''
 
 pal = sns.color_palette("colorblind") 
 
-color_dict = {'CBA':pal[0], 'WIO': pal[1], 'Ghosh':pal[2],  \
-              'ParGhosh': pal[3], 'HT-WIO': pal[5], 'Exio_HTwio': pal[4]}
+color_dict = {'CBA':pal[0], 'WIO-MFA': pal[1], 'Ghosh-IO AMC':pal[2],  \
+              'Partial Ghosh-IO': pal[3], 'HT-WIO': pal[5], 'Exio_HT-WIO': pal[4],\
+            'Shipment_1':pal[7], 'Shipment_2':pal[0],'Shipment_3':pal[3]}
 
-marker_dict = {'HT-WIO': 'v'}
+marker_dict = {'CBA':'o', 'WIO-MFA': 'o', 'Ghosh-IO AMC':'o',  \
+              'Partial Ghosh-IO': 'o', 'HT-WIO': 'v', 'Exio_HT-WIO': '.'}
 
 
-name_list1 = ['wood_construction_df', 'wood_furniture_df', 'wood_packaging_df', 'steel_construction_df', 'steel_transportation_df', 'steel_machinery_df', 'steel_packaging_df', 'alu_construction_df',\
-              'alu_transport_df', 'alu_machinery_df', 'alu_packaging_df', 'copper_construction_df', 'copper_transport_df', 'copper_machinery_df', 'plastic_packaging_df', 'plastic_transport_df',\
-              'plastic_construction_df', 'plastic_elect_df']
+name_list1 = ['wood_construction_df',  'steel_construction_df', 'alu_construction_df', 'copper_construction_df', 'plastic_construction_df','steel_transport_df', 'alu_transport_df',\
+              'copper_transport_df', 'plastic_transport_df', 'steel_machinery_df', 'alu_machinery_df', 'copper_machinery_df', 'plastic_electrical_df', \
+              'wood_packaging_df', 'steel_packaging_df','alu_packaging_df', 'plastic_packaging_df','wood_furniture_df']
 
 plot_list1 = [eval(e) for e in name_list1]
-    
-dict_list = {wood_construction_df : 'Wood in Construction', wood_furniture_df : 'Wood in Furniture', wood_packaging_df : 'Wood in Packaging', steel_construction_df: 'Steel in Construction', \
-             steel_transportation_df:'Steel in Transport', steel_machinery_df:'Steel in Machinery', steel_packaging_df:'Steel in Packaging', alu_construction_df:'Aluminum in Construction',\
-              alu_transport_df:'Aluminum in Transport', alu_machinery_df:'Aluminum in Machinery', alu_packaging_df:'Aluminum in Packaging', copper_construction_df:'Copper in Construction',\
-             copper_transport_df:'Copper in Transport', copper_machinery_df:'Copper in Machinery', plastic_packaging_df:'Copper in Packaging', plastic_transport_df:'Plastic in Transport',\
-            plastic_construction_df:'Plastic in Construction', plastic_elect_df:'Plastic in Electrical'}
 
-fig, axs = plt.subplots(7,3 ,sharex=False, sharey=False, figsize=(14,22))
-k = 0              
+k,i,j = 0,0,0     
+fig, axs = plt.subplots(6,3 ,sharex=False, sharey=False, figsize=(14,20))
+#axs[6,2].axis('off')
+
+           
 for i in range(0,6):
     for j in range (0,3):
+        plot_list1[k].plot(ax=axs[i,j], color = [color_dict.get(r) for r in plot_list1[k]], style = [marker_dict.get(r, '*') for r in plot_list1[k]], kind='line', title= name_list1[k][:-3], legend = False)
         k = k+1
-        plot_list1[k].plot( ax=axs[i,j], color = [color_dict.get(r, pal[7]) for r in plot_list1[k]], style = [marker_dict.get(r, '*') for r in plot_list1[k]], kind='line', title= name_list1[k][:-3], legend = False)
-      
+        axs[i,j].set_ylabel('%')
+        axs[i,j].set_xticks([1963,1972,1982,1992,2002,2012])
              
-
-
-
-fig, axs = plt.subplots(7,3 ,sharex=False, sharey=False, figsize=(14,22))
-
-
-axs[6,2].axis('off')
-
-wood_construction_df.plot( ax=axs[0,0], color = [color_dict.get(r, pal[7]) for r in wood_construction_df], style = [marker_dict.get(r, '*') for r in wood_construction_df], kind='line', title= 'Wood in Construction', legend = False)
-wood_furniture_df.plot(ax=axs[0,1],color = [color_dict.get(r, pal[7]) for r in wood_furniture_df], kind='line',marker='o',title= 'Wood in Furniture', legend = False)
-wood_packaging_df.plot(ax=axs[0,2],color = [color_dict.get(r, pal[7]) for r in wood_packaging_df], kind='line',marker='o', title= 'Wood in Packaging', legend = False)
-steel_construction_df.plot(ax=axs[1,0],color = [color_dict.get(r, pal[7]) for r in steel_construction_df], kind='line',marker='o', title= 'Steel in Construction', legend = False)
-steel_transportation_df.plot(ax=axs[1,1],color = [color_dict.get(r, pal[7]) for r in steel_transportation_df], kind='line',marker='o', title= 'Steel in Transport', legend = False)
-steel_machinery_df.plot(ax=axs[1,2],color = [color_dict.get(r, pal[7]) for r in steel_machinery_df], kind='line',marker='o', title= 'Steel in Machinery', legend = False)
-steel_packaging_df.plot(ax=axs[2,0], color = [color_dict.get(r, pal[7]) for r in steel_packaging_df], kind='line',marker='o', title= 'Steel in Packaging', legend = False)
-alu_construction_df.plot(ax=axs[2,1], color = [color_dict.get(r, pal[7]) for r in alu_construction_df], kind='line',marker='o', title= 'Alu in Construction', legend = False)
-alu_transport_df.plot(ax=axs[2,2], color = [color_dict.get(r, pal[7]) for r in alu_transport_df],kind='line',marker='o', title= 'Alu in Transport', legend = False)
-alu_machinery_df.plot(ax=axs[3,0], color = [color_dict.get(r, pal[7]) for r in alu_machinery_df],kind='line',marker='o', title= 'Alu in Machinery', legend = False)
-alu_packaging_df.plot(ax=axs[3,1], color = [color_dict.get(r, pal[7]) for r in alu_packaging_df],kind='line',marker='o', title= 'Alu in Packaging', legend = False)
-copper_construction_df.plot(ax=axs[3,2], color = [color_dict.get(r, pal[7]) for r in copper_construction_df],kind='line',marker='o', title= 'Copper in Construction', legend = False)
-copper_transport_df.plot(ax=axs[4,0], color = [color_dict.get(r, pal[7]) for r in copper_transport_df],kind='line',marker='o', title= 'Copper in Transport', legend = False)
-copper_machinery_df.plot(ax=axs[4,1], color = [color_dict.get(r, pal[7]) for r in copper_machinery_df],kind='line',marker='o', title= 'Copper in Machinery', legend = False)
-plastic_construction_df.plot(ax=axs[4,2], color = [color_dict.get(r, pal[7]) for r in plastic_construction_df],kind='line',marker='o', title= 'Plastic in Construction', legend = False)
-plastic_transport_df.plot(ax=axs[5,0], color = [color_dict.get(r, pal[7]) for r in plastic_transport_df],kind='line',marker='o', title= 'Plastic in Packaging', legend = False)
-plastic_packaging_df.plot(ax=axs[5,1], color = [color_dict.get(r, pal[7]) for r in plastic_packaging_df],kind='line',marker='o', title= 'Plastic in Transport', legend = False)
-plastic_elect_df.plot(ax=axs[5,2], color = [color_dict.get(r, pal[7]) for r in plastic_elect_df],kind='line',marker='o', title= 'Plastic in Electrical', legend = False)
-
-
 #-->need to give different names to dataframes
-axs[0,1].annotate(label='lala',xy=(1990, 0.5),text='lala') #write text in plot
+#axs[0,1].annotate(label='lala',xy=(1990, 0.5),text='lala') #write text in plot
 
-lgd = axs[6,2].legend(loc='center left', bbox_to_anchor=(0.01, 0.5),fontsize=12)
+lgd = fig.legend(loc='center left', bbox_to_anchor=(0.145, -0.02),fontsize=14, ncol=5) #, bbox_to_anchor=(0.01, 0.5),fontsize=14)
 
 def add_line(legend):
     ax1 = legend.axes
     from matplotlib.lines import Line2D
 
     import matplotlib.patches as mpatches
-    handles, labels = axs[0,0].get_legend_handles_labels()
+    handles, labels = axs[0,1].get_legend_handles_labels()
     legend._legend_box = None
     legend._init_legend_box(handles, labels)
     legend._set_loc(legend._loc)
     legend.set_title(legend.get_title().get_text())
-    
+
+
            
 add_line(lgd)
+fig.suptitle('Comparison of end-use shares - high sector aggregation', y=1, fontsize = 16)
 fig.tight_layout()
 
 
+
+'''PLOT: SENSITIVITY high sector aggregation'''
+
+pal = sns.color_palette("colorblind") 
+
+#optionally with ExtAgg and WIO_filter diff
+color_dict = {'WIO-MFA': pal[3], 'HT-WIO': pal[5], 'WIO-MFA_extAgg': pal[3],'WIO-MFA_filtDif': pal[3], \
+            'HT-WIO_extAgg': pal[5],'Exio_HT-WIO': pal[4], 'Shipment_1':pal[7], 'Shipment_2':pal[0],'Shipment_3':pal[3]}
+
+marker_dict = {'WIO-MFA': 'o', 'HT-WIO': 'v', 'WIO-MFA_extAgg': '*','WIO-MFA_filtDif': 'h' ,\
+            'HT-WIO_extAgg': '*'}
+
+
+name_list1 = ['wood_construction_df',  'steel_construction_df', 'alu_construction_df', 'copper_construction_df', 'plastic_construction_df','steel_transport_df', 'alu_transport_df',\
+              'copper_transport_df', 'plastic_transport_df', 'steel_machinery_df', 'alu_machinery_df', 'copper_machinery_df', 'plastic_electrical_df', \
+              'wood_packaging_df', 'steel_packaging_df','alu_packaging_df', 'plastic_packaging_df','wood_furniture_df']
+
+plot_list1 = [eval(e) for e in name_list1]
+
+k,i,j = 0,0,0     
+fig, axs = plt.subplots(6,3 ,sharex=False, sharey=False, figsize=(14,20))
+#axs[6,2].axis('off')
+
+           
+for i in range(0,6):
+    for j in range (0,3):
+        plot_list1[k].plot(ax=axs[i,j], color = [color_dict.get(r) for r in plot_list1[k]], style = [marker_dict.get(r, '*') for r in plot_list1[k]], kind='line', title= name_list1[k][:-3], legend = False)
+        k = k+1
+        axs[i,j].set_ylabel('%')
+        axs[i,j].set_xticks([1963,1972,1982,1992,2002,2012])
+             
+#-->need to give different names to dataframes
+#axs[0,1].annotate(label='lala',xy=(1990, 0.5),text='lala') #write text in plot
+
+lgd = fig.legend(loc='center left', bbox_to_anchor=(0.145, -0.02),fontsize=14, ncol=5) #, bbox_to_anchor=(0.01, 0.5),fontsize=14)
+
+def add_line(legend):
+    ax1 = legend.axes
+    from matplotlib.lines import Line2D
+
     import matplotlib.patches as mpatches
-    handles, labels = axs[2,2].get_legend_handles_labels()
-    
-    handles.append(mpatches.Patch(color=pal[0], label='Final Waste'))
-    labels.append('EoL, final waste')
+    handles, labels = axs[0,1].get_legend_handles_labels()
     legend._legend_box = None
     legend._init_legend_box(handles, labels)
     legend._set_loc(legend._loc)
     legend.set_title(legend.get_title().get_text())
+
+
+           
+add_line(lgd)
+fig.suptitle('Sensitivity to extension choice & filter design (WIO-MFA, HT-WIO) @high aggregation', y=1, fontsize = 16)
+#fig.suptitle('Comparison of end-use shares - high sector aggregation', y=1, fontsize = 16)
+fig.tight_layout()
+
+
+
+'''PLOT: medium sector aggregation'''
+
+pal = sns.color_palette("colorblind") 
+color_dict = {'CBA':pal[0], 'WIO-MFA': pal[1], 'Ghosh-IO AMC':pal[2],  \
+              'Partial Ghosh-IO': pal[3], 'HT-WIO': pal[5], 'Exio_HT-WIO': pal[4],\
+            'Shipment_1':pal[7], 'Shipment_2':pal[0],'Shipment_3':pal[3]}
+marker_dict = {'CBA':'o', 'WIO-MFA': 'o', 'Ghosh-IO AMC':'o',  \
+              'Partial Ghosh-IO': 'o', 'HT-WIO': 'v', 'Exio_HT-WIO': '.'}
+name_list1 = ['wood_residential_df', 'wood_nonresidential_df', 'cement_residential_df', 'cement_nonRes_df', 'cement_CE_df']
+plot_list1 = [eval(e) for e in name_list1]
+
+
+k,i,j = 0,0,0     
+fig, axs = plt.subplots(2,3 ,sharex=False, sharey=False, figsize=(14,7))
+axs[1,2].axis('off')
+
+for i in range(0,2):
+    for j in range (0,3):
+        try:
+            plot_list1[k].plot(ax=axs[i,j], color = [color_dict.get(r,pal[0]) for r in plot_list1[k]], style = [marker_dict.get(r, '*') for r in plot_list1[k]], kind='line', title= name_list1[k][:-3], legend = False)
+            k = k+1
+            axs[i,j].set_ylabel('%')
+            axs[i,j].set_xticks([1963,1972,1982,1992,2002,2012])
+        except:
+            continue
+             
+lgd = axs[1,2].legend(loc='center', fontsize=14) #, bbox_to_anchor=(0.01, 0.5),fontsize=14)
+
+def add_line(legend):
+    ax1 = legend.axes
+    from matplotlib.lines import Line2D
+
+    import matplotlib.patches as mpatches
+    handles, labels = axs[1,0].get_legend_handles_labels()
+    legend._legend_box = None
+    legend._init_legend_box(handles, labels)
+    legend._set_loc(legend._loc)
+    legend.set_title(legend.get_title().get_text())
+           
+add_line(lgd)
+fig.suptitle('Comparison of end-use shares - medium sector aggregation', y=1, fontsize = 16)
+fig.tight_layout()
+ 
+ 
+ 
+
+
+
+    # import matplotlib.patches as mpatches
+    # handles, labels = axs[2,2].get_legend_handles_labels()
+    
+    # handles.append(mpatches.Patch(color=pal[0], label='Final Waste'))
+    # labels.append('EoL, final waste')
+    # legend._legend_box = None
+    # legend._init_legend_box(handles, labels)
+    # legend._set_loc(legend._loc)
+    # legend.set_title(legend.get_title().get_text())
        
-    handles.append(mpatches.Patch(color=pal[1], label='EoL Export'))
-    labels.append('EoL, export')
-    legend._legend_box = None
-    legend._init_legend_box(handles, labels)
-    legend._set_loc(legend._loc)
-    legend.set_title(legend.get_title().get_text())
+    # handles.append(mpatches.Patch(color=pal[1], label='EoL Export'))
+    # labels.append('EoL, export')
+    # legend._legend_box = None
+    # legend._init_legend_box(handles, labels)
+    # legend._set_loc(legend._loc)
+    # legend.set_title(legend.get_title().get_text())
     
-    handles.append(mpatches.Patch(color=pal[2], label='Domestic EoL Recycling'))
-    labels.append('EoL, domestic recycling')
-    legend._legend_box = None
-    legend._init_legend_box(handles, labels)
-    legend._set_loc(legend._loc)
-    legend.set_title(legend.get_title().get_text())
+    # handles.append(mpatches.Patch(color=pal[2], label='Domestic EoL Recycling'))
+    # labels.append('EoL, domestic recycling')
+    # legend._legend_box = None
+    # legend._init_legend_box(handles, labels)
+    # legend._set_loc(legend._loc)
+    # legend.set_title(legend.get_title().get_text())
     
-    handles.append(mpatches.Patch(color=pal[3], label='EoL Downcycling'))
-    labels.append('EoL, domestic downcycling')
-    legend._legend_box = None
-    legend._init_legend_box(handles, labels)
-    legend._set_loc(legend._loc)
-    legend.set_title(legend.get_title().get_text())
+    # handles.append(mpatches.Patch(color=pal[3], label='EoL Downcycling'))
+    # labels.append('EoL, domestic downcycling')
+    # legend._legend_box = None
+    # legend._init_legend_box(handles, labels)
+    # legend._set_loc(legend._loc)
+    # legend.set_title(legend.get_title().get_text())
 
 
-
-cement_residential_df
-cement_nonRes_df
-cement_CE_df 
-
-wood_residential_df.plot(ax=axs[0,1], kind='line',marker='o', title= 'Wood in Residential', legend = False)
-wood_nonresidential_df.plot(ax=axs[0,2], kind='line',marker='o', title= 'Wood in Non-residential', legend = False)
 
 '''
- #try detailed plots for US selected materrials
+ Create detailed plots for WOOD and CEMENT in the CONSTRUCTION SECTOR
  '''
- 
- # detail
- Wood_detail_dict = {}
- Wood_detail_df = pd.DataFrame([], index=HTWio_detail_dict.get(year).index.get_level_values(1), columns=years)
- for year in years:
-     wood_detail_single = HTWio_detail_dict.get(year).iloc[:,HTWio_detail_dict.get(year).columns.get_level_values(1).map(lambda t: ('Sawmill' or 'Wood') in t).to_list()]
-     Wood_detail_df[year] = wood_detail_single.values
- Wood_detail_dict['HT-WIO_detail'] = Wood_df
- #every sheet has different number of sectors --> cannot really assemble that in one frame
- #-- am besten wohl durch Aggregation Matrices
- # für welche end-uses? Construction, Transportation
- # Stahl - 2004 sehr detailliert (vergleihcen mit 2002/007) --> excel
- # plastic - automotive 2006-2015 - IO 2007/2012 -_> excel
- # wood - construction, furniture 1950-2006 --> iloc constr & furniture in allen & ausschneiden, FURNITURE HABEN WUR
- #cement - construction
- constr_1963 = HTWio_detail_dict.get(1963).iloc[19:26,:]
- constr_1967 = HTWio_detail_dict.get(1967).iloc[26:76,:]
- constr_1972 = HTWio_detail_dict.get(1972).iloc[26:76,:]
- constr_1977 = HTWio_detail_dict.get(1977).iloc[30:83,:]
- constr_1982 = HTWio_detail_dict.get(1982).iloc[30:83,:]
- constr_1987 = HTWio_detail_dict.get(1987).iloc[30:83,:]
- constr_1992 = HTWio_detail_dict.get(1992).iloc[30:45,:] #checl if to add to this and the above minign stuff
- constr_1997 = HTWio_detail_dict.get(1997).iloc[26:45,:]
- constr_2002 = HTWio_detail_dict.get(2002).iloc[27:40,:]
- constr_2007 = HTWio_detail_dict.get(2007).iloc[19:36,:] 
- constr_2012 = HTWio_detail_dict.get(2012).iloc[19:36,:] 
+# isolate construction sector sub-sectors and save in excel for manual processing
+# (no automatic processing as different for each year)
+# constr_1963 = HTWio_detail_dict.get(1963).iloc[19:26,:]
+# constr_1967 = HTWio_detail_dict.get(1967).iloc[26:76,:]
+# constr_1972 = HTWio_detail_dict.get(1972).iloc[26:76,:]
+# constr_1977 = HTWio_detail_dict.get(1977).iloc[30:83,:]
+# constr_1982 = HTWio_detail_dict.get(1982).iloc[30:83,:]
+# constr_1987 = HTWio_detail_dict.get(1987).iloc[30:83,:]
+# constr_1992 = HTWio_detail_dict.get(1992).iloc[30:45,:] #checl if to add to this and the above minign stuff
+# constr_1997 = HTWio_detail_dict.get(1997).iloc[26:45,:]
+# constr_2002 = HTWio_detail_dict.get(2002).iloc[27:40,:]
+# constr_2007 = HTWio_detail_dict.get(2007).iloc[19:36,:] 
+# constr_2012 = HTWio_detail_dict.get(2012).iloc[19:36,:] 
 
- # save to Excel, including used filter matrices
- writer = pd.ExcelWriter(data_path_usa + '/Construction_detail' + '_Run_{}.xlsx'.format(pd.datetime.today().strftime('%y%m%d-%H%M%S')))
- constr_1963.to_excel(writer,'1963')
- constr_1967.to_excel(writer,'1967')
- constr_1972.to_excel(writer,'1972')
- constr_1977.to_excel(writer,'1977')
- constr_1982.to_excel(writer,'1982')
- constr_1987.to_excel(writer,'1987')
- constr_1992.to_excel(writer,'1992')
- constr_1997.to_excel(writer,'1997')
- constr_2002.to_excel(writer,'2002')
- constr_2007.to_excel(writer,'2007')
- constr_2012.to_excel(writer,'2012')
- writer.save()
+# # save to Excel, including used filter matrices
+# writer = pd.ExcelWriter(data_path_usa + '/Construction_detail' + '_Run_{}.xlsx'.format(pd.datetime.today().strftime('%y%m%d-%H%M%S')))
+# constr_1963.to_excel(writer,'1963')
+# constr_1967.to_excel(writer,'1967')
+# constr_1972.to_excel(writer,'1972')
+# constr_1977.to_excel(writer,'1977')
+# constr_1982.to_excel(writer,'1982')
+# constr_1987.to_excel(writer,'1987')
+# constr_1992.to_excel(writer,'1992')
+# constr_1997.to_excel(writer,'1997')
+# constr_2002.to_excel(writer,'2002')
+# constr_2007.to_excel(writer,'2007')
+# constr_2012.to_excel(writer,'2012')
+# writer.save()
+
+wood_detail = pd.read_excel(data_path_usa + 'Construction_detail_Run_220317-102202_manualEdit.xlsx',sheet_name='Wood_out', index_col=[0])
+cement_detail = pd.read_excel(data_path_usa + 'Construction_detail_Run_220317-102202_manualEdit.xlsx',sheet_name='Cement_out', index_col=[0])
 
 
- constr_detail = np.zeros((500,500))
- constr_detail[:,0] = constr_1963.iloc[:,0].values
- count_constr_detail = 0
- for year in years:
-     constr_detail[:,count_constr_detail] = constr_ +year
-     
- #all of these might still not include some sector assigned to total construciton
- constr_1963.iloc[:,0].values.plot(x=years, kind='line',marker='o', title= 'Wood in Construction', linewidth =0 )
- constr_1967.iloc[:,0].T.plot(kind='line',marker='o', title= 'Wood in Construction', linewidth =0 )
+  
+'''PLOT: low sector aggregation'''
 
- fig, ((ax1, ax3), (ax5, ax7)) = plt.subplots(nrows=2, ncols=2, sharex=False, sharey=False, figsize=(12,8))
- ax1 = constr_1963
- fig.tight_layout(h_pad=2.5)
- plt.show()
+pal = sns.color_palette("colorblind") 
+color_dict = {'MIOT new single-family*':pal[0],'MIOT new-multifamily*':pal[1],'MIOT resid. repairs/alterations':pal[2], 'MIOT resid. other':pal[3],\
+              'MIOT highways & streets*':pal[4], 'PCA new single family buildings':pal[0], 'PCA new multi-family buildings':pal[1], \
+              'PCA res. buildungs improvements':pal[2], 'PCA highways & streets':pal[4], 'McK new single-family housing':pal[0], \
+              'McK new multi-family housing':pal[1], 'McK new manufactued housing':pal[3], 'McK resid. repair & remodeling':pal[2]}
+					
+marker_dict = {'MIOT new single-family*':'.-','MIOT new-multifamily*':'.-','MIOT resid. repairs/alterations':'.-', 'MIOT resid. other':'.-',\
+              'MIOT highways & streets*':'.-',  'McK new single-family housing':'^', 'McK new multi-family housing':'^',
+               'McK new manufactued housing':'^', 'McK resid. repair & remodeling':'^'}
 
- x = [1963,1967,1972,1977,1982,1987,1992,1997,2002,2007]
- y = list(range(0,100,10))
- plt.scatter(x, constr_1963.iloc[:,0].values)
- for i, txt in enumerate(n):
-     plt.annotate(txt, (z[i], y[i]))
+name_list1 = ['cement_detail', 'wood_detail']
+plot_list1 = [eval(e) for e in name_list1]
 
- for i, txt in enumerate(n):
-     ax.annotate(txt, (x[i], y[i]))
-     
-     import numpy as np
- from matplotlib import griddata
 
- x = np.array([0,0,1,1])
- y = np.array([0,1,0,1])
- z = np.array([0,10,20,30])
- xi = np.arange(x.min(),x.max()+1)
- yi = np.arange(y.min(),y.max()+1)
- ar = griddata(x,y,z,xi,yi)
+k,i,j = 0,0,0     
+fig, axs = plt.subplots(1,3 ,sharex=False, sharey=False, figsize=(14,5))
+axs[2].axis('off')
 
- # ar is now
- # array([[  0.,  20.],
- #        [ 10.,  30.]])
+for i in range(0,3):
+        try:
+            plot_list1[k].plot(ax=axs[i], color = [color_dict.get(r,pal[0]) for r in plot_list1[k]], style = [marker_dict.get(r, '*') for r in plot_list1[k]], kind='line', title= name_list1[k][:-7], legend = False)
+            #plot_list1[k].iloc[np.r_[0:7,8],:4].plot(ax=axs[i], color = [color_dict.get(r,pal[0]) for r in plot_list1[k]], style = [marker_dict.get(r, '*') for r in plot_list1[k]], kind='line', title= name_list1[k][:-7], legend = False)
+            #plot_list1[k].iloc[np.r_[1:9,13],:4].plot(ax=axs[i], color = [color_dict.get(r,pal[0]) for r in plot_list1[k]], style = [marker_dict.get(r, '*') for r in plot_list1[k]], kind='line', title= name_list1[k][:-7], legend = False)
+            k = k+1
+            axs[i,j].set_ylabel('%')
+        except:
+            continue
+        
+plot_list1[0].iloc[np.r_[1:9,13],:].plot(ax=axs[0], color = [color_dict.get(r) for r in plot_list1[0]], style = [marker_dict.get(r, '*') for r in plot_list1[0]], kind='line', title= name_list1[0][:-7], legend = False)
+plot_list1[1].iloc[np.r_[0:7,8],:3].plot(ax=axs[1], color = [color_dict.get(r) for r in plot_list1[1]], style = [marker_dict.get(r, '*') for r in plot_list1[1]], kind='line', title= name_list1[1][:-7], legend = False)
+plot_list1[1].iloc[np.r_[0:6,8],3].plot(ax=axs[1], color = pal[3], style = [marker_dict.get(r, '*') for r in plot_list1[1]], kind='line', title= name_list1[1][:-7], legend = False)
+                  
+lgd = axs[2].legend(loc='center', fontsize=14) #, bbox_to_anchor=(0.01, 0.5),fontsize=14)
 
-     
-     
- fig, axs = plt.subplots(3,2 ,sharex=False, sharey=False, figsize=(12,10))
- 
- 
- 
- 
- 
+def add_line(legend):
+    ax1 = legend.axes
+    from matplotlib.lines import Line2D
+
+    import matplotlib.patches as mpatches
+    a = axs[0].get_legend_handles_labels()[0][:9] + axs[1].get_legend_handles_labels()[0][4:8]
+    b = axs[0].get_legend_handles_labels()[1][:9] + axs[1].get_legend_handles_labels()[1][4:8]
+    c = tuple((a,b))
+    handles, labels = c
+    legend._legend_box = None
+    legend._init_legend_box(handles, labels)
+    legend._set_loc(legend._loc)
+    legend.set_title(legend.get_title().get_text())
+           
+add_line(lgd)
+
+axs[0].set_xticks([1963,1972,1982,1992,2002,2015])
+axs[1].set_xticks([1967,1972,1977,1982,1987,1992,1997,2002,2007])
+
+fig.suptitle('Comparison of end-use shares - low sector aggregation (HT-WIO)', y=1, fontsize = 16)
+fig.tight_layout()
 
 
 

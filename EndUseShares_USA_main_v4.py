@@ -22,8 +22,8 @@ from EndUseShares_functions_v4 import calc_CBA,create_WIOMassFilter_plain, creat
 
 
 ##--> for def create_GhoshIoAmcMassFilter_delServiceRawMat think about whether to delete only outputs of services , raw materials? 
-extensions = ['_Base']#, '_ExtAgg'] # choose scenario out of ['_Base','_ExtAgg']; _Base = Z,A,Y matrices as derived from Information of US BEA, _ExtAgg = in comparison to _Base, some IOT sectors were aggregated  (e.g. paper mills + paperboard mills), filter matrix _Base
-years =  ['1992', '1997', '2002','2007', '2012'] # year has to be a string
+extensions = ['_ExtAgg']#, '_ExtAgg'] # choose scenario out of ['_Base','_ExtAgg']; _Base = Z,A,Y matrices as derived from Information of US BEA, _ExtAgg = in comparison to _Base, some IOT sectors were aggregated  (e.g. paper mills + paperboard mills), filter matrix _Base
+years =  ['1963', '1967', '1972', '1977', '1982', '1987', '1992', '1997', '2002','2007', '2012'] # year has to be a string
 
 #year = '1987'
 #extension = '_Base'
