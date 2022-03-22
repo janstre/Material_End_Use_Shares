@@ -690,7 +690,83 @@ wood_nonresidential_df
 wood_furniture_df
 wood_packaging_df
 
+'''STATISTICS'''
 
+high_aggregation_numComp = [plastic_packaging_df, plastic_transport_df,plastic_construction_df,plastic_electrical_df,\
+                    alu_transport_df,alu_construction_df,alu_packaging_df,alu_machinery_df,copper_construction_df,\
+                    copper_transport_df,copper_machinery_df,\
+                    steel_construction_df,steel_transport_df,steel_packaging_df,steel_machinery_df,
+                    wood_construction_df,wood_furniture_df,wood_packaging_df]
+    
+high_aggregation_numComp_plast = [plastic_packaging_df, plastic_transport_df,\
+                                  plastic_construction_df,plastic_electrical_df]
+high_aggregation_numComp_alu = [alu_transport_df,alu_construction_df,alu_packaging_df,\
+                                alu_machinery_df]
+high_aggregation_numComp_steel = [steel_construction_df,steel_transport_df,steel_packaging_df,
+                                  steel_machinery_df]
+high_aggregation_numComp_wood = [wood_construction_df,wood_furniture_df,wood_packaging_df]
+
+high_aggregation_numComp_cop = [copper_construction_df,copper_transport_df,copper_machinery_df]
+                             
+
+
+high_aggregation_numComp_const = [plastic_construction_df,copper_construction_df, wood_construction_df,\
+                                  steel_construction_df,alu_construction_df]
+high_aggregation_numComp_trans = [plastic_transport_df, alu_transport_df, steel_transport_df,\
+                                  copper_transport_df]
+high_aggregation_numComp_mach = [plastic_electrical_df,alu_machinery_df,steel_machinery_df,\
+                                 copper_machinery_df]
+high_aggregation_numComp_pack = [plastic_packaging_df, alu_packaging_df, steel_packaging_df,\
+                                 wood_packaging_df]
+
+total_deviation = []
+rel_deviation = []
+for frame in high_aggregation_numComp_pack:
+    try:
+        frame['HT-Shipment1'] = frame['HT-WIO'] - frame['Shipment_1']
+        frame['HT-Shipment1_rel']  = (frame['HT-WIO'] - frame['Shipment_1'])/frame['Shipment_1']
+        total_deviation.append(frame['HT-Shipment1'].dropna().values.tolist())
+        rel_deviation.append(frame['HT-Shipment1_rel'].dropna().values.tolist())
+    except:
+        continue
+    try:
+        frame['HT-Shipment2']  = frame['HT-WIO'] - frame['Shipment_2']
+        total_deviation.append(frame['HT-Shipment2'].dropna().values.tolist())
+        frame['HT-Shipment2_rel']  = (frame['HT-WIO'] - frame['Shipment_2'])/frame['Shipment_2']
+        total_deviation.append(frame['HT-Shipment2'].dropna().values.tolist())
+        rel_deviation.append(frame['HT-Shipment2_rel'].dropna().values.tolist())
+    except:
+        continue
+    try:
+        frame['HT-Shipment3']  = frame['HT-WIO'] - frame['Shipment_3']
+        frame['HT-Shipment3_rel']  = (frame['HT-WIO'] - frame['Shipment_3'])/frame['Shipment_3']
+        total_deviation.append(frame['HT-Shipment3'].dropna().values.tolist())
+        rel_deviation.append(frame['HT-Shipment3_rel'].dropna().values.tolist())
+    except:
+        continue
+
+
+import statistics   
+total_deviation_abs =  [abs(x) for x in sum(total_deviation, [])]
+tot_dev_mean = sum(total_deviation_abs)/len(total_deviation_abs)
+tot_dev_med = statistics.median(total_deviation_abs)
+
+rel_deviation_abs =  [abs(x) for x in sum(rel_deviation, [])]
+rel_dev_mean = sum(rel_deviation_abs )/len(rel_deviation_abs )
+rel_dev_med = statistics.median(rel_deviation_abs )
+
+print(tot_dev_mean,tot_dev_med, max(total_deviation_abs), min(total_deviation_abs), \
+      rel_dev_mean*100, rel_dev_med*100, max(rel_deviation_abs)*100, min(rel_deviation_abs)*100) 
+    
+    
+    
+#####################    
+    
+    
+    
+    
+    
+    
 ##OPTIONAL: add ext_agg and differnt filter design to matrices:
     
 Wio_withServiceInput_dict = {}
@@ -852,39 +928,114 @@ fig.tight_layout()
  
  
  
+'''PLOT: combine medium and low sector aggregation'''
+
+wood_detail = pd.read_excel(data_path_usa + 'Construction_detail_Run_220317-102202_manualEdit.xlsx',sheet_name='Wood_out', index_col=[0])
+cement_detail = pd.read_excel(data_path_usa + 'Construction_detail_Run_220317-102202_manualEdit.xlsx',sheet_name='Cement_out', index_col=[0])
 
 
+pal = sns.color_palette("colorblind") 
+color_dict = {'CBA':pal[0], 'WIO-MFA': pal[1], 'Ghosh-IO AMC':pal[2],  \
+              'Partial Ghosh-IO': pal[3], 'HT-WIO': pal[5], 'Exio_HT-WIO': pal[4],\
+            'Shipment_1':pal[7], 'Shipment_2':pal[0],'Shipment_3':pal[3]}
+marker_dict = {'CBA':'o', 'WIO-MFA': 'o', 'Ghosh-IO AMC':'o',  \
+              'Partial Ghosh-IO': 'o', 'HT-WIO': 'v', 'Exio_HT-WIO': '.'}
+name_list1 = ['wood_residential_df', 'wood_nonresidential_df', 'cement_residential_df', 'cement_nonRes_df', 'cement_CE_df']
+plot_list1 = [eval(e) for e in name_list1]
 
-    # import matplotlib.patches as mpatches
-    # handles, labels = axs[2,2].get_legend_handles_labels()
+
+k,i,j = 0,0,0     
+fig, axs = plt.subplots(3,3 ,sharex=False, sharey=False, figsize=(14,11), gridspec_kw={'height_ratios':[1,1,1.4]}) #'width_ratios': [2,0.08],
+axs[1,2].axis('off')
+axs[2,2].axis('off')
+
+for i in range(0,2):
+    for j in range (0,3):
+        try:
+            plot_list1[k].plot(ax=axs[i,j], color = [color_dict.get(r,pal[0]) for r in plot_list1[k]], style = [marker_dict.get(r, '*') for r in plot_list1[k]], kind='line', title= name_list1[k][:-3], legend = False)
+            k = k+1
+            axs[i,j].set_ylabel('%')
+            axs[i,j].set_xticks([1963,1972,1982,1992,2002,2012])
+        except:
+            continue
+             
+
+
+pal = sns.color_palette("colorblind") 
+color_dict_low = {'MIOT new single-family*':pal[0],'MIOT new-multifamily*':pal[1],'MIOT resid. repairs/alterations':pal[2], 'MIOT resid. other':pal[3],\
+              'MIOT highways & streets*':pal[4], 'PCA new single family buildings':pal[0], 'PCA new multi-family buildings':pal[1], \
+              'PCA res. buildungs improvements':pal[2], 'PCA highways & streets':pal[4], 'McK new single-family housing':pal[0], \
+              'McK new multi-family housing':pal[1], 'McK new manufactued housing':pal[3], 'McK resid. repair & remodeling':pal[2]}
+					
+marker_dict_low = {'MIOT new single-family*':'.-','MIOT new-multifamily*':'.-','MIOT resid. repairs/alterations':'.-', 'MIOT resid. other':'.-',\
+              'MIOT highways & streets*':'.-',  'McK new single-family housing':'^', 'McK new multi-family housing':'^',
+               'McK new manufactued housing':'^', 'McK resid. repair & remodeling':'^'}
+
+name_list1_low = ['cement_detail', 'wood_detail']
+plot_list1_low = [eval(e) for e in name_list1_low ]
+
+
+k,i,j = 0,0,0     
+for i in range(2,3):
+    for j in range (0,2):
+        try:
+            plot_list1_low[k].plot(ax=axs[i,j], color = [color_dict_low.get(r,pal[0]) for r in plot_list1_low[k]], style = [marker_dict_low.get(r, '*') for r in plot_list1_low[k]], kind='line', title= name_list1_low [k][:-7], legend = False)
+            #plot_list1_low[k].iloc[np.r_[0:7,8],:4].plot(ax=axs[i], color = [color_dict_low.get(r,pal[0]) for r in plot_list1_low[k]], style = [marker_dict_low.get(r, '*') for r in plot_list1_low[k]], kind='line', title= name_list1_low [k][:-7], legend = False)
+            #plot_list1_low[k].iloc[np.r_[1:9,13],:4].plot(ax=axs[i], color = [color_dict_low.get(r,pal[0]) for r in plot_list1_low[k]], style = [marker_dict_low.get(r, '*') for r in plot_list1_low[k]], kind='line', title= name_list1_low [k][:-7], legend = False)
+            k = k+1
+            axs[i,j].set_ylabel('%')
+        except:
+            continue
+        
+plot_list1_low[0].iloc[np.r_[1:9,13],:].plot(ax=axs[2,0], color = [color_dict_low.get(r) for r in plot_list1_low[0]], style = [marker_dict_low.get(r, '*') for r in plot_list1_low[0]], kind='line', title= name_list1_low [0][:-7], legend = False)
+plot_list1_low[1].iloc[np.r_[0:7,8],:3].plot(ax=axs[2,1], color = [color_dict_low.get(r) for r in plot_list1_low[1]], style = [marker_dict_low.get(r, '*') for r in plot_list1_low[1]], kind='line', title= name_list1_low [1][:-7], legend = False)
+plot_list1_low[1].iloc[np.r_[0:6,8],3].plot(ax=axs[2,1], color = pal[3], style = [marker_dict_low.get(r, '*') for r in plot_list1_low[1]], kind='line', title= name_list1_low [1][:-7], legend = False)
+                  
+
+##lgd medium plot:
+lgd = axs[1,2].legend(loc='center', fontsize=12) #, bbox_to_anchor=(0.01, 0.5),fontsize=14)
+
+def add_line(legend):
+    ax1 = legend.axes
+    from matplotlib.lines import Line2D
+
+    import matplotlib.patches as mpatches
+    handles, labels = axs[1,0].get_legend_handles_labels()
+    legend._legend_box = None
+    legend._init_legend_box(handles, labels)
+    legend._set_loc(legend._loc)
+    legend.set_title(legend.get_title().get_text())
+           
+add_line(lgd)
     
-    # handles.append(mpatches.Patch(color=pal[0], label='Final Waste'))
-    # labels.append('EoL, final waste')
-    # legend._legend_box = None
-    # legend._init_legend_box(handles, labels)
-    # legend._set_loc(legend._loc)
-    # legend.set_title(legend.get_title().get_text())
-       
-    # handles.append(mpatches.Patch(color=pal[1], label='EoL Export'))
-    # labels.append('EoL, export')
-    # legend._legend_box = None
-    # legend._init_legend_box(handles, labels)
-    # legend._set_loc(legend._loc)
-    # legend.set_title(legend.get_title().get_text())
-    
-    # handles.append(mpatches.Patch(color=pal[2], label='Domestic EoL Recycling'))
-    # labels.append('EoL, domestic recycling')
-    # legend._legend_box = None
-    # legend._init_legend_box(handles, labels)
-    # legend._set_loc(legend._loc)
-    # legend.set_title(legend.get_title().get_text())
-    
-    # handles.append(mpatches.Patch(color=pal[3], label='EoL Downcycling'))
-    # labels.append('EoL, domestic downcycling')
-    # legend._legend_box = None
-    # legend._init_legend_box(handles, labels)
-    # legend._set_loc(legend._loc)
-    # legend.set_title(legend.get_title().get_text())
+
+#lgd low plot
+lgd_low = axs[2,2].legend(loc='center', fontsize=12) #, bbox_to_anchor=(0.01, 0.5),fontsize=14)
+
+def add_line(legend):
+    ax1 = legend.axes
+    from matplotlib.lines import Line2D
+
+    import matplotlib.patches as mpatches
+    a = axs[2,0].get_legend_handles_labels()[0][:9] + axs[2,1].get_legend_handles_labels()[0][4:8]
+    b = axs[2,0].get_legend_handles_labels()[1][:9] + axs[2,1].get_legend_handles_labels()[1][4:8]
+    c = tuple((a,b))
+    handles, labels = c
+    legend._legend_box = None
+    legend._init_legend_box(handles, labels)
+    legend._set_loc(legend._loc)
+    legend.set_title(legend.get_title().get_text())
+           
+add_line(lgd_low)
+
+axs[2,0].set_xticks([1963,1972,1982,1992,2002,2015])
+axs[2,1].set_xticks([1967,1972,1977,1982,1987,1992,1997,2002,2007])
+axs[2,0].xaxis.label.set_visible(False)
+axs[2,0].xaxis.label.set_visible(False)
+
+fig.suptitle('Comparison of end-use shares - medium & low sector aggregation', y=1, fontsize = 16)
+fig.tight_layout()
+
 
 
 
