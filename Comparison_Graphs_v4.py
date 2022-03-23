@@ -554,28 +554,28 @@ plt.xticks(years)
 plt.ylabel('%')
 plt.show()
 
-cement_nonRes_df = pd.DataFrame([], index=list(range(1963,2017)), columns=method_names)
+cement_nonresidential_df = pd.DataFrame([], index=list(range(1963,2017)), columns=method_names)
 for method_name in method_names:
-    cement_nonRes_df[method_name] = cement_dict.get(method_name).loc['Non-Residential']
-cement_nonRes_df['Shipment_1'] = phys_dict.get('pd_Cement').T.loc['Nonresidential buildings PCA']*100 #'PCA_nonres.buildings
-cement_nonRes_df['Shipment_2'] = phys_dict.get('pd_Cement').T.loc['Non-Residential Cao']*100 #'Cao_nonres.building'
-cement_nonRes_df['Shipment_3'] = phys_dict.get('pd_Cement').T.loc['Commercial buildings PCA Kapur & web']*100 + \
+    cement_nonresidential_df[method_name] = cement_dict.get(method_name).loc['Non-Residential']
+cement_nonresidential_df['Shipment_1'] = phys_dict.get('pd_Cement').T.loc['Nonresidential buildings PCA']*100 #'PCA_nonres.buildings
+cement_nonresidential_df['Shipment_2'] = phys_dict.get('pd_Cement').T.loc['Non-Residential Cao']*100 #'Cao_nonres.building'
+cement_nonresidential_df['Shipment_3'] = phys_dict.get('pd_Cement').T.loc['Commercial buildings PCA Kapur & web']*100 + \
     phys_dict.get('pd_Cement').T.loc['Public Buildings PCA Kapur & web']*100 + phys_dict.get('pd_Cement').T.loc['Farm construction PCA Kapur & web']*100
-cement_nonRes_df.plot(kind='line',marker='o', title= 'Cement in Non-residential STRUCTURES' )
+cement_nonresidential_df.plot(kind='line',marker='o', title= 'Cement in Non-residential STRUCTURES' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
 plt.ylabel('%')
 plt.show()
 
-cement_CE_df = pd.DataFrame([], index=list(range(1963,2017)), columns=method_names)
+cement_civil_engineering_df = pd.DataFrame([], index=list(range(1963,2017)), columns=method_names)
 for method_name in method_names:
-    cement_CE_df[method_name] = cement_dict.get(method_name).loc['Infrastructure'] + cement_dict.get(method_name).loc['Other construction']
-cement_CE_df['Shipment_1'] = phys_dict.get('pd_Cement').T.loc['Civil engineering/Infra']*100 + phys_dict.get('pd_Cement').T.loc['Highways & Streets']*100 #'PCA_civ.eng+streets'
-cement_CE_df['Shipment_2'] = phys_dict.get('pd_Cement').T.loc['Civil Engineering Cao']*100
-cement_CE_df['Shipment_3'] = phys_dict.get('pd_Cement').T.loc['Utilities PCA Kapur & web']*100 + \
+    cement_civil_engineering_df[method_name] = cement_dict.get(method_name).loc['Infrastructure'] + cement_dict.get(method_name).loc['Other construction']
+cement_civil_engineering_df['Shipment_1'] = phys_dict.get('pd_Cement').T.loc['Civil engineering/Infra']*100 + phys_dict.get('pd_Cement').T.loc['Highways & Streets']*100 #'PCA_civ.eng+streets'
+cement_civil_engineering_df['Shipment_2'] = phys_dict.get('pd_Cement').T.loc['Civil Engineering Cao']*100
+cement_civil_engineering_df['Shipment_3'] = phys_dict.get('pd_Cement').T.loc['Utilities PCA Kapur & web']*100 + \
     phys_dict.get('pd_Cement').T.loc['Streets and Highways PCA Kapur & web']*100 + phys_dict.get('pd_Cement').T.loc['Others PCA Kapur & web']*100\
         + phys_dict.get('pd_Cement').T.loc['Water and waste management PCA Kapur & web']*100 #'PCAKapur_util.+streets+other'
-cement_CE_df.plot(kind='line',marker='o', title= 'Cement in Civil Engineering' )
+cement_civil_engineering_df.plot(kind='line',marker='o', title= 'Cement in Civil Engineering' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
 plt.ylabel('%')
@@ -834,10 +834,10 @@ pal = sns.color_palette("colorblind")
 
 #optionally with ExtAgg and WIO_filter diff
 color_dict = {'WIO-MFA': pal[3], 'HT-WIO': 'maroon', 'WIO-MFA_extAgg': pal[3],'WIO-MFA_filtDif': pal[3], \
-            'HT-WIO_extAgg': pal[6],'Exio_HT-WIO': pal[4], 'Shipment_1':pal[7], 'Shipment_2':pal[0],'Shipment_3':pal[3]}
+            'HT-WIO_extAgg': 'maroon','Exio_HT-WIO': pal[4], 'Shipment_1':pal[7], 'Shipment_2':pal[0],'Shipment_3':pal[3]}
 
-marker_dict = {'WIO-MFA': 'o', 'HT-WIO': 'v', 'WIO-MFA_extAgg': '*','WIO-MFA_filtDif': 'h' ,\
-            'HT-WIO_extAgg': '*'}
+marker_dict = {'WIO-MFA': 'o', 'HT-WIO': 'v', 'WIO-MFA_extAgg': 'X','WIO-MFA_filtDif': '+' ,\
+            'HT-WIO_extAgg': 'X'}
 
 
 name_list1 = ['(a) wood_construction_df',  '(b) steel_construction_df', '(c) alu_construction_df', '(d) copper_construction_df', '(e) plastic_construction_df','(f) steel_transport_df', '(g) alu_transport_df',\
@@ -877,7 +877,7 @@ def add_line(legend):
 
            
 add_line(lgd)
-fig.suptitle('Sensitivity to extension choice & filter design (WIO-MFA, HT-WIO) @high aggregation', y=1, fontsize = 16)
+fig.suptitle('Sensitivity to extension choice & filter design (WIO-MFA, HT-WIO) - high sector aggregation', y=1, fontsize = 16)
 #fig.suptitle('Comparison of end-use shares - high sector aggregation', y=1, fontsize = 16)
 fig.tight_layout()
 
@@ -891,7 +891,7 @@ color_dict = {'CBA':pal[0], 'WIO-MFA': pal[1], 'Ghosh-IO AMC':pal[2],  \
             'Shipment_1':pal[7], 'Shipment_2':pal[0],'Shipment_3':pal[3]}
 marker_dict = {'CBA':'o', 'WIO-MFA': 'o', 'Ghosh-IO AMC':'o',  \
               'Partial Ghosh-IO': 'o', 'HT-WIO': 'v', 'Exio_HT-WIO': '.'}
-name_list1 = ['wood_residential_df', 'wood_nonresidential_df', 'cement_residential_df', 'cement_nonRes_df', 'cement_CE_df']
+name_list1 = ['wood_residential_df', 'wood_nonresidential_df', 'cement_residential_df', 'cement_nonresidential_df', 'cement_civil_engineering_df']
 plot_list1 = [eval(e) for e in name_list1]
 
 
@@ -940,7 +940,7 @@ color_dict = {'CBA':pal[0], 'WIO-MFA': pal[1], 'Ghosh-IO AMC':pal[2],  \
             'Shipment_1':pal[7], 'Shipment_2':pal[0],'Shipment_3':pal[3]}
 marker_dict = {'CBA':'o', 'WIO-MFA': 'o', 'Ghosh-IO AMC':'o',  \
               'Partial Ghosh-IO': 'o', 'HT-WIO': 'v', 'Exio_HT-WIO': '.'}
-name_list1 = ['(a) wood_residential_df', '(b) wood_nonresidential_df', '(c) cement_residential_df', '(d) cement_nonRes_df', '(e) cement_CE_df']
+name_list1 = ['(a) wood_residential_df', '(b) wood_nonresidential_df', '(c) cement_residential_df', '(d) cement_nonresidential_df', '(e) cement_civil_engineering_df']
 plot_list1 = [eval(e[4:]) for e in name_list1]
 
 
@@ -1136,12 +1136,18 @@ fig.tight_layout()
 
 
 
+
+#####
+
+
+
 '''
     #4 Assemble comparison of Exiobase countries and sectors (selected method)
     --> add global end-use data!!
 '''
 
 '''FOR NOW: assemnle old Exiobase data till calculated anew'''
+
 data_path_exio = os.path.join('C:/Users/jstreeck/Desktop/EndUse_shortTermSave/Exiobase/output/')
 
 
@@ -1345,78 +1351,16 @@ for plotRegion in plotRegions:
         plt.legend(bbox_to_anchor=(1,1), loc="upper left")
         plt.show()
         
- 
-###direct plotting     
-# for plotMaterial in plotMaterials:
-#     for plotRegion in plotRegions:
-#         randomlist = []
-#         plot_frame = region_dict.get(plotRegion).get(plotMaterial).T
-#         if plotMaterial == 'Plastic':
-#             try:
-#                 plot_frame['Packaging_Euromap'] = physSplit_plastics_Intern.loc[physSplit_plastics_Intern['Country'] == region_transl.get(plotRegion)].iloc[:,1:].set_index('Application').transpose()['Packaging']
-#                 plot_frame['Automotive_Euromap'] = physSplit_plastics_Intern.loc[physSplit_plastics_Intern['Country'] == region_transl.get(plotRegion)].iloc[:,1:].set_index('Application').transpose()['Automotive']
-#                 plot_frame['Electrical_Euromap'] = physSplit_plastics_Intern.loc[physSplit_plastics_Intern['Country'] == region_transl.get(plotRegion)].iloc[:,1:].set_index('Application').transpose()['Construction industry']
-#                 plot_frame['Construction_Euromap'] = physSplit_plastics_Intern.loc[physSplit_plastics_Intern['Country'] == region_transl.get(plotRegion)].iloc[:,1:].set_index('Application').transpose()['Electrical, electronics & telecom']
-#                 plot_frame['Other_Euromap'] = physSplit_plastics_Intern.loc[physSplit_plastics_Intern['Country'] == region_transl.get(plotRegion)].iloc[:,1:].set_index('Application').transpose()['Others']
-#             except:
-#                 continue
-#             if plotRegion == 'CN':
-#                 plot_frame['Jiang_Packaging'] = physSplit_plastics_China['Packaging']
-#                 plot_frame['Jiang_B&C'] = physSplit_plastics_China['B&C']
-#                 plot_frame['Jiang_Automobile'] = physSplit_plastics_China['Automobile']
-#                 plot_frame['Jiang_Electronics'] = physSplit_plastics_China['Electronics']
-#                 plot_frame['Jiang_Agriculture'] = physSplit_plastics_China['Agriculture']
-#                 plot_frame['Jiang_Others'] = physSplit_plastics_China['Others']
-#             if plotRegion in EU28: #watch out: EU28 list not complete
-#                 plot_frame['PlastEU_Packaging'] = physSplit_plastics_EU28['Packaging PE']
-#                 plot_frame['PlastEU_B&C'] = physSplit_plastics_EU28['Building and construction PE']
-#                 plot_frame['PlastEU_Automotive'] = physSplit_plastics_EU28['Automotive PE']
-#                 plot_frame['PlastEU_Electrical'] = physSplit_plastics_EU28['Electrical&Electronic PE']
-#                 plot_frame['PlastEU_Agriculture'] = physSplit_plastics_EU28['Agriculture PE']
-#                 plot_frame['PlastEU_Others'] = physSplit_plastics_EU28['Others PE']
-                
-#         if plotMaterial == 'steel':
-#             if plotRegion == 'CN':
-#                 plot_frame['Wang_Construction'] = physSplit_steel_China['RFSCon']
-#                 plot_frame['Wang_Transportation'] = physSplit_steel_China['RFSTra']
-#                 plot_frame['Wang_Machinery'] = physSplit_steel_China['RFSM']
-#                 plot_frame['Wang_Appliances'] = physSplit_steel_China['RFSA']
-#                 plot_frame['Wang_Other'] = physSplit_steel_China['RFSOth']
-#             if plotRegion == 'IN':
-#                 plot_frame['Pauliuk_Construction'] = physSplit_steel_India['construction']
-#                 plot_frame['Pauliuk_Transportation'] = physSplit_steel_India['transportation']
-#                 plot_frame['Pauliuk_Machinery'] = physSplit_steel_India['machinery']
-#                 plot_frame['Pauliuk_Products'] = physSplit_steel_India['products']
-#             if plotRegion == 'GB':
-#                 plot_frame['Pauliuk_Construction'] = physSplit_steel_UK['Construction']
-#                 plot_frame['Pauliuk_Transportation'] = physSplit_steel_UK['Transportation']
-#                 plot_frame['Pauliuk_Machinery'] = physSplit_steel_UK['Machinery']
-#                 plot_frame['Pauliuk_Products'] = physSplit_steel_UK['Products']
-        
-#         if plotMaterial == 'Copper':
-#             if plotRegion in EU28: #watch out: EU28 list not complete
-#                 plot_frame['Ciacci_B&C'] = physSplit_copper_EU28['Building and construction']
-#                 plot_frame['Ciacci_Electrical'] = physSplit_copper_EU28['Electrical and Electronic Goods']
-#                 plot_frame['Ciacci_Machinery'] = physSplit_copper_EU28['Industrial Machinery and Equipment']
-#                 plot_frame['Ciacci_Transportation'] = physSplit_copper_EU28['Transportation Equipment']
-#                 plot_frame['Ciacci_Products'] = physSplit_copper_EU28['Consumer and General Products']
-#         style=['+-', 'o-', '.--', 's:']
-#         for i in range(0,plot_frame.shape[1]):
-#             n = random.randint(0,3)
-#             randomlist.append(n)
-#         c = [style[i] for i in randomlist]
-#         plot_frame.plot(kind='line',style=c, title= (plotRegion + ' ' +plotMaterial) )
-#         plt.legend(bbox_to_anchor=(1,1), loc="upper left")
-#         plt.show()
-        
-
-
-
-
-
-
-
-###PLOTS ALL COUNTRIES 1 material, one end-use
+    
+    
+    
+    
+#######   
+    
+    
+    
+    
+###ASSEMBLE DATA FOR ALL COUNTRY PLOTS (1 material, one end-use)
 #ALU CONSTRUCTION
 end_use_all_aluConst =  pd.DataFrame([])# index=years_exio, columns=regions)
 for region in regions:
@@ -1441,16 +1385,14 @@ for region in regions:
 del end_use_region
 
 
-'''PLOT: EXIOBASE - combine region-level with all-region plots'''
 
-# pal = sns.color_palette("colorblind") 
+#######  
 
-# marker_dict = {'CBA':'o', 'WIO-MFA': 'o', 'Ghosh-IO AMC':'o',  \
-#               'Partial Ghosh-IO': 'o', 'HT-WIO': 'v', 'Exio_HT-WIO': '.'}
-# name_list1 = ['wood_residential_df', 'wood_nonresidential_df', 'cement_residential_df', 'cement_nonRes_df', 'cement_CE_df']
-# plot_list1 = [eval(e) for e in name_list1]
 
-                 
+'''PLOT: EXIOBASE - combined
+ region-level with all-region plots'''
+
+               
 dropped_sectors = ['Machinery and equipment n.e.c. ', 'Medical, precision and optical instruments, watches and clocks (33)', \
                    'Office machinery and computers (30)','Radio, television and communication equipment and apparatus (32)',\
                     'Electrical machinery and apparatus n.e.c. (31)', 'Office machinery and computers (30)',  'Motor vehicles, trailers and semi-trailers (34)',
@@ -1475,7 +1417,6 @@ marker_dict = {'Construction':'.-', 'Electrical machinery & appliances':'.-', 'T
                'Textiles (17)':'.-', 'Food':'.-', 'All other':'.-' }
 
 
-
 china_steel = lala_dict.get('steel').get('CN').replace(0,np.nan).drop(dropped_sectors,axis=1)
 india_steel = lala_dict.get('steel').get('IN').replace(0,np.nan).drop(dropped_sectors,axis=1)
 britain_steel= lala_dict.get('steel').get('GB').replace(0,np.nan).drop(dropped_sectors,axis=1)
@@ -1486,7 +1427,9 @@ china_Plastic = lala_dict.get('Plastic').get('CN').replace(0,np.nan).drop(droppe
 india_Plastic = lala_dict.get('Plastic').get('IN').replace(0,np.nan).drop(dropped_sectors,axis=1)
 britain_Plastic= lala_dict.get('Plastic').get('GB').replace(0,np.nan).drop(dropped_sectors,axis=1)
 
-    'Construction', ,
+
+########
+
           
 fig, axs = plt.subplots(4,3 ,sharex=False, sharey=False, figsize=(14,14))
 #axs[3,2].axis('off')
@@ -1494,15 +1437,15 @@ fig, axs = plt.subplots(4,3 ,sharex=False, sharey=False, figsize=(14,14))
 #check if summing up to 100%
 #lafa = lala_dict.get('steel').get('CN').drop(dropped_sectors,axis=1)
 
-china_steel.plot(ax=axs[0,0], kind='line', title= 'Steel China', legend = False, color= [color_dict.get(r) for r in china_steel], style=[marker_dict.get(r, '*') for r in china_steel])
-india_steel.plot(ax=axs[0,1], kind='line',title= 'Steel India', legend = False, color= [color_dict.get(r) for r in india_steel], style=[marker_dict.get(r, '*') for r in india_steel])
-britain_steel.plot(ax=axs[0,2], kind='line', title= 'Steel UK', legend = False, color= [color_dict.get(r) for r in britain_steel], style=[marker_dict.get(r, '*') for r in britain_steel])
-china_alumin.plot(ax=axs[1,0], kind='line', title= 'Aluminum China', legend = False, color= [color_dict.get(r) for r in china_alumin], style=[marker_dict.get(r, '*') for r in china_alumin])
-india_alumin.plot(ax=axs[1,1], kind='line',title= 'Aluminum India', legend = False, color= [color_dict.get(r) for r in india_alumin], style=[marker_dict.get(r, '*') for r in india_alumin])
-britain_alumin.plot(ax=axs[1,2], kind='line', title= 'Aluminum UK', legend = False, color= [color_dict.get(r) for r in britain_alumin], style=[marker_dict.get(r, '*') for r in britain_alumin])
-china_Plastic.plot(ax=axs[2,0], kind='line', title= 'Plastics China', legend = False, color= [color_dict.get(r) for r in china_Plastic], style=[marker_dict.get(r, '*') for r in china_Plastic])
-india_Plastic.plot(ax=axs[2,1], kind='line',title= 'Plastics India', legend = False, color= [color_dict.get(r) for r in india_Plastic], style=[marker_dict.get(r, '*') for r in india_Plastic])
-britain_Plastic.plot(ax=axs[2,2], kind='line', title= 'Plastics UK', legend = False, color= [color_dict.get(r) for r in britain_Plastic], style=[marker_dict.get(r, '*') for r in britain_Plastic])
+china_steel.plot(ax=axs[0,0], kind='line', title= '(1a) Steel China', legend = False, color= [color_dict.get(r) for r in china_steel], style=[marker_dict.get(r, '*') for r in china_steel])
+india_steel.plot(ax=axs[0,1], kind='line',title= '(1b) Steel India', legend = False, color= [color_dict.get(r) for r in india_steel], style=[marker_dict.get(r, '*') for r in india_steel])
+britain_steel.plot(ax=axs[0,2], kind='line', title= '(1c) Steel UK', legend = False, color= [color_dict.get(r) for r in britain_steel], style=[marker_dict.get(r, '*') for r in britain_steel])
+china_alumin.plot(ax=axs[1,0], kind='line', title= '(1d) Aluminum China', legend = False, color= [color_dict.get(r) for r in china_alumin], style=[marker_dict.get(r, '*') for r in china_alumin])
+india_alumin.plot(ax=axs[1,1], kind='line',title= '(1e) Aluminum India', legend = False, color= [color_dict.get(r) for r in india_alumin], style=[marker_dict.get(r, '*') for r in india_alumin])
+britain_alumin.plot(ax=axs[1,2], kind='line', title= '(1f) Aluminum UK', legend = False, color= [color_dict.get(r) for r in britain_alumin], style=[marker_dict.get(r, '*') for r in britain_alumin])
+china_Plastic.plot(ax=axs[2,0], kind='line', title= '(1g) Plastics China', legend = False, color= [color_dict.get(r) for r in china_Plastic], style=[marker_dict.get(r, '*') for r in china_Plastic])
+india_Plastic.plot(ax=axs[2,1], kind='line',title= '(1h) Plastics India', legend = False, color= [color_dict.get(r) for r in india_Plastic], style=[marker_dict.get(r, '*') for r in india_Plastic])
+britain_Plastic.plot(ax=axs[2,2], kind='line', title= '(1i) Plastics UK', legend = False, color= [color_dict.get(r) for r in britain_Plastic], style=[marker_dict.get(r, '*') for r in britain_Plastic])
 # axs[0,0].set_ylim(5,lala_dict.get('steel').get('CN').max().max()+5)
 # axs[0,1].set_ylim(5,lala_dict.get('steel').get('IN').max().max()+5)
 # axs[0,2].set_ylim(5,lala_dict.get('steel').get('GB').max().max()+5)
@@ -1512,9 +1455,9 @@ sns.boxplot(ax=axs[3,1],data=end_use_all_steelConst.T,whis=[0, 100], width=.6, p
 sns.swarmplot(ax=axs[3,1],data=end_use_all_steelConst.T, size=2)
 sns.boxplot(ax=axs[3,2],data=end_use_all_steelMotor.T,whis=[0, 100], width=.6, palette="vlag")
 sns.swarmplot(ax=axs[3,2],data=end_use_all_steelMotor.T, size=2)
-axs[3,0].set(ylabel = '%', title = 'Aluminum Construction All Regions')
-axs[3,1].set(ylabel = '%', title = 'Steel Construction All Regions')
-axs[3,2].set(ylabel = '%', title = 'Steel Motor Vehicles All Regions')
+axs[3,0].set(ylabel = '%', title = '(2j) Aluminum Construction All Regions')
+axs[3,1].set(ylabel = '%', title = '(2k) Steel Construction All Regions')
+axs[3,2].set(ylabel = '%', title = '(2l) Steel Motor Vehicles All Regions')
 axs[3,0].set_xticklabels(years_exio,fontsize = 6)
 axs[3,1].set_xticklabels(years_exio,fontsize = 6)
 axs[3,2].set_xticklabels(years_exio,fontsize = 6)
@@ -1559,32 +1502,20 @@ def add_line(legend):
 
            
 add_line(lgd)
-fig.suptitle('Exiobase end-uses for (a) selected regions and (b) selected end-uses', y=1, fontsize = 16)
+fig.suptitle('Exiobase end-uses for (1) selected regions and (2) selected end-uses', y=1, fontsize = 16)
 #fig.suptitle('Comparison of end-use shares - high sector aggregation', y=1, fontsize = 16)
 fig.tight_layout()
 
-####---> match color codes and markers for shipments and categories
-
-###---> plastics still going not much to food; might it here be better to not use HT-WIO but
-# just WIO and then jsut assume that the plastics going to e.g. 'hotels and restaurants' is packaging????
-#--> but in the end we dont know as which products the plastics go there ; so really, more resolution is required
 
 
 
+################################
 
 
+#(IN DEVELOPMENT #!#!#!)
+#Plot BAR PLOTS for ONE MATERIAL, ONE END-USE, ALL COUNTRIES 
 
-
-
-
-
-
-
-
-
-#Plot VIOLIN PLOTS for ONE MATERIAL, ONE END-USE, ALL COUNTRIES
 #COPPER
-
 end_use_all =  pd.DataFrame([])# index=years_exio, columns=regions)
 for region in regions:
     end_use_region = pd.DataFrame(region_dict.get(region).get('Copper').loc['Construction']).rename(columns = {'Construction':region})
@@ -1698,218 +1629,7 @@ for region in regions:
 ax =  sns.boxplot(data=end_use_all.T,whis=[0, 100], width=.6, palette="vlag")
 ax =  sns.swarmplot(data=end_use_all.T, size=3)
 
-# plot histogram 
-ax = sns.distplot(flights[‘passengers’], color=’#9d94ba’, bins=10, kde=False)
-ax.set(title=’Distribution of Passengers’)# label each bar in histogram
-for p in ax.patches:
- height = p.get_height() # get the height of each bar
- # adding text to each bar
- ax.text(x = p.get_x()+(p.get_width()/2), # x-coordinate position of data label, padded to be in the middle of the bar
- y = height+0.2, # y-coordinate position of data label, padded 0.2 above bar
- s = ‘{:.0f}’.format(height), # data label, formatted to ignore decimals
- ha = ‘center’) # sets horizontal alignment (ha) to center
 
-Histogram showing the frequency of passengers on each flight.
-Histogram showing the number of passengers on each flight.
-
-An additional information that might be beneficial to reflect in the graph as well is the mean line of the dataset:
-
-# plot histogram 
-# …# adding a vertical line for the average passengers per flight
-plt.axvline(flights[‘passengers’].mean(), color=’purple’, label=’mean’)# adding data label to mean line
-plt.text(x = flights[‘passengers’].mean()+3, # x-coordinate position of data label, adjusted to be 3 right of the data point
- y = max([h.get_height() for h in ax.patches]), # y-coordinate position of data label, to take max height 
- s = ‘mean: {:.0f}’.format(flights[‘passengers’].mean()), # data label
- color = ‘purple’) # colour of the vertical mean line# label each bar in histogram
-# …
-
-Histogram showing the frequency of passengers on each flight with a vertical line indicating the mean.
-Histogram showing the number of passengers on each flight and a line indicating the mean.
-Bar Plot
-
-Vertical Bar Plot
-
-Plotting the total number of passengers for each year:
-
-# plot vertical barplot
-sns.set(rc={‘figure.figsize’:(10,5)})
-ax = sns.barplot(x=’year’, y=’passengers’, data=year_flights)
-ax.set(title=’Total Number of Passengers Yearly’) # title barplot# label each bar in barplot
-for p in ax.patches:
- # get the height of each bar
- height = p.get_height()
- # adding text to each bar
- ax.text(x = p.get_x()+(p.get_width()/2), # x-coordinate position of data label, padded to be in the middle of the bar
- y = height+100, # y-coordinate position of data label, padded 100 above bar
- s = ‘{:.0f}’.format(height), # data label, formatted to ignore decimals
- ha = ‘center’) # sets horizontal alignment (ha) to center
-
-Bar Plot with vertical bars showing the total number of passengers yearly.
-Bar plot with vertical bars showing the total number of passengers yearly
-
-Horizontal Bar Plot
-
-Plotting the average number of passengers on flights each month:
-
-# plot horizontal barplot
-sns.set(rc={‘figure.figsize’:(10,5)})
-ax = sns.barplot(x=’passengers’, y=’month’, data=month_flights, orient=’h’)
-ax.set(title=’Average Number of Flight Passengers Monthly’) # title barplot# label each bar in barplot
-for p in ax.patches:
- height = p.get_height() # height of each horizontal bar is the same
- width = p.get_width() # width (average number of passengers)
- # adding text to each bar
- ax.text(x = width+3, # x-coordinate position of data label, padded 3 to right of bar
- y = p.get_y()+(height/2), # # y-coordinate position of data label, padded to be in the middle of the bar
- s = ‘{:.0f}’.format(width), # data label, formatted to ignore decimals
- va = ‘center’) # sets vertical alignment (va) to center
-
-Bar plot with horizontal bars showing the average number of passengers for each month.
-Bar plot with horizontal bars showing the average number of passengers for each month
-Notes on Usage
-
-It might be beneficial to add data labels to some plots (especially bar plots), it would be good to experiment and test out different configurations (such as using labels only for certain meaningful points, instead of labelling everything) and not overdo the labelling, especially if there are many points. A clean and informative graph is usually more preferable than a cluttered one.
-
-# only labelling some points on graph# plot line graph
-sns.set(rc={‘figure.figsize’:(10,5)})
-ax = sns.lineplot(x=’year’, y=’passengers’, data=year_flights, marker=’*’, color=’#965786')# title the plot
-ax.set(title=’Total Number of Passengers Yearly’)mean = year_flights[‘passengers’].mean()# label points on the plot only if they are higher than the mean
-for x, y in zip(year_flights[‘year’], year_flights[‘passengers’]):
- if y > mean:
- plt.text(x = x, # x-coordinate position of data label
- y = y-150, # y-coordinate position of data label, adjusted to be 150 below the data point
- s = ‘{:.0f}’.format(y), # data label, formatted to ignore decimals
- color = ‘purple’) # set colour of line
-
-A line plot showing the total number of passengers yearly.
-Line plot showing the total number of passengers yearly.
-
-Sign up for Top 10 Stories
-By The Startup
-
-Get smarter at building your thing. Subscribe to receive The Startup's top 10 most read stories — delivered straight into your inbox, twice a month. Take a look.
-
-By signing up, you will create a Medium account if you don’t already have one. Review our Privacy Policy for more information about our privacy practices.
-More from The Startup
-
-Get smarter at building your thing. Follow to join The Startup’s +8 million monthly readers & +754K followers.
-Sayali Charhate
-
-Sayali Charhate
-
-·Aug 9, 2020
-Interview Preparation That Helped Me Get Multiple Offers During the Lockdown
-
-Preparing for interviews can be overwhelming, especially when you have a full-time job alongside. While there are plenty of resources available online to prepare for software engineering interviews, it is hard to decide where to begin, how to cover different aspects of interviewing and know whether you are ready to…
-Netflix
-
-8 min read
-Interview Preparation That Helped Me Get Multiple Offers During the Lockdown
-
-Share your ideas with millions of readers.
-Write on Medium
-Rajat Sharma
-
-Rajat Sharma
-
-·Aug 9, 2020
-Contacts List Screen in React Native
-
-We will be building a simple contacts list screen in React Native. This is how the final version of the app will look like.
-React
-
-3 min read
-Simple Contacts List in React Native
-Michael Beausoleil
-
-Michael Beausoleil
-
-·Aug 9, 2020
-The Villainization of Retail Employees
-
-Somewhere along the line, you’ve probably heard the old cliché “ the customer’s always right.” Please, for the sake of yourself or for your customers, disregard this statement. Nobody is always right, but if anyone is right, it’s usually the employee. We’re currently in a time when many of our…
-Retail
-
-4 min read
-The Villainization of Retail Employees
-Black_Raven (James Ng)
-
-Black_Raven (James Ng)
-
-·Aug 9, 2020
-Introduction to Airflow in Python
-
-A beginner’s guide to the basic concepts of Apache Airflow — This is a memo to share what I have learnt in Apache Airflow, capturing the learning objectives as well as my personal notes. The course is taught by Mike Metzger from DataCamp. A data engineer’s job includes writing scripts, adding complex CRON tasks, and trying various ways to meet an…
-Airflow
-
-2 min read
-Introduction to Airflow in Python
-Beth Bruno
-
-Beth Bruno
-
-·Aug 9, 2020
-The Problem With Writing About Your Life
-
-You have to write a lot of garbage to finally get to the truth — I have begun. I have been meaning to begin for a long time. But there has always been something more important to do. Washing the dishes. Weeding the garden. Washing fly spots off the windows. But when I am gone, who is going to remember that I kept a clean…
-Writing
-
-3 min read
-The Problem With Writing About Your Life
-Read more from The Startup
-More from Medium
-A Data Model to Generate Keywords List based on Articles
-Best Books For Data Science
-Wish you all a very happy and prosperous new year 2021.
-Using GBIF data and GeoPandas to plot biodiversity trends
-A Gentle Introduction to GDAL Part 4: Working with Satellite Data
-Neuromancer Blues: Threading vs Processing — Part 2
-Garbage Disposal Repair
-ARIMA model for forecasting using EViews
-EViews from IHS Markit offers academic researchers, corporations, government agencies and students access to powerful statistical…
-Find the Difference between Two Angles using Python
-
-Sign In
-Kaili Chen
-Kaili Chen
-
-Student of tech, working in tech. Also at https://www.linkedin.com/in/chenkaili/
-Related
-Book Rating Prediction with Python
-Use of Linear Regression to predict the rating of a book.
-ENEM Data Analysis
-In the last weeks, I've dedicated my time looking upon the microdata from Brazilian High School national exam ENEM.
-How to convert a string column to title case, lower case, or upper case with Python, Pandas, and…
-Mastering Histograms in Matplotlib
-Details of Making Histograms
-
-Help
-
-Status
-
-Writers
-
-Blog
-
-Careers
-
-Privacy
-
-Terms
-
-About
-
-Knowable
-To make Medium work, we log user data. By using Medium, you agree to our Privacy Policy, including cookie policy.
-
-
-
-#'Construction', 'Machinery and equipment n.e.c. ','Office machinery and computers (30)',
-# 'Electrical machinery and apparatus n.e.c. (31)','Radio, television and communication equipment and apparatus (32)',
-# 'Medical, precision and optical instruments, watches and clocks (33)','Motor vehicles, trailers and semi-trailers (34)',
-# 'Other transport equipment (35)','Furniture; other manufactured goods n.e.c. (36)', 'Textiles (17)',
-# 'Printed matter and recorded media (22)', 'Food', 'Other raw materials','Secondary materials', 
-# 'Energy carriers', 'Energy carriers.1', 'Other','Products nec', 'Services']#
 
 end_uses = ['Construction', 'Machinery and equipment n.e.c. ', 'Electrical machinery and apparatus n.e.c. (31)', \
           'Motor vehicles, trailers and semi-trailers (34)', 'Other transport equipment (35)', 'Furniture; other manufactured goods n.e.c. (36)' ]
@@ -1955,17 +1675,6 @@ sns.violinplot(data=end_use_all.T)
 
 
 
-
-
-
-
-
-#region_dict.get('US').get('steel').T.plot(kind='line',marker='o', title= material)
-#plt.legend(bbox_to_anchor=(1,1), loc="upper left")
-#plt.show()
-
-
-
 end_use_all =  pd.DataFrame([], index=years_exio, columns=regions)
 for region in regions:
     end_use_region = pd.DataFrame(region_dict.get(region).get('steel').loc['Construction'])
@@ -1999,7 +1708,8 @@ for region in regions:
 end_use_all.T.plot( kind='box', title= 'Copper to Construction')
 sns.violinplot(data=end_use_all.T)
 
-.T.plot(kind='line',marker='o', title= material)
+
+
 #for material in materials:
 #    material_single = []
 #    material_df = pd.DataFrame([], index=Exio_dict.get(year).index.get_level_values(1), columns=years)
@@ -2008,5 +1718,3 @@ sns.violinplot(data=end_use_all.T)
 #      material_df[year] = material_single.values
 #    material_dict[(material)] = material_df
     
-    
-

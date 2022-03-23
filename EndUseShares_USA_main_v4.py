@@ -22,11 +22,11 @@ from EndUseShares_functions_v4 import calc_CBA,create_WIOMassFilter_plain, creat
 
 
 ##--> for def create_GhoshIoAmcMassFilter_delServiceRawMat think about whether to delete only outputs of services , raw materials? 
-extensions = ['_ExtAgg']#, '_ExtAgg'] # choose scenario out of ['_Base','_ExtAgg']; _Base = Z,A,Y matrices as derived from Information of US BEA, _ExtAgg = in comparison to _Base, some IOT sectors were aggregated  (e.g. paper mills + paperboard mills), filter matrix _Base
+extensions = ['_Base']#, '_ExtAgg'] # choose scenario out of ['_Base','_ExtAgg']; _Base = Z,A,Y matrices as derived from Information of US BEA, _ExtAgg = in comparison to _Base, some IOT sectors were aggregated  (e.g. paper mills + paperboard mills), filter matrix _Base
 years =  ['1963', '1967', '1972', '1977', '1982', '1987', '1992', '1997', '2002','2007', '2012'] # year has to be a string
 
-#year = '1987'
-#extension = '_Base'
+year = '1997'
+extension = '_Base'
 
 for extension in extensions:
     for year in years:
@@ -72,6 +72,11 @@ for extension in extensions:
         #check difference of new x,A to original to x,A
         print('The sum of x is ' + str(round(x.sum(),4)) + ', the sum of L*Y is ' +str(round(np.dot(L, Y).sum(),4)) + ', the difference is ' +str(abs(x.sum()-np.dot(L, Y).sum())))
         print('The sum of A is ' + str(round(A.sum().sum(),4)) + ', the sum of A_orig is ' +str(round(A_orig.sum().sum(),4)) + ', the difference is ' +str(abs(A.sum().sum()-A_orig.sum().sum())))
+        
+        
+        
+        Q = Z.divide(x.values,axis=0).replace(np.nan,0.0)
+        Q.to_excel('Q_1997_directDeliveryShares.xlsx')
         
         
         '''#2 IMPLEMENT METHODS TO DATA BY FUNCTIONS IN EndUseSplit_USA_functions_v#'''
@@ -203,3 +208,4 @@ for extension in extensions:
         
         del Z_orig, A_orig, Y_orig, filter_matrix, raw_yield_df, yield_filter, aggregation_matrix, extension_products, raw_materials,\
             materials, intermediates, products_p1, products_p2, products, non_service, Y, Z, x, A, I, L
+            
