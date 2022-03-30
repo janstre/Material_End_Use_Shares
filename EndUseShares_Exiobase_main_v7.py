@@ -39,10 +39,12 @@ from EndUseShares_functions_v4 import hypothetical_transfer_exio, create_WIOMass
 
 '''
 ### 1 - general variables
-years = list(range(1997,2012))
+years = list(range(2004,2005))
 # regions = ['AT',  'AU', 'BE', 'BG', 'BR', 'CA', 'CH', 'CN', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FI', 'FR', 'GB', 'GR', 'HR', 'HU', 'ID', 'IE', 'IN', 'IT', 'JP',\
-#            'KR', 'LT', 'LU', 'LV', 'MT', 'MX', 'NL', 'NO', 'PL', 'PT', 'RO', 'RU', 'SE', 'SI', 'SK', 'TR', 'TW', 'US', 'WA', 'WE', 'WF', 'WL', 'WM', 'ZA']
-regions = ['US']
+#             'KR', 'LT', 'LU', 'LV', 'MT', 'MX', 'NL', 'NO', 'PL', 'PT', 'RO', 'RU', 'SE', 'SI', 'SK', 'TR', 'TW', 'US', 'WA', 'WE', 'WF', 'WL', 'WM', 'ZA']
+# #regions = ['US']
+regions = [ 'FI', 'FR', 'GB', 'GR', 'HR', 'HU', 'ID', 'IE', 'IN', 'IT', 'JP',\
+            'KR', 'LT', 'LU', 'LV', 'MT', 'MX', 'NL', 'NO', 'PL', 'PT', 'RO', 'RU', 'SE', 'SI', 'SK', 'TR', 'TW', 'US', 'WA', 'WE', 'WF', 'WL', 'WM', 'ZA']
 
 filter_matrix = pd.read_excel(data_path + 'Filter_Exiobase_Base_v2.xlsx',index_col=[0],header=[0,1],sheet_name='mass_&_aggreg') # (mass) filter and aggregation matrix 
 aggregation_matrix = filter_matrix.iloc[:,4:-2].T # select aggregation matrix from filter matrix
