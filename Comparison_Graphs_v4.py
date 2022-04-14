@@ -240,6 +240,30 @@ plt.xticks(years)
 plt.ylabel('%')
 plt.show()
 
+#transport
+wood_transport_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
+for method_name in method_names:
+    wood_transport_df[method_name] = Wood_dict.get(method_name).loc['Motor vehicles'] + Wood_dict.get(method_name).loc['Other transport equipment']
+wood_transport_df['Exio_HT-WIO'] = region_dict.get('US').get('wood').loc['Motor vehicles, trailers and semi-trailers'] +\
+    region_dict.get('US').get('wood').loc['Other transport equipment']
+wood_transport_df.plot(kind='line',marker='o', title= 'Aluminum in Transportation' )
+plt.legend(bbox_to_anchor=(1,1), loc="upper left")
+plt.xticks(years)
+plt.ylabel('%')
+plt.show()
+
+#machinery
+wood_machinery_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
+for method_name in method_names:
+    wood_machinery_df[method_name] = Wood_dict.get(method_name).loc['Electronic machinery'] + Wood_dict.get(method_name).loc['Other machinery']
+wood_machinery_df['Exio_HT-WIO'] = region_dict.get('US').get('wood').loc['Machinery and equipment n.e.c. '] +\
+    region_dict.get('US').get('wood').loc['Electrical machinery and apparatus n.e.c.']
+wood_machinery_df.plot(kind='line',marker='o', title= 'woodminum in Machinery' )
+plt.legend(bbox_to_anchor=(1,1), loc="upper left")
+plt.xticks(years)
+plt.ylabel('%')
+plt.show()
+
 # # single-fam, multi-fam, manuf-houses, repair
 # singleFam_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
 # singleFam_df [HTWIO_] = Wood_dict.get(method_name).loc['Packaging']
@@ -339,6 +363,18 @@ plt.xticks(years)
 plt.ylabel('%')
 plt.show()
 
+#furniture
+alu_furniture_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
+for method_name in method_names:
+    alu_furniture_df[method_name] = alu_dict.get(method_name).loc['Furniture']
+alu_furniture_df['Exio_HT-WIO'] = region_dict.get('US').get('alumin').loc['Furniture; other manufactured goods n.e.c.']
+alu_furniture_df.plot(kind='line',marker='o', title= 'Alu in Furniture' )
+plt.legend(bbox_to_anchor=(1,1), loc="upper left")
+plt.xticks(years)
+plt.ylabel('%')
+plt.show()
+
+
 
 # STEEL
 steel_dict = {}
@@ -431,6 +467,16 @@ plt.xticks(years)
 plt.ylabel('%')
 plt.show()
 
+#furniture
+steel_furniture_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
+for method_name in method_names:
+    steel_furniture_df[method_name] = steel_dict.get(method_name).loc['Furniture']
+steel_furniture_df['Exio_HT-WIO'] = region_dict.get('US').get('steel').loc['Furniture; other manufactured goods n.e.c.']
+steel_furniture_df.plot(kind='line',marker='o', title= 'steel in Furniture' )
+plt.legend(bbox_to_anchor=(1,1), loc="upper left")
+plt.xticks(years)
+plt.ylabel('%')
+plt.show()
 
 
 # COPPER (some problems assembling the material dict so took the easy way)
@@ -523,6 +569,17 @@ for method_name in method_names:
 copper_machineryOther_df['Shipment_1'] = phys_dict.get('pd_Copper').T.loc['Industrial machinery and equipment USGS+Trade']*100
 copper_machineryOther_df['Shipment_2'] = phys_dict.get('pd_Copper').T.loc['Industrial machinery and equipment CDA+Trade']*100
 copper_machineryOther_df.plot(kind='line',marker='o', title= 'Copper in Other machinery' )
+plt.legend(bbox_to_anchor=(1,1), loc="upper left")
+plt.xticks(years)
+plt.ylabel('%')
+plt.show()
+
+#furniture
+copper_furniture_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
+for method_name in method_names:
+    copper_furniture_df[method_name] = copper_dict.get(method_name).loc['Furniture']
+copper_furniture_df['Exio_HT-WIO'] = region_dict.get('US').get('Copper').loc['Furniture; other manufactured goods n.e.c.']
+copper_furniture_df.plot(kind='line',marker='o', title= 'copper in Furniture' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
 plt.ylabel('%')
@@ -647,6 +704,17 @@ for method_name in method_names:
 plastic_electrical_df['Shipment_1'] = phys_dict.get('pd_Plastics').T.loc['Electrical, electronics & telecom Euromap USA']*100
 plastic_electrical_df['Shipment_2'] = phys_dict.get('pd_Plastics').T.loc['Electrical&Electronic PE']*100
 plastic_electrical_df.plot(kind='line',marker='o', title= 'Plastics in Electronics' )
+plt.legend(bbox_to_anchor=(1,1), loc="upper left")
+plt.xticks(years)
+plt.ylabel('%')
+plt.show()
+
+#furniture
+plastic_furniture_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
+for method_name in method_names:
+    plastic_furniture_df[method_name] = plastic_dict.get(method_name).loc['Furniture']
+plastic_furniture_df['Exio_HT-WIO'] = region_dict.get('US').get('Plastic').loc['Furniture; other manufactured goods n.e.c.']
+plastic_furniture_df.plot(kind='line',marker='o', title= 'plastic in Furniture' )
 plt.legend(bbox_to_anchor=(1,1), loc="upper left")
 plt.xticks(years)
 plt.ylabel('%')
@@ -991,6 +1059,74 @@ add_line(lgd)
 fig.suptitle('Comparison of end-use shares - low sector resolution', y=1, fontsize = 16)
 fig.tight_layout()
 
+
+
+
+
+'''PLOT: high sector aggregation STRUCTURED per material and end-use'''
+dummy_df = plastic_electrical_df.copy()
+dummy_df[:] = 0
+
+pal = sns.color_palette("colorblind") 
+
+color_dict = {'CBA':pal[0], 'WIO-MFA': pal[1], 'Ghosh-IO AMC':pal[2],  \
+              'Partial Ghosh-IO': pal[3], 'HT-WIO': 'maroon', 'Exio_HT-WIO': pal[4],\
+            'Shipment_1':pal[7], 'Shipment_2':pal[0],'Shipment_3':pal[3]}
+
+marker_dict = {'CBA':'o', 'WIO-MFA': 'o', 'Ghosh-IO AMC':'o',  \
+              'Partial Ghosh-IO': 'o', 'HT-WIO': 'v', 'Exio_HT-WIO': '.'}
+
+#'(a) wood_construction_df',  '(b) steel_construction_df', '(c) alu_construction_df', '(d) copper_construction_df', '(e) plastic_construction_df'
+name_list1 = ['(a) wood_construction_df','(b) wood_transport_df','(c) wood_packaging_food_df', '(d) wood_machinery_df', '(e) wood_furniture_df',\
+              '(f) steel_construction_df', '(g) steel_transport_df',  '(h) steel_packaging_food_df', '(i) steel_machinery_df',  '(j) steel_furniture_df',\
+              '(k) copper_construction_df', '(l) copper_transport_df',  '(x) dummy_df', '(m) copper_machinery_df', '(n) copper_furniture_df',\
+              '(o) alu_construction_df', '(p) alu_transport_df', '(q) alu_packaging_food_df', '(r) alu_machinery_df', '(s) alu_furniture_df', \
+              '(t) plastic_construction_df', '(u) plastic_transport_df',  '(v) plastic_packaging_food_df', '(w) plastic_electrical_df', '(x) plastic_furniture_df']
+
+plot_list1 = [eval(e[4:]) for e in name_list1]
+
+k,i,j = 0,0,0     
+fig, axs = plt.subplots(5,5 ,sharex=False, sharey=False, figsize=(33,22))
+
+#i_list= [0,1,2,3]
+
+
+           
+for i in range(0,5):
+    for j in range (0,5):
+        plot_list1[k].plot(ax=axs[i,j], color = [color_dict.get(r) for r in plot_list1[k]], style = [marker_dict.get(r, '*') for r in plot_list1[k]], kind='line', title= name_list1[k][:-3], fontsize=16, legend = False)
+        plot_list1[k].xs('HT-WIO',axis=1).dropna().plot(ax=axs[i,j], color = 'maroon', kind='line', legend = False, linestyle='--')
+        k = k+1
+        axs[i,j].set_ylabel('%')
+        axs[i,j].set_xticks([1963,1972,1982,1992,2002,2012])
+        axs[i,j].title.set_fontsize(18)
+
+#axs[2,1].set_visible(False)        
+#-->need to give different names to dataframes
+#axs[0,1].annotate(label='lala',xy=(1990, 0.5),text='lala') #write text in plot
+axs[2,2].clear()
+axs[2,2].axis('off')
+lgd = axs[2,2].legend(loc='center',fontsize=18, ncol=5) #, ,fontsize=14)# bbox_to_anchor=(0.145, -0.02)
+
+def add_line(legend):
+    ax1 = legend.axes
+    from matplotlib.lines import Line2D
+
+    import matplotlib.patches as mpatches
+    a = axs[1,0].get_legend_handles_labels()[0][:-1] 
+    b = axs[1,0].get_legend_handles_labels()[1][:-1]
+    c = tuple((a,b))
+    handles, labels = c
+    legend._legend_box = None
+    legend._init_legend_box(handles, labels)
+    legend._set_loc(legend._loc)
+    legend.set_title(legend.get_title().get_text())
+
+
+           
+add_line(lgd)
+fig.suptitle('Comparison of end-use shares - low sector resolution', y=1, fontsize = 22)
+fig.tight_layout()
 
 
 
@@ -1648,13 +1784,12 @@ fig.tight_layout()
 
 '''
     #4 Assemble comparison of Exiobase countries and sectors (selected method)
-    --> add global end-use data!!
 '''
 
-'''FOR NOW: assemnle old Exiobase data till calculated anew'''
 
-data_path_exio = os.path.join('C:/Users/jstreeck/Desktop/EndUse_shortTermSave/Exiobase/output/')
 
+#data_path_exio = os.path.join('C:/Users/jstreeck/Desktop/EndUse_shortTermSave/Exiobase/output/')
+data_path_exio = os.path.join(main_path, 'output/Exiobase/')
 
 year = 1995
 
@@ -1751,7 +1886,7 @@ for plotMaterial in plotMaterials:
 
 
 
-##assemble dictionary to use in COMPOUNT FIGURE construction later
+##assemble dictionary to use in COMPOUND FIGURE construction later
 lala_dict = {}
 for plotMaterial in plotMaterials:
     Exio_region_plotDict = []
@@ -1760,15 +1895,27 @@ for plotMaterial in plotMaterials:
         dict_2={}
         plot_frame = region_dict.get(plotRegion).get(plotMaterial).T
         plot_frame['Other machinery & appliances'] =  plot_frame['Machinery and equipment n.e.c. '] + \
-            plot_frame['Medical, precision and optical instruments, watches and clocks (33)']
-        plot_frame['Electrical machinery & appliances'] =  plot_frame['Office machinery and computers (30)'] + \
-            plot_frame['Radio, television and communication equipment and apparatus (32)']+ \
-               plot_frame['Electrical machinery and apparatus n.e.c. (31)']
-        plot_frame['Transportation'] = plot_frame['Motor vehicles, trailers and semi-trailers (34)'] + \
-            plot_frame['Other transport equipment (35)']
-        plot_frame['All other'] = plot_frame['Printed matter and recorded media (22)'] + plot_frame['Other raw materials']+\
-             + plot_frame['Secondary materials'] + plot_frame['Energy carriers'] + plot_frame[ 'Energy carriers.1'] \
+            plot_frame['Medical, precision and optical instruments, watches and clocks']
+        plot_frame['Electrical machinery & appliances'] =  plot_frame['Office machinery and computers'] + \
+            plot_frame['Radio, television and communication equipment and apparatus']+ \
+               plot_frame['Electrical machinery and apparatus n.e.c.']
+        plot_frame['Transportation'] = plot_frame['Motor vehicles, trailers and semi-trailers'] + \
+            plot_frame['Other transport equipment']
+        plot_frame['All other'] = plot_frame['Printed matter and recorded media'] + plot_frame['Other raw materials']+\
+             + plot_frame['Secondary materials'] + plot_frame['Energy carriers']  \
                  + plot_frame[ 'Other'] + plot_frame[ 'Products nec'] + plot_frame['Services']
+        
+        # plot_frame = region_dict.get(plotRegion).get(plotMaterial).T
+        # plot_frame['Other machinery & appliances'] =  plot_frame['Machinery and equipment n.e.c. '] + \
+        #     plot_frame['Medical, precision and optical instruments, watches and clocks (33)']
+        # plot_frame['Electrical machinery & appliances'] =  plot_frame['Office machinery and computers (30)'] + \
+        #     plot_frame['Radio, television and communication equipment and apparatus (32)']+ \
+        #        plot_frame['Electrical machinery and apparatus n.e.c. (31)']
+        # plot_frame['Transportation'] = plot_frame['Motor vehicles, trailers and semi-trailers (34)'] + \
+        #     plot_frame['Other transport equipment (35)']
+        # plot_frame['All other'] = plot_frame['Printed matter and recorded media (22)'] + plot_frame['Other raw materials']+\
+        #      + plot_frame['Secondary materials'] + plot_frame['Energy carriers'] + plot_frame[ 'Energy carriers.1'] \
+        #          + plot_frame[ 'Other'] + plot_frame[ 'Products nec'] + plot_frame['Services']
         if plotMaterial == 'Plastic':
             try:
                 plot_frame['Packaging_Euromap'] = physSplit_plastics_Intern.loc[physSplit_plastics_Intern['Country'] == region_transl.get(plotRegion)].iloc[:,1:].set_index('Application').transpose()['Packaging']
@@ -1885,7 +2032,7 @@ del end_use_region
 #Steel MOTOR VEHICLES
 end_use_all_steelMotor =  pd.DataFrame([])# index=years_exio, columns=regions)
 for region in regions:
-    end_use_region = pd.DataFrame(region_dict.get(region).get('steel').loc['Motor vehicles, trailers and semi-trailers (34)']).rename(columns = {'Construction':region})
+    end_use_region = pd.DataFrame(region_dict.get(region).get('steel').loc['Motor vehicles, trailers and semi-trailers']).rename(columns = {'Construction':region})
     end_use_all_steelMotor[region] = end_use_region
 del end_use_region
 
@@ -1898,11 +2045,11 @@ del end_use_region
  region-level with all-region plots'''
 
                
-dropped_sectors = ['Machinery and equipment n.e.c. ', 'Medical, precision and optical instruments, watches and clocks (33)', \
-                   'Office machinery and computers (30)','Radio, television and communication equipment and apparatus (32)',\
-                    'Electrical machinery and apparatus n.e.c. (31)', 'Office machinery and computers (30)',  'Motor vehicles, trailers and semi-trailers (34)',
-                    'Other transport equipment (35)', 'Secondary materials', 'Printed matter and recorded media (22)', 'Other raw materials',\
-                      'Energy carriers','Energy carriers.1','Other','Products nec', 'Services' ]
+dropped_sectors = ['Machinery and equipment n.e.c. ', 'Medical, precision and optical instruments, watches and clocks', \
+                   'Office machinery and computers','Radio, television and communication equipment and apparatus',\
+                    'Electrical machinery and apparatus n.e.c.', 'Office machinery and computers',  'Motor vehicles, trailers and semi-trailers',
+                    'Other transport equipment', 'Secondary materials', 'Printed matter and recorded media', 'Other raw materials',\
+                      'Energy carriers','Other','Products nec', 'Services' ]
 
 pal = sns.color_palette("colorblind")
  
@@ -1913,13 +2060,13 @@ color_dict = {'Construction':pal[0], 'Packaging_Euromap':pal[4], 'Automotive_Eur
 'Wang_Other':pal[7], 'Pauliuk_Construction':pal[0], 'Pauliuk_Transportation':pal[1], 'Pauliuk_Machinery':pal[3],'Pauliuk_Products':pal[5],
  'Ciacci_B&C':pal[0], 'Ciacci_Electrical':pal[2], 'Ciacci_Machinery':pal[3], 'Ciacci_Transportation':pal[1], 'Ciacci_Products':pal[5],
  'Electrical machinery & appliances':pal[2], 'Transportation':pal[1], 'Other machinery & appliances':pal[3], 
- 'Furniture; other manufactured goods n.e.c. (36)':pal[7], 'Textiles (17)':pal[9], 'Food':pal[9], 'All other':pal[5],
+ 'Furniture; other manufactured goods n.e.c.':pal[7], 'Textiles':pal[9], 'Food':'maroon', 'All other':pal[5],
  'Liu_building&construction':pal[0], 'Liu_Transport':pal[1], 'Liu_Machinery&equipment':pal[3], 'Liu_Electric&electronics':pal[2],
  'Liu_Containers&packaging':pal[4], 'Liu_Consumer Durables':pal[7], 'Liu_Others':pal[7] } 
 
 marker_dict = {'Construction':'.-', 'Electrical machinery & appliances':'.-', 'Transportation':'.-', 
-               'Other machinery & appliances':'.-', 'Furniture; other manufactured goods n.e.c. (36)':'.-', 
-               'Textiles (17)':'.-', 'Food':'.-', 'All other':'.-' }
+               'Other machinery & appliances':'.-', 'Furniture; other manufactured goods n.e.c.':'.-', 
+               'Textiles':'.-', 'Food':'.-', 'All other':'.-' }
 
 
 china_steel = lala_dict.get('steel').get('CN').replace(0,np.nan).drop(dropped_sectors,axis=1)
@@ -1994,7 +2141,7 @@ def add_line(legend):
     handles.append(Line2D([0],[0],color=pal[2],linewidth=3, marker='*', linestyle='None', markersize=9))
     labels.append("Shipment_Electrical")
     handles.append(Line2D([0],[0],color=pal[3],linewidth=3, marker='*', linestyle='None', markersize=9))
-    labels.append("Shipment_Machinery")
+    labels.append("Shipment_Machinery&Appl.")
     handles.append(Line2D([0],[0],color=pal[4],linewidth=3, marker='*', linestyle='None', markersize=9))
     labels.append("Shipment_Packaging")
     handles.append(Line2D([0],[0],color=pal[7],linewidth=3, marker='*', linestyle='None', markersize=9))
@@ -2011,6 +2158,263 @@ fig.suptitle('Exiobase end-uses for (1) selected regions and (2) selected end-us
 #fig.suptitle('Comparison of end-use shares - high sector aggregation', y=1, fontsize = 16)
 fig.tight_layout()
 
+
+
+#################################
+
+
+
+
+'''PLOT: EXIOBASE - combined
+ region-level with all-region plots --- WITH ANNOTATED SWARMPLOTS (TRY)'''
+
+               
+dropped_sectors = ['Machinery and equipment n.e.c. ', 'Medical, precision and optical instruments, watches and clocks', \
+                   'Office machinery and computers','Radio, television and communication equipment and apparatus',\
+                    'Electrical machinery and apparatus n.e.c.', 'Office machinery and computers',  'Motor vehicles, trailers and semi-trailers',
+                    'Other transport equipment', 'Secondary materials', 'Printed matter and recorded media', 'Other raw materials',\
+                      'Energy carriers','Other','Products nec', 'Services' ]
+
+pal = sns.color_palette("colorblind")
+ 
+color_dict = {'Construction':pal[0], 'Packaging_Euromap':pal[4], 'Automotive_Euromap':pal[1],'Electrical_Euromap':pal[2],'Construction_Euromap':pal[0],
+              'Other_Euromap':pal[7],'Jiang_Packaging':pal[4], 'Jiang_B&C':pal[0], 'Jiang_Automobile':pal[1],'Jiang_Electronics':pal[2],'Jiang_Agriculture':pal[8], 'Jiang_Others':pal[5],
+'PlastEU_Packaging':pal[4], 'PlastEU_B&C':pal[0], 'PlastEU_Automotive':pal[1], 'PlastEU_Electrical':pal[2], 'PlastEU_Agriculture':pal[7],
+'PlastEU_Others':pal[7], 'Wang_Construction':pal[0], 'Wang_Transportation':pal[1], 'Wang_Machinery':pal[3], 'Wang_Appliances':pal[3], 
+'Wang_Other':pal[7], 'Pauliuk_Construction':pal[0], 'Pauliuk_Transportation':pal[1], 'Pauliuk_Machinery':pal[3],'Pauliuk_Products':pal[5],
+ 'Ciacci_B&C':pal[0], 'Ciacci_Electrical':pal[2], 'Ciacci_Machinery':pal[3], 'Ciacci_Transportation':pal[1], 'Ciacci_Products':pal[5],
+ 'Electrical machinery & appliances':pal[2], 'Transportation':pal[1], 'Other machinery & appliances':pal[3], 
+ 'Furniture; other manufactured goods n.e.c.':pal[7], 'Textiles':pal[9], 'Food':'maroon', 'All other':pal[5],
+ 'Liu_building&construction':pal[0], 'Liu_Transport':pal[1], 'Liu_Machinery&equipment':pal[3], 'Liu_Electric&electronics':pal[2],
+ 'Liu_Containers&packaging':pal[4], 'Liu_Consumer Durables':pal[7], 'Liu_Others':pal[7] } 
+
+marker_dict = {'Construction':'.-', 'Electrical machinery & appliances':'.-', 'Transportation':'.-', 
+               'Other machinery & appliances':'.-', 'Furniture; other manufactured goods n.e.c.':'.-', 
+               'Textiles':'.-', 'Food':'.-', 'All other':'.-' }
+
+
+china_steel = lala_dict.get('steel').get('CN').replace(0,np.nan).drop(dropped_sectors,axis=1)
+india_steel = lala_dict.get('steel').get('IN').replace(0,np.nan).drop(dropped_sectors,axis=1)
+britain_steel= lala_dict.get('steel').get('GB').replace(0,np.nan).drop(dropped_sectors,axis=1)
+china_alumin = lala_dict.get('alumin').get('CN').replace(0,np.nan).drop(dropped_sectors,axis=1)
+india_alumin = lala_dict.get('alumin').get('IN').replace(0,np.nan).drop(dropped_sectors,axis=1)
+britain_alumin= lala_dict.get('alumin').get('GB').replace(0,np.nan).drop(dropped_sectors,axis=1)
+china_Plastic = lala_dict.get('Plastic').get('CN').replace(0,np.nan).drop(dropped_sectors,axis=1)
+india_Plastic = lala_dict.get('Plastic').get('IN').replace(0,np.nan).drop(dropped_sectors,axis=1)
+britain_Plastic= lala_dict.get('Plastic').get('GB').replace(0,np.nan).drop(dropped_sectors,axis=1)
+
+
+########
+
+          
+fig, axs = plt.subplots(4,3 ,sharex=False, sharey=False, figsize=(14,14))
+#axs[3,2].axis('off')
+
+#check if summing up to 100%
+#lafa = lala_dict.get('steel').get('CN').drop(dropped_sectors,axis=1)
+
+china_steel.plot(ax=axs[0,0], kind='line', title= '(1a) Steel China', legend = False, color= [color_dict.get(r) for r in china_steel], style=[marker_dict.get(r, '*') for r in china_steel])
+india_steel.plot(ax=axs[0,1], kind='line',title= '(1b) Steel India', legend = False, color= [color_dict.get(r) for r in india_steel], style=[marker_dict.get(r, '*') for r in india_steel])
+britain_steel.plot(ax=axs[0,2], kind='line', title= '(1c) Steel UK', legend = False, color= [color_dict.get(r) for r in britain_steel], style=[marker_dict.get(r, '*') for r in britain_steel])
+china_alumin.plot(ax=axs[1,0], kind='line', title= '(1d) Aluminum China', legend = False, color= [color_dict.get(r) for r in china_alumin], style=[marker_dict.get(r, '*') for r in china_alumin])
+india_alumin.plot(ax=axs[1,1], kind='line',title= '(1e) Aluminum India', legend = False, color= [color_dict.get(r) for r in india_alumin], style=[marker_dict.get(r, '*') for r in india_alumin])
+britain_alumin.plot(ax=axs[1,2], kind='line', title= '(1f) Aluminum UK', legend = False, color= [color_dict.get(r) for r in britain_alumin], style=[marker_dict.get(r, '*') for r in britain_alumin])
+china_Plastic.plot(ax=axs[2,0], kind='line', title= '(1g) Plastics China', legend = False, color= [color_dict.get(r) for r in china_Plastic], style=[marker_dict.get(r, '*') for r in china_Plastic])
+india_Plastic.plot(ax=axs[2,1], kind='line',title= '(1h) Plastics India', legend = False, color= [color_dict.get(r) for r in india_Plastic], style=[marker_dict.get(r, '*') for r in india_Plastic])
+britain_Plastic.plot(ax=axs[2,2], kind='line', title= '(1i) Plastics UK', legend = False, color= [color_dict.get(r) for r in britain_Plastic], style=[marker_dict.get(r, '*') for r in britain_Plastic])
+# axs[0,0].set_ylim(5,lala_dict.get('steel').get('CN').max().max()+5)
+# axs[0,1].set_ylim(5,lala_dict.get('steel').get('IN').max().max()+5)
+# axs[0,2].set_ylim(5,lala_dict.get('steel').get('GB').max().max()+5)
+sns.boxplot(ax=axs[3,0],data=end_use_all_aluConst.T,whis=[0, 100], width=.6, palette="vlag")
+sns.swarmplot(ax=axs[3,0],data=end_use_all_aluConst.T, size=2)
+sns.boxplot(ax=axs[3,1],data=end_use_all_steelConst.T,whis=[0, 100], width=.6, palette="vlag")
+sns.swarmplot(ax=axs[3,1],data=end_use_all_steelConst.T, size=2)
+sns.boxplot(ax=axs[3,2],data=end_use_all_steelMotor.T,whis=[0, 100], width=.6, palette="vlag")
+sns.swarmplot(ax=axs[3,2],data=end_use_all_steelMotor.T, size=2)
+axs[3,0].set(ylabel = '%', title = '(2j) Aluminum Construction All Regions')
+axs[3,1].set(ylabel = '%', title = '(2k) Steel Construction All Regions')
+axs[3,2].set(ylabel = '%', title = '(2l) Steel Motor Vehicles All Regions')
+axs[3,0].set_xticklabels(years_exio,fontsize = 6)
+axs[3,1].set_xticklabels(years_exio,fontsize = 6)
+axs[3,2].set_xticklabels(years_exio,fontsize = 6)
+for i in range(0,3):
+    for j in range (0,3):
+            axs[i,j].set_ylabel('%')
+            axs[i,j].set_xticks(list(range(1995,2012,2)))
+            
+p = 0
+swarms = [end_use_all_aluConst,end_use_all_steelConst,end_use_all_steelMotor]
+for item in swarms:
+    max_labels = pd.DataFrame(item.idxmax(axis=1))
+    max_vals = item.max(axis=1)
+    min_labels = pd.DataFrame(item.idxmin(axis=1))
+    min_vals = item.min(axis=1)
+    for i in range(0,17):
+        axs[3,p].annotate(max_labels.iloc[i,:][0], xy=((i,max_vals.iloc[i])))
+        axs[3,p].annotate(min_labels.iloc[i,:][0], xy=((i,min_vals.iloc[i])))
+    p = p+1
+ 
+lgd = fig.legend(loc='center left', bbox_to_anchor=(0.12, -0.12),fontsize=14, ncol=2) #, bbox_to_anchor=(0.01, 0.5),fontsize=14)
+
+def add_line(legend):
+    ax1 = legend.axes
+    from matplotlib.lines import Line2D
+
+    import matplotlib.patches as mpatches
+    a = axs[0,0].get_legend_handles_labels()[0][:8] 
+    b = axs[0,0].get_legend_handles_labels()[1][:8] 
+    c = tuple((a,b))
+    handles, labels = c
+    legend._legend_box = None
+    legend._init_legend_box(handles, labels)
+    legend._set_loc(legend._loc)
+    legend.set_title(legend.get_title().get_text())
+    
+    handles.append(Line2D([0],[0],color=pal[0],linewidth=3, marker='*', linestyle='None', markersize=9))
+    labels.append("Shipment_Construction")
+    handles.append(Line2D([0],[0],color=pal[1],linewidth=3, marker='*', linestyle='None', markersize=9))
+    labels.append("Shipment_Transportation")
+    handles.append(Line2D([0],[0],color=pal[2],linewidth=3, marker='*', linestyle='None', markersize=9))
+    labels.append("Shipment_Electrical")
+    handles.append(Line2D([0],[0],color=pal[3],linewidth=3, marker='*', linestyle='None', markersize=9))
+    labels.append("Shipment_Machinery&Appl.")
+    handles.append(Line2D([0],[0],color=pal[4],linewidth=3, marker='*', linestyle='None', markersize=9))
+    labels.append("Shipment_Packaging")
+    handles.append(Line2D([0],[0],color=pal[7],linewidth=3, marker='*', linestyle='None', markersize=9))
+    labels.append("Shipment_Other")
+    
+    legend._legend_box = None
+    legend._init_legend_box(handles, labels)
+    legend._set_loc(legend._loc)
+    legend.set_title(legend.get_title().get_text())
+
+           
+add_line(lgd)
+fig.suptitle('Exiobase end-uses for (1) selected regions and (2) selected end-uses', y=1, fontsize = 16)
+#fig.suptitle('Comparison of end-use shares - high sector aggregation', y=1, fontsize = 16)
+fig.tight_layout()
+
+
+
+
+
+
+# '''PLOT: EXIOBASE - combined
+#  region-level with all-region plots'''
+
+               
+# dropped_sectors = ['Machinery and equipment n.e.c. ', 'Medical, precision and optical instruments, watches and clocks (33)', \
+#                    'Office machinery and computers (30)','Radio, television and communication equipment and apparatus (32)',\
+#                     'Electrical machinery and apparatus n.e.c. (31)', 'Office machinery and computers (30)',  'Motor vehicles, trailers and semi-trailers (34)',
+#                     'Other transport equipment (35)', 'Secondary materials', 'Printed matter and recorded media (22)', 'Other raw materials',\
+#                       'Energy carriers','Energy carriers.1','Other','Products nec', 'Services' ]
+
+# pal = sns.color_palette("colorblind")
+ 
+# color_dict = {'Construction':pal[0], 'Packaging_Euromap':pal[4], 'Automotive_Euromap':pal[1],'Electrical_Euromap':pal[2],'Construction_Euromap':pal[0],
+#               'Other_Euromap':pal[7],'Jiang_Packaging':pal[4], 'Jiang_B&C':pal[0], 'Jiang_Automobile':pal[1],'Jiang_Electronics':pal[2],'Jiang_Agriculture':pal[8], 'Jiang_Others':pal[5],
+# 'PlastEU_Packaging':pal[4], 'PlastEU_B&C':pal[0], 'PlastEU_Automotive':pal[1], 'PlastEU_Electrical':pal[2], 'PlastEU_Agriculture':pal[7],
+# 'PlastEU_Others':pal[7], 'Wang_Construction':pal[0], 'Wang_Transportation':pal[1], 'Wang_Machinery':pal[3], 'Wang_Appliances':pal[3], 
+# 'Wang_Other':pal[7], 'Pauliuk_Construction':pal[0], 'Pauliuk_Transportation':pal[1], 'Pauliuk_Machinery':pal[3],'Pauliuk_Products':pal[5],
+#  'Ciacci_B&C':pal[0], 'Ciacci_Electrical':pal[2], 'Ciacci_Machinery':pal[3], 'Ciacci_Transportation':pal[1], 'Ciacci_Products':pal[5],
+#  'Electrical machinery & appliances':pal[2], 'Transportation':pal[1], 'Other machinery & appliances':pal[3], 
+#  'Furniture; other manufactured goods n.e.c. (36)':pal[7], 'Textiles (17)':pal[9], 'Food':pal[9], 'All other':pal[5],
+#  'Liu_building&construction':pal[0], 'Liu_Transport':pal[1], 'Liu_Machinery&equipment':pal[3], 'Liu_Electric&electronics':pal[2],
+#  'Liu_Containers&packaging':pal[4], 'Liu_Consumer Durables':pal[7], 'Liu_Others':pal[7] } 
+
+# marker_dict = {'Construction':'.-', 'Electrical machinery & appliances':'.-', 'Transportation':'.-', 
+#                'Other machinery & appliances':'.-', 'Furniture; other manufactured goods n.e.c. (36)':'.-', 
+#                'Textiles (17)':'.-', 'Food':'.-', 'All other':'.-' }
+
+
+# china_steel = lala_dict.get('steel').get('CN').replace(0,np.nan).drop(dropped_sectors,axis=1)
+# india_steel = lala_dict.get('steel').get('IN').replace(0,np.nan).drop(dropped_sectors,axis=1)
+# britain_steel= lala_dict.get('steel').get('GB').replace(0,np.nan).drop(dropped_sectors,axis=1)
+# china_alumin = lala_dict.get('alumin').get('CN').replace(0,np.nan).drop(dropped_sectors,axis=1)
+# india_alumin = lala_dict.get('alumin').get('IN').replace(0,np.nan).drop(dropped_sectors,axis=1)
+# britain_alumin= lala_dict.get('alumin').get('GB').replace(0,np.nan).drop(dropped_sectors,axis=1)
+# china_Plastic = lala_dict.get('Plastic').get('CN').replace(0,np.nan).drop(dropped_sectors,axis=1)
+# india_Plastic = lala_dict.get('Plastic').get('IN').replace(0,np.nan).drop(dropped_sectors,axis=1)
+# britain_Plastic= lala_dict.get('Plastic').get('GB').replace(0,np.nan).drop(dropped_sectors,axis=1)
+
+
+# ########
+
+          
+# fig, axs = plt.subplots(4,3 ,sharex=False, sharey=False, figsize=(14,14))
+# #axs[3,2].axis('off')
+
+# #check if summing up to 100%
+# #lafa = lala_dict.get('steel').get('CN').drop(dropped_sectors,axis=1)
+
+# china_steel.plot(ax=axs[0,0], kind='line', title= '(1a) Steel China', legend = False, color= [color_dict.get(r) for r in china_steel], style=[marker_dict.get(r, '*') for r in china_steel])
+# india_steel.plot(ax=axs[0,1], kind='line',title= '(1b) Steel India', legend = False, color= [color_dict.get(r) for r in india_steel], style=[marker_dict.get(r, '*') for r in india_steel])
+# britain_steel.plot(ax=axs[0,2], kind='line', title= '(1c) Steel UK', legend = False, color= [color_dict.get(r) for r in britain_steel], style=[marker_dict.get(r, '*') for r in britain_steel])
+# china_alumin.plot(ax=axs[1,0], kind='line', title= '(1d) Aluminum China', legend = False, color= [color_dict.get(r) for r in china_alumin], style=[marker_dict.get(r, '*') for r in china_alumin])
+# india_alumin.plot(ax=axs[1,1], kind='line',title= '(1e) Aluminum India', legend = False, color= [color_dict.get(r) for r in india_alumin], style=[marker_dict.get(r, '*') for r in india_alumin])
+# britain_alumin.plot(ax=axs[1,2], kind='line', title= '(1f) Aluminum UK', legend = False, color= [color_dict.get(r) for r in britain_alumin], style=[marker_dict.get(r, '*') for r in britain_alumin])
+# china_Plastic.plot(ax=axs[2,0], kind='line', title= '(1g) Plastics China', legend = False, color= [color_dict.get(r) for r in china_Plastic], style=[marker_dict.get(r, '*') for r in china_Plastic])
+# india_Plastic.plot(ax=axs[2,1], kind='line',title= '(1h) Plastics India', legend = False, color= [color_dict.get(r) for r in india_Plastic], style=[marker_dict.get(r, '*') for r in india_Plastic])
+# britain_Plastic.plot(ax=axs[2,2], kind='line', title= '(1i) Plastics UK', legend = False, color= [color_dict.get(r) for r in britain_Plastic], style=[marker_dict.get(r, '*') for r in britain_Plastic])
+# # axs[0,0].set_ylim(5,lala_dict.get('steel').get('CN').max().max()+5)
+# # axs[0,1].set_ylim(5,lala_dict.get('steel').get('IN').max().max()+5)
+# # axs[0,2].set_ylim(5,lala_dict.get('steel').get('GB').max().max()+5)
+# sns.boxplot(ax=axs[3,0],data=end_use_all_aluConst.T,whis=[0, 100], width=.6, palette="vlag")
+# sns.swarmplot(ax=axs[3,0],data=end_use_all_aluConst.T, size=2)
+# sns.boxplot(ax=axs[3,1],data=end_use_all_steelConst.T,whis=[0, 100], width=.6, palette="vlag")
+# sns.swarmplot(ax=axs[3,1],data=end_use_all_steelConst.T, size=2)
+# sns.boxplot(ax=axs[3,2],data=end_use_all_steelMotor.T,whis=[0, 100], width=.6, palette="vlag")
+# sns.swarmplot(ax=axs[3,2],data=end_use_all_steelMotor.T, size=2)
+# axs[3,0].set(ylabel = '%', title = '(2j) Aluminum Construction All Regions')
+# axs[3,1].set(ylabel = '%', title = '(2k) Steel Construction All Regions')
+# axs[3,2].set(ylabel = '%', title = '(2l) Steel Motor Vehicles All Regions')
+# axs[3,0].set_xticklabels(years_exio,fontsize = 6)
+# axs[3,1].set_xticklabels(years_exio,fontsize = 6)
+# axs[3,2].set_xticklabels(years_exio,fontsize = 6)
+# for i in range(0,3):
+#     for j in range (0,3):
+#             axs[i,j].set_ylabel('%')
+#             axs[i,j].set_xticks(list(range(1995,2012,2)))
+ 
+# lgd = fig.legend(loc='center left', bbox_to_anchor=(0.12, -0.12),fontsize=14, ncol=2) #, bbox_to_anchor=(0.01, 0.5),fontsize=14)
+
+# def add_line(legend):
+#     ax1 = legend.axes
+#     from matplotlib.lines import Line2D
+
+#     import matplotlib.patches as mpatches
+#     a = axs[0,0].get_legend_handles_labels()[0][:8] 
+#     b = axs[0,0].get_legend_handles_labels()[1][:8] 
+#     c = tuple((a,b))
+#     handles, labels = c
+#     legend._legend_box = None
+#     legend._init_legend_box(handles, labels)
+#     legend._set_loc(legend._loc)
+#     legend.set_title(legend.get_title().get_text())
+    
+#     handles.append(Line2D([0],[0],color=pal[0],linewidth=3, marker='*', linestyle='None', markersize=9))
+#     labels.append("Shipment_Construction")
+#     handles.append(Line2D([0],[0],color=pal[1],linewidth=3, marker='*', linestyle='None', markersize=9))
+#     labels.append("Shipment_Transportation")
+#     handles.append(Line2D([0],[0],color=pal[2],linewidth=3, marker='*', linestyle='None', markersize=9))
+#     labels.append("Shipment_Electrical")
+#     handles.append(Line2D([0],[0],color=pal[3],linewidth=3, marker='*', linestyle='None', markersize=9))
+#     labels.append("Shipment_Machinery")
+#     handles.append(Line2D([0],[0],color=pal[4],linewidth=3, marker='*', linestyle='None', markersize=9))
+#     labels.append("Shipment_Packaging")
+#     handles.append(Line2D([0],[0],color=pal[7],linewidth=3, marker='*', linestyle='None', markersize=9))
+#     labels.append("Shipment_Other")
+    
+#     legend._legend_box = None
+#     legend._init_legend_box(handles, labels)
+#     legend._set_loc(legend._loc)
+#     legend.set_title(legend.get_title().get_text())
+
+           
+# add_line(lgd)
+# fig.suptitle('Exiobase end-uses for (1) selected regions and (2) selected end-uses', y=1, fontsize = 16)
+# #fig.suptitle('Comparison of end-use shares - high sector aggregation', y=1, fontsize = 16)
+# fig.tight_layout()
 
 
 
@@ -2038,9 +2442,21 @@ plt.show()
  
  ####---> I don't get, why annotation to plots does not work---
 
+'''THIS WORKS!!'''
 ax =  sns.swarmplot(data=end_use_all.T, size=3)
-ax.annotate('blablabla', xy=(2000,8.0))
+ax.annotate('blablabla', xy=((0,8.0)))
 
+
+ax =  sns.swarmplot(data=end_use_all.T, size=3)
+max_labels = pd.DataFrame(end_use_all.idxmax(axis=1))
+max_vals =end_use_all.max(axis=1)
+min_labels = pd.DataFrame(end_use_all.idxmin(axis=1))
+min_vals =end_use_all.min(axis=1)
+for i in range(0,17):
+    ax.annotate(max_labels.iloc[i,:][0], xy=((i,max_vals.iloc[i])))
+    ax.annotate(min_labels.iloc[i,:][0], xy=((i,min_vals.iloc[i])))
+    
+    
 ax.annotate('blablabla', xy=(1997,90), xytext= (1997,90),arrowprops=dict(arrowstyle="->"))
 
 ela=end_use_all.T.reset_index()
