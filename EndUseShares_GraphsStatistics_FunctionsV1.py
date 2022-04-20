@@ -6,6 +6,17 @@ Created on Tue Apr 19 17:11:33 2022
 """
 import numpy as np
 import pandas as pd
+from openpyxl import load_workbook
+
+def save_list2Excel(path, matEndUse_nameList, matEndUse_dfList):
+    list2dict = dict(zip(matEndUse_nameList, matEndUse_dfList))
+    writer = pd.ExcelWriter(path + '_Run_{}.xlsx'.format(pd.datetime.today().strftime('%y%m%d-%H%M%S')))
+    for df_name, df in  list2dict.items():
+        df.to_excel(writer, sheet_name=df_name)
+    writer.save()
+
+
+
 
 '''function calculating deviation per dataframe'''
 def calc_relDeviation(frame):

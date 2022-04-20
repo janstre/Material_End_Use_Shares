@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import random
 import os
 import sys
-from EndUseShares_GraphsStatistics_FunctionsV1 import calc_relDeviation, assemble_materialEndUse_df
+from EndUseShares_GraphsStatistics_FunctionsV1 import save_list2Excel, calc_relDeviation, assemble_materialEndUse_df
 
 #define working directory and data paths
 main_path = os.getcwd()
@@ -315,7 +315,7 @@ writer.save()
 
 
 
-    
+ 
         
 #####
     
@@ -533,7 +533,7 @@ fig.tight_layout()
 
 
 
-'''PLOT: high sector aggregation STRUCTURED per material and end-use + ANNOTATE relative deviation'''
+'''FIGURE2: high sector aggregation STRUCTURED per material and end-use + ANNOTATE relative deviation'''
 dummy_df = plastic_electrical_df.copy()
 dummy_df[:] = 0
 
@@ -571,7 +571,7 @@ for i in range(0,5):
         median = []
         try:
             median, lower, upper = calc_relDeviation(plot_list1[k])
-            axs[i,j].annotate(str(round(median,2)) + ', ' + str(round(lower,2)) + ', ' + str(round(upper,2)) , ((2007, axs[i,j].get_ylim()[1]-axs[i,j].get_ylim()[1]*0.2)))
+            axs[i,j].annotate(str(round(median,2)) + ', ' + str(round(lower,2)) + ', ' + str(round(upper,2)) , ((2002.5, axs[i,j].get_ylim()[1]-axs[i,j].get_ylim()[1]*0.04)))
             # axs[i,j].annotate(str(round(median,2)) + ', ' + str(round(lower,2)) + ', ' + str(round(upper,2)) , ((2007, axs[i,j].get_ylim()[1]-axs[i,j].get_ylim()[1]*0.2)), xycoords='axes fraction', fontsize=16,
             #     xytext=(-5, 5), textcoords='offset points',
             #     ha='right', va='bottom')
@@ -607,6 +607,10 @@ def add_line(legend):
 add_line(lgd)
 fig.suptitle('Comparison of end-use shares - low sector resolution', y=1, fontsize = 22)
 fig.tight_layout()
+
+#save plot data to Excel:
+path = './output/USA/FiguresStats/' + 'Data_Figure2'   
+save_list2Excel(path, name_list1, plot_list1)
 
 
 print(r'$\mu \pm \sigma$')
