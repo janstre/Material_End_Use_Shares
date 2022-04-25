@@ -18,7 +18,7 @@ def save_list2Excel(path, matEndUse_nameList, matEndUse_dfList):
 
 
 
-'''function calculating deviation per dataframe'''
+'''function calculating deviation per dataframe for HT-WIO and Industry Shipments'''
 def calc_relDeviation(frame):
     import statistics 
     
@@ -49,7 +49,9 @@ def calc_relDeviation(frame):
     quantiles = statistics.quantiles(rel_deviation_abs,  n=40, method='exclusive')
     lower = quantiles[0] - rel_dev_med
     upper = quantiles[-1] - rel_dev_med
-    return rel_dev_med, lower, upper
+    maxim = max(rel_deviation_abs)
+    minim = min(rel_deviation_abs)
+    return rel_dev_med, minim, maxim
 
 def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict, region_dict ):
         
