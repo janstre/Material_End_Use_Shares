@@ -542,7 +542,7 @@ fig.tight_layout()
 
 
 
-'''FIGURE 3: combine high, medium and low sector aggregation ONLY WOOD CONSTRUCTION'''
+'''FIGURE 3: combine high, medium and low sector aggregation'''
 dummy_df = plastic_electrical_df.copy()
 dummy_df[:] = 0
 
@@ -596,12 +596,12 @@ axs[4,1].clear()
 
 
 pal = sns.color_palette("Paired") 
-color_dict_low = {'MIOT new single-family*':pal[0],'MIOT new-multifamily*':pal[1],'MIOT resid. repairs/alterations':pal[2], 'MIOT resid. other':pal[3],\
-              'MIOT highways & streets*':pal[4], 'PCA new single family buildings':pal[0], 'PCA new multi-family buildings':pal[1], \
+color_dict_low = {'MIOT new single-family*':pal[0],'MIOT new multi-family*':pal[1],'MIOT resid. repairs/alterations':pal[2], 'MIOT resid. other':pal[3],\
+              'MIOT highways & streets*':pal[4], 'PCA new single-family buildings':pal[0], 'PCA new multi-family buildings':pal[1], \
               'PCA res. buildungs improvements':pal[2], 'PCA highways & streets':pal[4], 'McK new single-family housing':pal[0], \
               'McK new multi-family housing':pal[1], 'McK new manufactued housing':pal[3], 'McK resid. repair & remodeling':pal[2]}
 					
-marker_dict_low = {'MIOT new single-family*':'.-','MIOT new-multifamily*':'.-','MIOT resid. repairs/alterations':'.-', 'MIOT resid. other':'.-',\
+marker_dict_low = {'MIOT new single-family*':'.-','MIOT new multi-family*':'.-','MIOT resid. repairs/alterations':'.-', 'MIOT resid. other':'.-',\
               'MIOT highways & streets*':'.-',  'McK new single-family housing':'^', 'McK new multi-family housing':'^',
                'McK new manufactued housing':'^', 'McK resid. repair & remodeling':'^'}
 
@@ -695,11 +695,13 @@ axs[4,1].set_title('(h) cement residential: housing types & repairs (HT-WIO)')
 fig.suptitle('Construction end-use shares wood & cement - low to high sector resolution', y=1, fontsize = 16)
 fig.tight_layout()
 
-
+#save figure 3 data to Excel
+# path = './output/USA/FiguresStats/' + 'Data_Figure3'   
+# save_list2Excel(path, (name_list1 + name_list1_low), (plot_list1 + plot_list1_low))
 
 
 '''
-    #4 Assemble comparison of Exiobase countries and sectors (selected method)
+    #4 Assemble comparison of EXIOBASE countries and sectors (selected method)
 '''
 
 
@@ -956,11 +958,12 @@ china_Plastic = lala_dict.get('Plastic').get('CN').replace(0,np.nan).drop(droppe
 india_Plastic = lala_dict.get('Plastic').get('IN').replace(0,np.nan).drop(dropped_sectors,axis=1)
 britain_Plastic= lala_dict.get('Plastic').get('GB').replace(0,np.nan).drop(dropped_sectors,axis=1)
 
-
+dummy_df = china_steel.copy()
+dummy_df[:] = 0
 ########
 
           
-fig, axs = plt.subplots(4,3 ,sharex=False, sharey=False, figsize=(14,14))
+fig, axs = plt.subplots(5,3 ,sharex=False, sharey=False, figsize=(14,18),gridspec_kw={'height_ratios':[1,1,0.6,1,1]})
 #axs[3,2].axis('off')
 
 #check if summing up to 100%
@@ -972,25 +975,33 @@ britain_steel.plot(ax=axs[0,2], kind='line', title= '(1c) Steel UK', legend = Fa
 china_alumin.plot(ax=axs[1,0], kind='line', title= '(1d) Aluminum China', legend = False, color= [color_dict.get(r) for r in china_alumin], style=[marker_dict.get(r, '*') for r in china_alumin])
 india_alumin.plot(ax=axs[1,1], kind='line',title= '(1e) Aluminum India', legend = False, color= [color_dict.get(r) for r in india_alumin], style=[marker_dict.get(r, '*') for r in india_alumin])
 britain_alumin.plot(ax=axs[1,2], kind='line', title= '(1f) Aluminum UK', legend = False, color= [color_dict.get(r) for r in britain_alumin], style=[marker_dict.get(r, '*') for r in britain_alumin])
-china_Plastic.plot(ax=axs[2,0], kind='line', title= '(1g) Plastics China', legend = False, color= [color_dict.get(r) for r in china_Plastic], style=[marker_dict.get(r, '*') for r in china_Plastic])
-india_Plastic.plot(ax=axs[2,1], kind='line',title= '(1h) Plastics India', legend = False, color= [color_dict.get(r) for r in india_Plastic], style=[marker_dict.get(r, '*') for r in india_Plastic])
-britain_Plastic.plot(ax=axs[2,2], kind='line', title= '(1i) Plastics UK', legend = False, color= [color_dict.get(r) for r in britain_Plastic], style=[marker_dict.get(r, '*') for r in britain_Plastic])
+
+dummy_df.plot(ax=axs[2,0], legend = False)
+dummy_df.plot(ax=axs[2,1], legend = False)
+dummy_df.plot(ax=axs[2,2], legend = False)
+
+
+china_Plastic.plot(ax=axs[3,0], kind='line', title= '(1g) Plastics China', legend = False, color= [color_dict.get(r) for r in china_Plastic], style=[marker_dict.get(r, '*') for r in china_Plastic])
+india_Plastic.plot(ax=axs[3,1], kind='line',title= '(1h) Plastics India', legend = False, color= [color_dict.get(r) for r in india_Plastic], style=[marker_dict.get(r, '*') for r in india_Plastic])
+britain_Plastic.plot(ax=axs[3,2], kind='line', title= '(1i) Plastics UK', legend = False, color= [color_dict.get(r) for r in britain_Plastic], style=[marker_dict.get(r, '*') for r in britain_Plastic])
 # axs[0,0].set_ylim(5,lala_dict.get('steel').get('CN').max().max()+5)
 # axs[0,1].set_ylim(5,lala_dict.get('steel').get('IN').max().max()+5)
 # axs[0,2].set_ylim(5,lala_dict.get('steel').get('GB').max().max()+5)
-sns.boxplot(ax=axs[3,0],data=end_use_all_aluConst.T,whis=[0, 100], width=.6, palette="vlag")
-sns.swarmplot(ax=axs[3,0],data=end_use_all_aluConst.T, size=2)
-sns.boxplot(ax=axs[3,1],data=end_use_all_steelConst.T,whis=[0, 100], width=.6, palette="vlag")
-sns.swarmplot(ax=axs[3,1],data=end_use_all_steelConst.T, size=2)
-sns.boxplot(ax=axs[3,2],data=end_use_all_steelMotor.T,whis=[0, 100], width=.6, palette="vlag")
-sns.swarmplot(ax=axs[3,2],data=end_use_all_steelMotor.T, size=2)
-axs[3,0].set(ylabel = '%', title = '(2j) Aluminum Construction All Regions')
-axs[3,1].set(ylabel = '%', title = '(2k) Steel Construction All Regions')
-axs[3,2].set(ylabel = '%', title = '(2l) Steel Motor Vehicles All Regions')
-axs[3,0].set_xticklabels(years_exio,fontsize = 6)
-axs[3,1].set_xticklabels(years_exio,fontsize = 6)
-axs[3,2].set_xticklabels(years_exio,fontsize = 6)
-for i in range(0,3):
+
+
+sns.boxplot(ax=axs[4,0],data=end_use_all_aluConst.T,whis=[0, 100], width=.6, palette="vlag")
+sns.swarmplot(ax=axs[4,0],data=end_use_all_aluConst.T, size=2)
+sns.boxplot(ax=axs[4,1],data=end_use_all_steelConst.T,whis=[0, 100], width=.6, palette="vlag")
+sns.swarmplot(ax=axs[4,1],data=end_use_all_steelConst.T, size=2)
+sns.boxplot(ax=axs[4,2],data=end_use_all_steelMotor.T,whis=[0, 100], width=.6, palette="vlag")
+sns.swarmplot(ax=axs[4,2],data=end_use_all_steelMotor.T, size=2)
+axs[4,0].set(ylabel = '%', title = '(2j) Aluminum Construction All Regions')
+axs[4,1].set(ylabel = '%', title = '(2k) Steel Construction All Regions')
+axs[4,2].set(ylabel = '%', title = '(2l) Steel Motor Vehicles All Regions')
+axs[4,0].set_xticklabels(years_exio,fontsize = 6)
+axs[4,1].set_xticklabels(years_exio,fontsize = 6)
+axs[4,2].set_xticklabels(years_exio,fontsize = 6)
+for i in range(0,4):
     for j in range (0,3):
             axs[i,j].set_ylabel('%')
             axs[i,j].set_xticks(list(range(1995,2012,2)))
@@ -1003,12 +1014,19 @@ for item in swarms:
     min_labels = pd.DataFrame(item.idxmin(axis=1))
     min_vals = item.min(axis=1)
     for i in range(0,17):
-        axs[3,p].annotate(max_labels.iloc[i,:][0], xy=((i,max_vals.iloc[i])))
-        axs[3,p].annotate(min_labels.iloc[i,:][0], xy=((i,min_vals.iloc[i])))
+        axs[4,p].annotate(max_labels.iloc[i,:][0], xy=((i,max_vals.iloc[i])))
+        axs[4,p].annotate(min_labels.iloc[i,:][0], xy=((i,min_vals.iloc[i])))
     p = p+1
+    
+axs[2,0].clear()
+axs[2,0].axis('off')
+axs[2,1].clear()
+axs[2,1].axis('off')
+axs[2,2].clear()
+axs[2,2].axis('off')
  
-lgd = fig.legend(loc='center left', bbox_to_anchor=(0.12, -0.12),fontsize=14, ncol=2) #, bbox_to_anchor=(0.01, 0.5),fontsize=14)
-
+lgd = fig.legend(loc='center', bbox_to_anchor=(0.5, 0.48),fontsize=14, ncol=3) #, bbox_to_anchor=(0.01, 0.5),fontsize=14)
+#0.12, -0.12)
 def add_line(legend):
     ax1 = legend.axes
     from matplotlib.lines import Line2D
@@ -1048,6 +1066,13 @@ fig.suptitle('Exiobase end-uses for (1) selected regions and (2) selected end-us
 fig.tight_layout()
 
 
+#save figure 4 data to Excel (option 2: save after added the difference between MIOT and shipment results (below))
+figure_4_plotNames = ['china_steel', 'india_steel', 'britain_steel', 'china_alumin', 'india_alumin', 'britain_alumin', 'china_Plastic',\
+                 'india_Plastic', 'britain_Plastic', 'end_use_all_aluConst', 'end_use_all_steelConst', 'end_use_all_steelMotor']
+# figure_4_plots = [eval(e) for e in figure_4_plotNames]
+# path = './output/USA/FiguresStats/' + 'Data_Figure4'   
+# save_list2Excel(path, figure_4_plotNames, figure_4_plots)
+
 
 ################################
 
@@ -1069,3 +1094,74 @@ for i in range(0,17):
     ax.annotate(max_labels.iloc[i,:][0], xy=((i,max_vals.iloc[i])))
     ax.annotate(min_labels.iloc[i,:][0], xy=((i,min_vals.iloc[i])))
 #ax.annotate('blablabla', xy=((0,8.0)))    
+
+
+
+
+''' EXIOBASE differences MIOT-based and shipment results'''
+#####################    
+analysis_list_eval = [eval(x) for x in figure_4_plotNames]
+   
+for frame in analysis_list_eval:
+    try:
+        frame['ExioConstruct-Construction_Euromap'] = frame['Construction'] - frame['Construction_Euromap']
+        frame['ExioTransport-Automotive_Euromap'] = frame['Transportation'] - frame['Automotive_Euromap']
+        frame['ExioMachElectric-Electrical_Euromap'] = frame['Electrical machinery & appliances'] + frame['Other machinery & appliances']  - frame['Electrical_Euromap']
+        frame['rel_Construction_Euromap'] = frame['ExioConstruct-Construction_Euromap'] / frame['Construction_Euromap']
+        frame['rel_Automotive_Euromap'] = frame['ExioTransport-Automotive_Euromap'] / frame['Automotive_Euromap']
+        frame['rel_Electrical_Euromap'] = frame['ExioMachElectric-Electrical_Euromap'] / frame['Electrical_Euromap']
+    except:
+        pass      
+    try:
+        frame['ExioConstruct-Jiang_B&C'] = frame['Construction'] - frame['Jiang_B&C']
+        frame['ExioTransport-Jiang_Automobile'] = frame['Transportation'] - frame['Jiang_Automobile']
+        frame['ExioMachElectric-Jiang_Electronics'] = frame['Electrical machinery & appliances'] + frame['Other machinery & appliances']  - frame['Jiang_Electronics']
+        frame['rel_Jiang_B&C'] = frame['ExioConstruct-Jiang_B&C'] / frame['Jiang_B&C']
+        frame['rel_Jiang_Automobile'] = frame['ExioTransport-Jiang_Automobile'] / frame['Jiang_Automobile']
+        frame['rel_Jiang_Electronics'] = frame['ExioMachElectric-Jiang_Electronics'] / frame['Jiang_Electronics']
+    except:
+        pass     
+    try:
+        frame['ExioConstruct-PlastEU_B&C'] = frame['Construction'] - frame['PlastEU_B&C']
+        frame['ExioTransport-PlastEU_Automotive'] = frame['Transportation'] - frame['PlastEU_Automotive']
+        frame['ExioMachElectric-PlastEU_Electrical'] = frame['Electrical machinery & appliances'] + frame['Other machinery & appliances']  - frame['PlastEU_Electrical']
+        frame['rel_PlastEU_B&C'] = frame['ExioConstruct-PlastEU_B&C'] / frame['PlastEU_B&C']
+        frame['rel_PlastEU_Automotive'] = frame['ExioTransport-PlastEU_Automotive'] / frame['PlastEU_Automotive']
+        frame['rel_PlastEU_Electrical'] = frame['ExioMachElectric-PlastEU_Electrical'] / frame['PlastEU_Electrical']
+    except:
+        pass  
+    try:
+        frame['ExioConstruct-Wang_Construction'] = frame['Construction'] - frame['Wang_Construction']
+        frame['ExioTransport-Wang_Transportation'] = frame['Transportation'] - frame['Wang_Transportation']
+        frame['ExioMachElectric-Wang_Mach&Appliances'] = frame['Electrical machinery & appliances'] + frame['Other machinery & appliances']  - frame['Wang_Machinery'] - frame['Wang_Appliances']
+        frame['rel_Wang_Construction'] = frame['ExioConstruct-Wang_Construction'] / frame['Wang_Construction']
+        frame['rel_Wang_Transportation'] = frame['ExioTransport-Wang_Transportation'] / frame['Wang_Transportation']
+        frame['rel_Wang_Mach&Appliances'] = frame['ExioMachElectric-Wang_Mach&Appliances'] / (frame['Wang_Machinery'] - frame['Wang_Appliances'])
+    except:
+        pass  
+    try:
+        frame['ExioConstruct-Pauliuk_Construction'] = frame['Construction'] - frame['Pauliuk_Construction']
+        frame['ExioTransport-Pauliuk_Transportation'] = frame['Transportation'] - frame['Pauliuk_Transportation']
+        frame['ExioMachElectric-Pauliuk_Machinery'] = frame['Electrical machinery & appliances'] + frame['Other machinery & appliances']  - frame['Pauliuk_Machinery']
+        frame['rel_Pauliuk_Construction'] = frame['ExioConstruct-Pauliuk_Construction'] / frame['Pauliuk_Construction']
+        frame['rel_Pauliuk_Transportation'] = frame['ExioTransport-Pauliuk_Transportation'] / frame['Pauliuk_Transportation']
+        frame['rel_Pauliuk_Machinery'] = frame['ExioMachElectric-Pauliuk_Machinery'] / frame['Pauliuk_Machinery']
+        # not working for britain_Steel??????
+    except:
+        pass
+    try:
+        frame['ExioConstruct-Liu_building&construction'] = frame['Construction'] - frame['Liu_building&construction']
+        frame['ExioTransport-Liu_Transport'] = frame['Transportation'] - frame['Liu_Transport']
+        frame['ExioOtherMach-Liu_Machinery&equipment'] =  frame['Other machinery & appliances']  - frame['Liu_Machinery&equipment']
+        frame['ExioElectric-Liu_Electric&electronics'] =   frame['Electrical machinery & appliances']   -  frame['Liu_Electric&electronics']
+        frame['rel_Liu_building&construction'] = frame['ExioConstruct-Liu_building&construction'] / frame['Liu_building&construction']
+        frame['rel_Liu_Transport'] = frame['ExioTransport-Liu_Transport'] / frame['Liu_Transport']
+        frame['rel_Liu_Machinery&equipment'] = frame['ExioOtherMach-Liu_Machinery&equipment'] / frame['Liu_Machinery&equipment']
+        frame['rel_Liu_Electric&electronics'] = frame['ExioElectric-Liu_Electric&electronics'] / frame['Liu_Electric&electronics']
+    except:
+        pass
+    
+
+figure_4_plots = [eval(e) for e in figure_4_plotNames]
+path = './output/USA/FiguresStats/' + 'Data_Figure4'   
+save_list2Excel(path, figure_4_plotNames, figure_4_plots)
