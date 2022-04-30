@@ -15,7 +15,11 @@ def save_list2Excel(path, matEndUse_nameList, matEndUse_dfList):
         df.to_excel(writer, sheet_name=df_name)
     writer.save()
 
-
+def save_dict2Excel(path, diction):
+    writer = pd.ExcelWriter(path + '_Run_{}.xlsx'.format(pd.datetime.today().strftime('%y%m%d-%H%M%S')))
+    for df_name, df in  diction.items():
+        df.to_excel(writer, sheet_name=str(df_name))
+    writer.save()
 
 
 '''function calculating deviation per dataframe for HT-WIO and Industry Shipments'''
@@ -242,7 +246,7 @@ def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict
     #machinery
     steel_machinery_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
     for method_name in method_names:
-        steel_machinery_df[method_name] = steel_dict.get(method_name).loc['Other machinery']
+        steel_machinery_df[method_name] = steel_dict.get(method_name).loc['Other machinery'] + steel_dict.get(method_name).loc['Electronic machinery']
     steel_machinery_df['Shipment_2'] = phys_dict.get('pd_IronSteel').T.loc['Machinery & Appliances YSTAFB']*100
     steel_machinery_df['Exio_HT-WIO'] = region_dict.get('US').get('steel').loc['Machinery and equipment n.e.c. '] +\
         region_dict.get('US').get('steel').loc['Electrical machinery and apparatus n.e.c.']

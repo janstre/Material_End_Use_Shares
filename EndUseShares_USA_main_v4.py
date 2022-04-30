@@ -15,13 +15,12 @@ module_path = os.path.join(main_path, 'modules')
 sys.path.insert(0, module_path)
 data_path = os.path.join(main_path, 'input_data/USA/')
 
-from EndUseShares_functions_v4 import calc_CBA,create_WIOMassFilter_plain, create_WIOMassFilter_withServiceRawMatInput,\
+from EndUseShares_functions_v5 import calc_CBA,create_WIOMassFilter_plain, create_WIOMassFilter_withServiceRawMatInput,\
      calc_WIO, create_GhoshIoAmcMassFilter_plain, create_GhoshIoAmcMassFilter_delServiceRawMat, calc_GhoshIO_AMC, \
      create_GhoshIoAmcMassFilter_delServiceOutput, create_PartialGhoshIO_filter_plain, create_PartialGhoshIO_filter_noServiceInput, \
      calc_PartialGhoshIO, hypothetical_transfer, calc_WIO_noYieldCorr, assemble_yield_filter, save_to_excel
 
 
-##--> for def create_GhoshIoAmcMassFilter_delServiceRawMat think about whether to delete only outputs of services , raw materials? 
 extensions = ['_Base']#, '_ExtAgg'] # choose scenario out of ['_Base','_ExtAgg']; _Base = Z,A,Y matrices as derived from Information of US BEA, _ExtAgg = in comparison to _Base, some IOT sectors were aggregated  (e.g. paper mills + paperboard mills), filter matrix _Base
 years =  ['1963', '1967', '1972', '1977', '1982', '1987', '1992', '1997', '2002','2007', '2012'] # year has to be a string
 
@@ -45,7 +44,6 @@ for extension in extensions:
         
         #assemble yield filter
         yield_filter = assemble_yield_filter(aggregation_matrix, raw_yield_df, Z_orig, yield_filter).replace(0,1)
-        #yield_filter = np.ones_like(Z_orig)
         
         #define the filter settings for different materials/product groups that are used in method functions
         raw_materials = filter_matrix.loc[:,(['All'],['Raw_materials'])]
@@ -73,10 +71,9 @@ for extension in extensions:
         print('The sum of x is ' + str(round(x.sum(),4)) + ', the sum of L*Y is ' +str(round(np.dot(L, Y).sum(),4)) + ', the difference is ' +str(abs(x.sum()-np.dot(L, Y).sum())))
         print('The sum of A is ' + str(round(A.sum().sum(),4)) + ', the sum of A_orig is ' +str(round(A_orig.sum().sum(),4)) + ', the difference is ' +str(abs(A.sum().sum()-A_orig.sum().sum())))
         
-        
-        
-        Q = Z.divide(x.values,axis=0).replace(np.nan,0.0)
-        Q.to_excel('Q_1997_directDeliveryShares.xlsx')
+        # optional: get direct market shares
+        # Q = Z.divide(x.values,axis=0).replace(np.nan,0.0)
+        # Q.to_excel('Q_1997_directDeliveryShares.xlsx')
         
         
         '''#2 IMPLEMENT METHODS TO DATA BY FUNCTIONS IN EndUseSplit_USA_functions_v#'''
