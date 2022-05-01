@@ -182,7 +182,7 @@ for extension in extensions:
         D_ht_WIO,D_ht_WIO_aggregated,HT_WIO_split,check_ht_WIO = calc_WIO_noYieldCorr(A_ht, Y_transferred, filt_Amp, filt_App, filter_matrix,aggregation_matrix,extension_products)
         
         # save
-        fileName_HTWIOMF= 'USA/HT_WIOMF_NEW' + year + extension
+        fileName_HTWIOMF= 'USA/HT_WIOMF_' + year + extension
         save_to_excel(fileName_HTWIOMF,D=D_ht_WIO,D_aggregated=D_ht_WIO_aggregated,total_split = HT_WIO_split, \
                       massFilterName=filter_matrix,   Ztransferred=pd.DataFrame(), Ytransferred=pd.DataFrame(), 
                       filter_transf=filter_transf, check = check_ht_WIO)
@@ -210,7 +210,7 @@ for extension in extensions:
         D_ht_WIO,D_ht_WIO_aggregated,HT_WIO_split,check_ht_WIO = calc_WIO_noYieldCorr(A_ht, Y_transferred, filt_Amp, filt_App, filter_matrix,aggregation_matrix,extension_products)
         
         # save
-        fileName_HTWIOMF= 'USA/HT_WIOMF_NEW' + year + extension
+        fileName_HTWIOMF= 'USA/HT_WIOMF_fildDif_' + year + extension
         save_to_excel(fileName_HTWIOMF,D=D_ht_WIO,D_aggregated=D_ht_WIO_aggregated,total_split = HT_WIO_split, \
                       massFilterName=filter_matrix,   Ztransferred=pd.DataFrame(), Ytransferred=pd.DataFrame(), 
                       filter_transf=filter_transf, check = check_ht_WIO)
