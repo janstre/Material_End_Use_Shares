@@ -239,10 +239,10 @@ for i in analysis_list_eval:
     k = k+1
 
 # SAVE (optional)
-# writer = pd.ExcelWriter('./output/USA/FiguresStats/' + 'DeviationStats_ShipmentHTWIO' + '_Run_{}.xlsx'.format(pd.datetime.today().strftime('%y%m%d-%H%M%S')))
-# for df_name, df in analysis_dict.items():
-#     df.to_excel(writer, sheet_name=df_name)
-# writer.save()
+writer = pd.ExcelWriter('./output/USA/FiguresStats/' + 'DeviationStats_ShipmentHTWIO' + '_Run_{}.xlsx'.format(pd.datetime.today().strftime('%y%m%d-%H%M%S')))
+for df_name, df in analysis_dict_1.items():
+    df.to_excel(writer, sheet_name=df_name)
+writer.save()
 
 ##########
 
@@ -289,10 +289,10 @@ for i in analysis_list_eval:
     k = k+1
 
 # SAVE (optional)
-# writer = pd.ExcelWriter('./output/USA/FiguresStats/' + 'DeviationStats_NationalExioHTWIO' + '_Run_{}.xlsx'.format(pd.datetime.today().strftime('%y%m%d-%H%M%S')))
-# for df_name, df in analysis_dict.items():
-#     df.to_excel(writer, sheet_name=df_name)
-# writer.save()
+writer = pd.ExcelWriter('./output/USA/FiguresStats/' + 'DeviationStats_NationalExioHTWIO' + '_Run_{}.xlsx'.format(pd.datetime.today().strftime('%y%m%d-%H%M%S')))
+for df_name, df in analysis_dict_2.items():
+    df.to_excel(writer, sheet_name=df_name)
+writer.save()
 
 
 ##### for EXIOBASE, differences of industry shipments and MIOT-based results are directly added to FIGURE 4 dataframes and can be found in 

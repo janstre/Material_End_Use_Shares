@@ -127,9 +127,18 @@ for region in regions:
     region_dict.update({region:dict_1})
 
 
-# SAVE selected dictionary to Excel    
-# path = './output/USA/FiguresStats/' + 'HTWIO_fullResults_USA'  
-# save_dict2Excel(path, HTWio_dict )  
+#SAVE method dictionaries to Excel (and calculate sum of all end-use shares to check if 100%)
+##sum doesn't make sense for industry shipments
+methods = [CBA_dict, Wio_dict, Ghosh_dict, ParGhosh_dict, HTWio_dict, phys_dict] 
+method_names = ['CBA', 'WIO-MFA', 'Ghosh-IO AMC', 'Partial Ghosh-IO', 'HT-WIO', 'Industry_Shipments' ]
+k=0
+for k in range(0,len(methods)):
+    for e,f in methods[k].items():
+        f.loc['sum'] = f.sum(axis=0)
+    path = './output/USA/FiguresStats/' + method_names[k] + '_fullResults_USA'  
+    save_dict2Excel(path, methods[k] )
+    k = k+1
+
 
 
 '''
@@ -218,18 +227,18 @@ add_line(lgd)
 fig.suptitle('Comparison of end-use shares - low sector resolution', y=1, fontsize = 22)
 fig.tight_layout()
 
-#SAVE plot data to Excel (optional)
-#path = './output/USA/FiguresStats/' + 'Data_Figure2'   
-#save_list2Excel(path, name_list1, plot_list1)
+# #SAVE plot data to Excel (optional)
+# path = './output/USA/FiguresStats/' + 'Data_Figure2'   
+# save_list2Excel(path, name_list1, plot_list1)
 
-###
+##
 
-# '''
+'''
 
-# OPTIONAL: FIGURE2 SENSITIVITY : sensitivity to extension and filter matrix choice at low end-use resolution
-# variables methods & method_names need to be changed above for this plot to work
+OPTIONAL: FIGURE2 SENSITIVITY : sensitivity to extension and filter matrix choice at low end-use resolution
+variables methods & method_names need to be changed above for this plot to work
 
-# '''
+'''
 # pal = sns.color_palette("colorblind") 
 # dummy_df = plastic_electrical_df.copy()
 # dummy_df[:] = 0
@@ -279,7 +288,23 @@ fig.tight_layout()
 # fig.suptitle('Sensitivity to extension choice & filter design (WIO-MFA, HT-WIO) - high sector aggregation', y=1, fontsize = 16)
 # fig.tight_layout()
 
-#######
+# ### ADD differences of sensitivity and base cases and SAVE to EXCEL
+# analysis_list_eval = [eval(x[4:]) for x in name_list1]
+# for frame in analysis_list_eval:
+#     try:
+#         frame['Diff_WIO-MFA_extAgg'] = frame['WIO-MFA'] - frame['WIO-MFA_extAgg']
+#         frame['Diff_HT-WIO_extAgg'] = frame['HT-WIO'] - frame['HT-WIO_extAgg']
+#         frame['Diff_WIO-MFA_filtDif'] = frame['WIO-MFA'] - frame['WIO-MFA_filtDif']
+#         frame['rel_Diff_WIO-MFA_extAgg'] = (frame['WIO-MFA'] - frame['WIO-MFA_extAgg']) / frame['WIO-MFA'] 
+#         frame['rel_Diff_HT-WIO_extAgg'] = (frame['HT-WIO'] - frame['HT-WIO_extAgg']) / frame['HT-WIO']
+#         frame['rel_Diff_WIO-MFA_filtDif'] = (frame['WIO-MFA'] - frame['WIO-MFA_filtDif']) / frame['WIO-MFA'] 
+#     except:
+#         pass
+
+# #SAVE plot data with differences to Excel (optional)
+# path = './output/USA/FiguresStats/' + 'Data_Figure2_Sensitivity'   
+# save_list2Excel(path, name_list1, plot_list1)
+# #######
 
 
 '''
@@ -451,7 +476,7 @@ axs[4,1].set_title('(h) cement residential: housing types & repairs (HT-WIO)')
 fig.suptitle('Construction end-use shares wood & cement - low to high sector resolution', y=1, fontsize = 16)
 fig.tight_layout()
 
-# SAVE FIGURE 3 data to Excel (optional)
+# #SAVE FIGURE 3 data to Excel (optional)
 # path = './output/USA/FiguresStats/' + 'Data_Figure3'   
 # save_list2Excel(path, (name_list1 + name_list1_low), (plot_list1 + plot_list1_low))
 
@@ -620,13 +645,13 @@ for plotMaterial in plotMaterials:
     
     
 # SAVE dictionary for selected materials and all defined countries (optional)
-# comp_mats = ['alumin', 'Plastic']
-# path = './output/Exiobase/FiguresStats/' + 'Exiobase_Comp18Countries'
-# writer = pd.ExcelWriter(path + '_Run_{}.xlsx'.format(pd.datetime.today().strftime('%y%m%d-%H%M%S')))
-# for material in comp_mats:
-#     for region, df in  lala_dict.get(material).items():
-#         df.to_excel(writer, sheet_name= material + '_' + region)
-#     writer.save()   
+comp_mats = ['alumin', 'Plastic']
+path = './output/Exiobase/FiguresStats/' + 'Exiobase_18Countries_Alu_Plastic'
+writer = pd.ExcelWriter(path + '_Run_{}.xlsx'.format(pd.datetime.today().strftime('%y%m%d-%H%M%S')))
+for material in comp_mats:
+    for region, df in  lala_dict.get(material).items():
+        df.to_excel(writer, sheet_name= material + '_' + region)
+    writer.save()   
 
 
 # assemble data for one material end-use and ALL countries for use in plots 
@@ -885,10 +910,10 @@ for frame in analysis_list_eval:
     except:
         pass
     
-# SAVE (optional)
-# figure_4_plots = [eval(e) for e in figure_4_plotNames]
-# path = './output/USA/FiguresStats/' + 'Data_Figure4'   
-# save_list2Excel(path, figure_4_plotNames, figure_4_plots)
+#SAVE (optional)
+figure_4_plots = [eval(e) for e in figure_4_plotNames]
+path = './output/Exiobase/FiguresStats/' + 'Data_Figure4'   
+save_list2Excel(path, figure_4_plotNames, figure_4_plots)
 
 '''
 
