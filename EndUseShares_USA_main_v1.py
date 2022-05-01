@@ -22,7 +22,7 @@ from EndUseShares_functions_v5 import calc_CBA,create_WIOMassFilter_plain, creat
 
 
 extensions = ['_Base']#, '_ExtAgg'] # choose scenario out of ['_Base','_ExtAgg']; _Base = Z,A,Y matrices as derived from Information of US BEA, _ExtAgg = in comparison to _Base, some IOT sectors were aggregated  (e.g. paper mills + paperboard mills), filter matrix _Base
-years =  ['1963', '1967', '1972', '1977', '1982', '1987', '1992', '1997', '2002','2007', '2012'] # year has to be a string
+years =  ['1963' ]#, '1967', '1972', '1977', '1982', '1987', '1992', '1997', '2002','2007', '2012'] # year has to be a string
 
 year = '1963'
 extension = '_Base'
@@ -113,7 +113,7 @@ for extension in extensions:
         
         ''' 
         
-        # WIO-MFA_filtDif
+        # WIO-MFA_filtDif (withServiceInput)
         
         '''
         filt_Amp, filt_App, filt_Amp_label, filt_App_label = create_WIOMassFilter_withServiceRawMatInput(A,raw_materials, materials,products,intermediates, non_service)
