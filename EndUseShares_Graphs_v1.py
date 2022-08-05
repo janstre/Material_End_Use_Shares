@@ -166,6 +166,171 @@ plastic_packaging_food_df, plastic_transport_df, plastic_construction_df, plasti
 #####
     
 
+#assemble material dictionary time series - #! move to FUNCTIONS
+year = 1963
+
+plastic_dict = {}
+count = -1
+for method in methods:
+    plastic_single = []
+    plastic_df = pd.DataFrame([], index=CBA_dict.get(year).index.get_level_values(1), columns=years)
+    count= count +1
+    for year in years:
+        plastic_single = method.get(year).iloc[:,method.get(year).columns.get_level_values(1).map(lambda t: ('Plastic' or 'plastic') in t).to_list()]
+        plastic_df[year] = plastic_single.values
+    plastic_dict[(method_names[count])] = plastic_df
+
+cement_dict = {}
+count = -1
+for method in methods:
+    cement_single = []
+    cement_df = pd.DataFrame([], index=CBA_dict.get(year).index.get_level_values(1), columns=years)
+    count= count +1
+    for year in years:
+        cement_single = method.get(year).iloc[:,method.get(year).columns.get_level_values(1).map(lambda t: ('Cement' or 'cement') in t).to_list()]
+        cement_df[year] = cement_single.values
+    cement_dict[(method_names[count])] = cement_df
+    
+years_cop = [1963,1967,1972,1977,1982,1987,1992]
+years_cop2 =  [1997]
+years_cop3 = [2002]
+years_cop4 = [2007,2012]
+copper_dict = {}
+count = -1
+for method in methods:
+    copper_single = []
+    copper_df = pd.DataFrame([], index=CBA_dict.get(year).index.get_level_values(1), columns=years)
+    count= count +1
+    for year in years_cop:
+        copper_single = method.get(year).iloc[:,method.get(year).columns.get_level_values(0).astype(str).map(lambda t: ('3801' ) in t).to_list()]
+        copper_df[year] = copper_single.values
+    copper_dict[(method_names[count])] = copper_df 
+    for year2 in years_cop2:
+        copper_single = method.get(year2).iloc[:,method.get(year2).columns.get_level_values(1).map(lambda t: ('smelting') in t).to_list()]
+        copper_df[year2] = copper_single.values
+    copper_dict[(method_names[count])] = copper_df
+    for year3 in years_cop3:
+        copper_single = method.get(year3).iloc[:,method.get(year3).columns.get_level_values(0).astype(str).map(lambda t: ('331411') in t).to_list()]
+        copper_df[year3] = copper_single.values
+    copper_dict[(method_names[count])] = copper_df
+    for year4 in years_cop4:
+        copper_single = method.get(year4).iloc[:,method.get(year4).columns.get_level_values(1).map(lambda t: ('Copper') in t).to_list()]
+        copper_df[year4] = copper_single.values
+    copper_dict[(method_names[count])] = copper_df
+        
+steel_dict = {}
+count = -1
+for method in methods:
+    steel_single = []
+    steel_df = pd.DataFrame([], index=CBA_dict.get(year).index.get_level_values(1), columns=years)
+    count= count +1
+    for year in years:
+        steel_single = method.get(year).iloc[:,method.get(year).columns.get_level_values(1).map(lambda t: ('steel' or 'Blast') in t).to_list()]
+        steel_df[year] = steel_single.values
+    steel_dict[(method_names[count])] = steel_df
+    
+alu_dict = {}
+count = -1
+for method in methods:
+    alu_single = []
+    alu_df = pd.DataFrame([], index=CBA_dict.get(year).index.get_level_values(1), columns=years)
+    count= count +1
+    for year in years:
+        alu_single = method.get(year).iloc[:,method.get(year).columns.get_level_values(1).map(lambda t: ('alu' or 'Alu') in t).to_list()]
+        alu_df[year] = alu_single.values
+    alu_dict[(method_names[count])] = alu_df
+    
+Wood_dict = {}
+count = -1
+for method in methods:
+    wood_single = []
+    Wood_df = pd.DataFrame([], index=CBA_dict.get(year).index.get_level_values(1), columns=years)
+    count= count +1
+    for year in years:
+        wood_single = method.get(year).iloc[:,method.get(year).columns.get_level_values(1).map(lambda t: ('Sawmill' or 'Wood') in t).to_list()]
+        Wood_df[year] = wood_single.values
+    Wood_dict[(method_names[count])] = Wood_df
+
+bricks_dict = {}
+count = -1
+for method in methods:
+    bricks_single = []
+    bricks_df = pd.DataFrame([], index=CBA_dict.get(year).index.get_level_values(1), columns=years)
+    count= count +1
+    for year in years:
+        bricks_single = method.get(year).iloc[:,method.get(year).columns.get_level_values(1).map(lambda t: 'Brick' in t or 'Clay product' in t).to_list()]
+        bricks_df[year] = bricks_single.values
+    bricks_dict[(method_names[count])] = bricks_df
+
+years =  [1963, 1967, 1972, 1977, 1982, 1987, 1992, 1997, 2002]
+#only do for these years as for 2007/12 all glass is aggregated
+flat_dict = {}
+count = -1
+for method in methods:
+    flat_single = []
+    flat_df = pd.DataFrame([], index=CBA_dict.get(year).index.get_level_values(1), columns=years)
+    count= count +1
+    for year in years:
+        flat_single = method.get(year).iloc[:,method.get(year).columns.get_level_values(1).map(lambda t: 'Flat glass' in t or 'glass products' in t).to_list()]
+        flat_df[year] = flat_single.values
+    flat_dict[(method_names[count])] = flat_df
+     
+
+
+years =  [1963, 1967, 1972, 1977, 1982, 1987, 1992, 1997, 2002, 2007, 2012]
+paper_dict = {}
+count = -1
+for method in methods:
+    paper_single = []
+    paper_df = pd.DataFrame([], index=CBA_dict.get(year).index.get_level_values(1), columns=years)
+    count= count +1
+    for year in years:
+        paper_single = method.get(year).iloc[:,method.get(year).columns.get_level_values(1).map(lambda t: 'Pulp' in t or 'Paper' in t).to_list()]
+        paper_df[year] = paper_single.values
+    paper_dict[(method_names[count])] = paper_df
+
+years =  [1963, 1967, 1972, 1977, 1982]
+lead_dict = {}
+count = -1
+for method in methods:
+    lead_single = []
+    lead_df = pd.DataFrame([], index=CBA_dict.get(year).index.get_level_values(1), columns=years)
+    count= count +1
+    for year in years:
+        lead_single = method.get(year).iloc[:,method.get(year).columns.get_level_values(1).map(lambda t: 'Lead' in t or 'lead' in t).to_list()]
+        lead_df[year] = lead_single.values
+    lead_dict[(method_names[count])] = lead_df
+
+
+years =  [1963, 1967, 1972, 1977, 1982]
+zinc_dict = {}
+count = -1
+for method in methods:
+    zinc_single = []
+    zinc_df = pd.DataFrame([], index=CBA_dict.get(year).index.get_level_values(1), columns=years)
+    count= count +1
+    for year in years:
+        zinc_single = method.get(year).iloc[:,method.get(year).columns.get_level_values(1).map(lambda t: 'zinc' in t or 'zinc' in t).to_list()]
+        zinc_df[year] = zinc_single.values
+    zinc_dict[(method_names[count])] = zinc_df
+
+years =  [1963, 1967, 1972, 1977, 1982, 1987, 1992, 1997, 2002, 2007, 2012]
+
+# #SAVE method dictionaries to Excel (and calculate sum of all end-use shares to check if 100%)
+# path = './output/USA/USA_time_series_per_material' 
+# mat_names = ['zinc_dict', 'lead_dict', 'paper_dict', 'flat_dict', 'bricks_dict', \
+#              'Wood_dict', 'alu_dict', 'copper_dict', 'steel_dict','cement_dict', 'plastic_dict']
+# mat_items = [eval(e) for e in mat_names]
+# list2dict = dict(zip(mat_names, mat_items))
+# writer = pd.ExcelWriter(path + '_Run_{}.xlsx'.format(pd.datetime.today().strftime('%y%m%d-%H%M%S')))
+# for df_name, df in  list2dict.items():
+#     df.get('HT-WIO').to_excel(writer, sheet_name=df_name)
+# writer.save()
+
+
+# figure_4_plotNames = ['china_steel', 'india_steel', 'britain_steel', 'china_alumin', 'india_alumin', 'britain_alumin', 'china_Plastic',\
+#                  'india_Plastic', 'britain_Plastic', 'end_use_all_aluConst', 'end_use_all_steelConst', 'end_use_all_steelMotor']
+# figure_4_plots = [eval(e) for e in figure_4_plotNames]
 '''
 
     FIGURE2: low end-use resolution
@@ -230,6 +395,7 @@ def add_line(legend):
 add_line(lgd)
 fig.suptitle('Comparison of end-use shares - low sector resolution', y=1, fontsize = 22)
 fig.tight_layout()
+#fig.savefig('Figure2.pdf', format='pdf', dpi =1200, bbox_inches='tight', pad_inches=0)
 
 # #SAVE plot data to Excel (optional)
 # path = './output/USA/FiguresStats/' + 'Data_Figure2'   
@@ -484,6 +650,7 @@ axs[4,1].set_title('(h) cement residential: housing types & repairs (HT-WIO)')
 
 fig.suptitle('Construction end-use shares wood & cement - low to high sector resolution', y=1, fontsize = 16)
 fig.tight_layout()
+#fig.savefig('Figure3.pdf', format='pdf', dpi =1200, bbox_inches='tight', pad_inches=0)
 
 # #SAVE FIGURE 3 data to Excel (optional)
 # path = './output/USA/FiguresStats/' + 'Data_Figure3'   
@@ -942,6 +1109,7 @@ add_line(lgd)
 fig.suptitle('Exiobase all end-uses for selected regions and all regions for selected end-uses', y=1, fontsize = 16)
 #fig.suptitle('Comparison of end-use shares - high sector aggregation', y=1, fontsize = 16)
 fig.tight_layout()
+#fig.savefig('Figure4.pdf', format='pdf', dpi =1200, bbox_inches='tight', pad_inches=0)
 
 
 #SAVE FIGURE 4 data to Excel (option 2: save after added the difference between MIOT and shipment results (below))
@@ -1036,6 +1204,13 @@ save_list2Excel(path, figure_4_plotNames, figure_4_plots)
 ADDITIONAL PLOTS: EXIOBASE plots in SI 1.3.3 (comparison of country-level industry shipments with MIOT-based results for aluminum and plastics
                                               
 '''
+##FULL lala DICTIONARY    
+dropped_sectors = ['Machinery and equipment n.e.c. ', 'Medical, precision and optical instruments, watches and clocks', \
+                    'Office machinery and computers','Radio, television and communication equipment and apparatus',\
+                    'Electrical machinery and apparatus n.e.c.', 'Office machinery and computers',  'Motor vehicles, trailers and semi-trailers',
+                    'Other transport equipment', 'Secondary materials', 'Printed matter and recorded media', 'Other raw materials',\
+                      'Energy carriers','Other','Products nec', 'Services' ]
+
 comp_mats = ['alumin', 'Plastic']
 for material in comp_mats:
     for region, df in  lala_dict.get(material).items():

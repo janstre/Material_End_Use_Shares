@@ -27,7 +27,7 @@ from EndUseShares_functions_v5 import hypothetical_transfer_exio, create_WIOMass
 
 '''
 ### 1 - define general variables
-years = list(range(1996,1997))
+years = list(range(1995,2012))
 regions = ['AT',  'AU', 'BE', 'BG', 'BR', 'CA', 'CH', 'CN', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FI', 'FR', 'GB', 'GR', 'HR', 'HU', 'ID', 'IE', 'IN', 'IT', 'JP',\
              'KR', 'LT', 'LU', 'LV', 'MT', 'MX', 'NL', 'NO', 'PL', 'PT', 'RO', 'RU', 'SE', 'SI', 'SK', 'TR', 'TW', 'US', 'WA', 'WE', 'WF', 'WL', 'WM', 'ZA']
 
@@ -76,7 +76,7 @@ filt_App_label_all = pd.concat([pd.concat([filt_App_label_single]*49, axis=1 ,ig
 
 '''
 
-  #2 CALCULATE D_WIO per region/country and year (and save as Excel)
+  #2 CALCULATE D_HT_WIO per region/country and year (and save as Excel)
 
 '''            
 
