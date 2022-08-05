@@ -6,4 +6,4 @@ industry shipment data in physical units and monetary input-output tables.
 Underlying methods and documentation can be found in the two relared journal articles
 that are currently under review.
 
-This information will be updated, once the journal articles are published.
+This information will be updated, once the journal articles are published. 
