@@ -1,4 +1,4 @@
-# IO_MaterialEndUse_Shares
+# Material_End_Use_Shares
 
 This repository documents code and data for tracing material flows into final products using 
 industry shipment data in physical units and monetary input-output tables.
