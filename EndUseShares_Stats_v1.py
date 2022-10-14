@@ -19,7 +19,7 @@ path_input_data =  os.path.join(main_path, 'input_data/')
 data_path_usa = os.path.join(main_path, 'output/USA/')
 data_path_exio = os.path.join(main_path, 'output/Exiobase/')
 
-from EndUseShares_GraphsStatistics_FunctionsV1 import save_list2Excel, save_dict2Excel, calc_relDeviation, assemble_materialEndUse_df
+from EndUseShares_GraphsStatistics_functions_v1 import save_list2Excel, save_dict2Excel, calc_relDeviation, assemble_materialEndUse_df
 
 '''
     #1 Load end-use shares for USA (national tables and Exiobase)
@@ -67,23 +67,23 @@ for year in years:
         ParGhosh_single = pd.read_excel(file, sheet_name='EndUse_shares_agg',index_col=[0,1],header=[0,1])
     ParGhosh_dict[year] = ParGhosh_single
     
-HTWio_dict = {}
+EUTWio_dict = {}
 for year in years:
-    for file in glob.glob(os.path.join((data_path_usa + 'HT_WIOMF_' + str(year) + '_Base' + '*.xlsx'))):
-        HTWio_single = pd.read_excel(file, sheet_name='EndUse_shares_agg',index_col=[0,1],header=[0,1])
-    HTWio_dict[year] = HTWio_single
+    for file in glob.glob(os.path.join((data_path_usa + 'EUT_WIOMF_' + str(year) + '_Base' + '*.xlsx'))):
+        EUTWio_single = pd.read_excel(file, sheet_name='EndUse_shares_agg',index_col=[0,1],header=[0,1])
+    EUTWio_dict[year] = EUTWio_single
     
-HTWio_ext_dict = {}
+EUTWio_ext_dict = {}
 for year in years:
-    for file in glob.glob(os.path.join((data_path_usa + 'HT_WIOMF_' + str(year) + '_ExtAgg' + '*.xlsx'))):
-        HTWio_single = pd.read_excel(file, sheet_name='EndUse_shares_agg',index_col=[0,1],header=[0,1])
-    HTWio_ext_dict[year] = HTWio_single
+    for file in glob.glob(os.path.join((data_path_usa + 'EUT_WIOMF_' + str(year) + '_ExtAgg' + '*.xlsx'))):
+        EUTWio_single = pd.read_excel(file, sheet_name='EndUse_shares_agg',index_col=[0,1],header=[0,1])
+    EUTWio_ext_dict[year] = EUTWio_single
     
-HTWio_detail_dict = {}
+EUTWio_detail_dict = {}
 for year in years:
-    for file in glob.glob(os.path.join((data_path_usa + 'HT_WIOMF_' + str(year) + '_Base' + '*.xlsx'))):
-        HTWio_detail_single = pd.read_excel(file, sheet_name='EndUse_shares',index_col=[0,1],header=[0,1])
-    HTWio_detail_dict[year] = HTWio_detail_single 
+    for file in glob.glob(os.path.join((data_path_usa + 'EUT_WIOMF_' + str(year) + '_Base' + '*.xlsx'))):
+        EUTWio_detail_single = pd.read_excel(file, sheet_name='EndUse_shares',index_col=[0,1],header=[0,1])
+    EUTWio_detail_dict[year] = EUTWio_detail_single 
 
 # dictionary for industry shipments in physical units    
 phys_materials = ['pd_IronSteel','pd_Alu','pd_Copper','pd_Wood','pd_Cement','pd_Plastics']
@@ -103,7 +103,7 @@ Exio_dict = {}
 for region in regions:
     Region_dict = {}
     for year in years_exio:
-        for file in glob.glob(os.path.join((data_path_exio + 'Exio_HT_WIOMF_' + str(year) + '_' + region + '*.xlsx'))):
+        for file in glob.glob(os.path.join((data_path_exio + 'Exio_EUT_WIOMF_' + str(year) + '_' + region + '*.xlsx'))):
             Region_single = pd.read_excel(file, sheet_name='EndUse_shares_agg',index_col=[0,1],header=[0])
         Region_dict[year] = Region_single
     Exio_dict[region] = Region_dict
@@ -126,8 +126,8 @@ for region in regions:
     region_dict.update({region:dict_1})
 
 # SAVE selected dictionary to Excel    
-# path = './output/USA/FiguresStats/' + 'HTWIO_fullResults_USA'  
-# save_dict2Excel(path, HTWio_dict )  
+# path = './output/USA/FiguresStats/' + 'EUTWIO_fullResults_USA'  
+# save_dict2Excel(path, EUTWio_dict )  
 
 '''
     #2 Assemble detailed comparison for USA national data + shipments + Exiobase (selected method)
@@ -135,8 +135,8 @@ for region in regions:
 
 years = [1963,1967,1972,1977,1982,1987,1992,1997,2002,2007,2012]
 
-methods = [CBA_dict, Wio_dict, Ghosh_dict, ParGhosh_dict, HTWio_dict] 
-method_names = ['CBA', 'WIO-MFA', 'Ghosh-IO AMC', 'Partial Ghosh-IO', 'HT-WIO' ]
+methods = [CBA_dict, Wio_dict, Ghosh_dict, ParGhosh_dict, EUTWio_dict] 
+method_names = ['CBA', 'WIO-MFA', 'Ghosh-IO AMC', 'Partial Ghosh-IO', 'EUT-WIO' ]
 
 # re-assemble data to dataframes per material and end-use
 plastic_packaging_food_df, plastic_transport_df, plastic_construction_df, plastic_electrical_df, plastic_furniture_df, alu_transport_df, \
@@ -149,7 +149,7 @@ plastic_packaging_food_df, plastic_transport_df, plastic_construction_df, plasti
 
 '''STATISTICS'''
 
-# assemble lists for calculating relative deviations of MIOT-based results (HT-WIO) to industry shipments with median, min, max, percentiles
+# assemble lists for calculating relative deviations of MIOT-based results (EUT-WIO) to industry shipments with median, min, max, percentiles
 
 figure2_overall_dev = [ wood_construction_df, wood_transport_df,wood_packaging_food_df, wood_machinery_df, wood_furniture_df,\
               steel_construction_df, steel_transport_df,  steel_packaging_food_df, steel_machinery_df, steel_furniture_df,\
@@ -184,7 +184,7 @@ packaging_stats = [plastic_packaging_food_df, alu_packaging_food_df, steel_packa
 #####
 
 '''
-STATS 1: calculate the relative deviation of HT-WIO from industry shipment datasources
+STATS 1: calculate the relative deviation of EUT-WIO from industry shipment datasources
 '''
 
 analysis_list = ['figure2_overall_dev', 'plastics_stats', 'alu_stats', 'steel_stats', 'wood_stats', 'copper_stats', 'construction_stats', \
@@ -200,25 +200,25 @@ for i in analysis_list_eval:
     rel_deviation = []
     for frame in i:
         try:
-            frame['HT-Shipment1'] = frame['HT-WIO'] - frame['Shipment_1']
-            frame['HT-Shipment1_rel']  = (frame['HT-WIO'] - frame['Shipment_1'])/frame['Shipment_1']
-            total_deviation.append(frame['HT-Shipment1'].dropna().values.tolist())
-            rel_deviation.append(frame['HT-Shipment1_rel'].dropna().values.tolist())
+            frame['EUT-Shipment1'] = frame['EUT-WIO'] - frame['Shipment_1']
+            frame['EUT-Shipment1_rel']  = (frame['EUT-WIO'] - frame['Shipment_1'])/frame['Shipment_1']
+            total_deviation.append(frame['EUT-Shipment1'].dropna().values.tolist())
+            rel_deviation.append(frame['EUT-Shipment1_rel'].dropna().values.tolist())
         except:
             pass
         try:
-            frame['HT-Shipment2']  = frame['HT-WIO'] - frame['Shipment_2']
-            total_deviation.append(frame['HT-Shipment2'].dropna().values.tolist())
-            frame['HT-Shipment2_rel']  = (frame['HT-WIO'] - frame['Shipment_2'])/frame['Shipment_2']
-            total_deviation.append(frame['HT-Shipment2'].dropna().values.tolist())
-            rel_deviation.append(frame['HT-Shipment2_rel'].dropna().values.tolist())
+            frame['EUT-Shipment2']  = frame['EUT-WIO'] - frame['Shipment_2']
+            total_deviation.append(frame['EUT-Shipment2'].dropna().values.tolist())
+            frame['EUT-Shipment2_rel']  = (frame['EUT-WIO'] - frame['Shipment_2'])/frame['Shipment_2']
+            total_deviation.append(frame['EUT-Shipment2'].dropna().values.tolist())
+            rel_deviation.append(frame['EUT-Shipment2_rel'].dropna().values.tolist())
         except:
             pass
         try:
-            frame['HT-Shipment3']  = frame['HT-WIO'] - frame['Shipment_3']
-            frame['HT-Shipment3_rel']  = (frame['HT-WIO'] - frame['Shipment_3'])/frame['Shipment_3']
-            total_deviation.append(frame['HT-Shipment3'].dropna().values.tolist())
-            rel_deviation.append(frame['HT-Shipment3_rel'].dropna().values.tolist())
+            frame['EUT-Shipment3']  = frame['EUT-WIO'] - frame['Shipment_3']
+            frame['EUT-Shipment3_rel']  = (frame['EUT-WIO'] - frame['Shipment_3'])/frame['Shipment_3']
+            total_deviation.append(frame['EUT-Shipment3'].dropna().values.tolist())
+            rel_deviation.append(frame['EUT-Shipment3_rel'].dropna().values.tolist())
         except:
             pass
         
@@ -232,14 +232,14 @@ for i in analysis_list_eval:
     minim = min(rel_deviation_abs)
     
     
-    lala = pd.DataFrame([[{'absolutes_rel_dev':rel_deviation_abs,'rel_dev_mean':rel_dev_mean, 'rel_dev_med':rel_dev_med, 'lower':lower,
+    stat_dict = pd.DataFrame([[{'absolutes_rel_dev':rel_deviation_abs,'rel_dev_mean':rel_dev_mean, 'rel_dev_med':rel_dev_med, 'lower':lower,
                            'upper':upper, 'quantiles2.5':quantiles, 'maxim':maxim, 'minum':minim }]])
-    analysis_dict_1[analysis_list[k]] = lala
+    analysis_dict_1[analysis_list[k]] = stat_dict
     
     k = k+1
 
 # SAVE (optional)
-writer = pd.ExcelWriter('./output/USA/FiguresStats/' + 'DeviationStats_ShipmentHTWIO' + '_Run_{}.xlsx'.format(pd.datetime.today().strftime('%y%m%d-%H%M%S')))
+writer = pd.ExcelWriter('./output/USA/FiguresStats/' + 'DeviationStats_ShipmentEUTWIO' + '_Run_{}.xlsx'.format(pd.datetime.today().strftime('%y%m%d-%H%M%S')))
 for df_name, df in analysis_dict_1.items():
     df.to_excel(writer, sheet_name=df_name)
 writer.save()
@@ -248,7 +248,7 @@ writer.save()
 
 
 '''
-STATS 2: calculate the relative deviation of USA national official MIOTs to EXIOBASE US data for FIGURE2 plots (for HT-WIO)
+STATS 2: calculate the relative deviation of USA national official MIOTs to EXIOBASE US data for FIGURE2 plots (for EUT-WIO)
 '''
 
 analysis_list_eval = []
@@ -263,8 +263,8 @@ for i in analysis_list_eval:
     rel_deviation = []
     for frame in i:
         try:
-            frame['USA-Exio'] = frame['HT-WIO'] - frame['Exio_HT-WIO']
-            frame['USA-Exio_rel']  = (frame['HT-WIO'] - frame['Exio_HT-WIO'])/frame['Exio_HT-WIO']
+            frame['USA-Exio'] = frame['EUT-WIO'] - frame['Exio_EUT-WIO']
+            frame['USA-Exio_rel']  = (frame['EUT-WIO'] - frame['Exio_EUT-WIO'])/frame['Exio_EUT-WIO']
             total_deviation.append(frame['USA-Exio'].dropna().values.tolist())
             rel_deviation.append(frame['USA-Exio_rel'].dropna().values.tolist())
         except:
@@ -282,14 +282,14 @@ for i in analysis_list_eval:
     except:
         pass      
 
-    lala = pd.DataFrame([[{'absolutes_rel_dev':rel_deviation_abs,'rel_dev_mean':rel_dev_mean, 'rel_dev_med':rel_dev_med, 'lower':lower,
+    stat_dict = pd.DataFrame([[{'absolutes_rel_dev':rel_deviation_abs,'rel_dev_mean':rel_dev_mean, 'rel_dev_med':rel_dev_med, 'lower':lower,
                            'upper':upper, 'quantiles2.5':quantiles, 'maxim':maxim, 'minum':minim }]])
-    analysis_dict_2[figure2_elements[k]] = lala
+    analysis_dict_2[figure2_elements[k]] = stat_dict
     
     k = k+1
 
 # SAVE (optional)
-writer = pd.ExcelWriter('./output/USA/FiguresStats/' + 'DeviationStats_NationalExioHTWIO' + '_Run_{}.xlsx'.format(pd.datetime.today().strftime('%y%m%d-%H%M%S')))
+writer = pd.ExcelWriter('./output/USA/FiguresStats/' + 'DeviationStats_NationalExioEUTWIO' + '_Run_{}.xlsx'.format(pd.datetime.today().strftime('%y%m%d-%H%M%S')))
 for df_name, df in analysis_dict_2.items():
     df.to_excel(writer, sheet_name=df_name)
 writer.save()

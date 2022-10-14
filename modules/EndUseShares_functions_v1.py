@@ -288,11 +288,11 @@ def calc_PartialGhoshIO(Z, filter_matrix, filt_ParGhosh, filt_ParGhosh_label, ag
 
 
 ''' 
-  # 5)  HYPOTHETICAL TRANSFER (HT) 
+  # 5)  END-USE TRANSFER (EUT) 
 '''
 
 # calculate new Z and Y matrices by transferring intermediate to final demand for selected sectoral output that is intermediate in MIOTs but end-use in MFA (e.g. packaging)
-def hypothetical_transfer(Z, Y, A, filter_transf, yield_filter):
+def end_use_transfer(Z, Y, A, filter_transf, yield_filter):
     
     #apply the pre-definied yield filter to Z so that no waste flows transferred to final demand
     Z_yield = Z * yield_filter
@@ -308,13 +308,13 @@ def hypothetical_transfer(Z, Y, A, filter_transf, yield_filter):
     
     x_diag = np.zeros_like(Z)
     np.fill_diagonal(x_diag, x)
-    A_ht = pd.DataFrame(np.dot(Z_transferred,np.linalg.pinv(x_diag)), index = Y.index, columns = Y.index)
-    print((A - A_ht).sum().sum()) #only difference here should be the yield substraction and transferred items
+    A_eut = pd.DataFrame(np.dot(Z_transferred,np.linalg.pinv(x_diag)), index = Y.index, columns = Y.index)
+    print((A - A_eut).sum().sum()) #only difference here should be the yield substraction and transferred items
 
-    return Y_transferred, Z_transferred, A_ht
+    return Y_transferred, Z_transferred, A_eut
 
 # calculate new Z and Y matrices by transferring intermediate to final demand for selected sectoral output that is intermediate in MIOTs but end-use in MFA (e.g. packaging)
-def hypothetical_transfer_exio(Z, Y, filter_transf, yield_filter):
+def end_use_transfer_exio(Z, Y, filter_transf, yield_filter):
     
     #apply the pre-definied yield filter to Z so that no waste flows transferred to final demand
     Z_yield = Z * yield_filter
@@ -344,13 +344,13 @@ def hypothetical_transfer_exio(Z, Y, filter_transf, yield_filter):
     np.fill_diagonal(x_inv_diag, x_inv)
     
     # calculate new A; use original x as it does not change by transfer
-    A_ht = pd.DataFrame(np.dot(Z_transferred,x_inv_diag), index = Z_transferred.index, columns = Z_transferred.columns)
+    A_eut = pd.DataFrame(np.dot(Z_transferred,x_inv_diag), index = Z_transferred.index, columns = Z_transferred.columns)
 
-    return Y_transferred, Z_transferred, A_ht
+    return Y_transferred, Z_transferred, A_eut
 
 
-# calculate WIO-MFA end-use share matrix D_wio INCLUDING HYPOTHETICAL TRANSFER using mass filter matrices defined in prior functions (equ. 1-3 in Streeck et al. 2022, part I)
-# no yield correction here, as this already occured during function hypothetical_transfer
+# calculate WIO-MFA end-use share matrix D_wio INCLUDING END-USE TRANSFER using mass filter matrices defined in prior functions (equ. 1-3 in Streeck et al. 2022, part I)
+# no yield correction here, as this already occured during function end_use_transfer
 def calc_WIO_noYieldCorr(A, Y, filt_Amp, filt_App, filter_matrix, aggregation_matrix, extension_products):
     
     # filter technology matrix A according to WIO-MFA mass filters and partition into Amp (materials --> products), App (products --> products)
@@ -378,8 +378,8 @@ def calc_WIO_noYieldCorr(A, Y, filt_Amp, filt_App, filter_matrix, aggregation_ma
     return D_wio,D_wio_aggregated,WIO_split,check_wio   
 
 
-# calculate WIO-MFA end-use share matrix D_wio INCLUDING HYPOTHETICAL TRANSFER using mass filter matrices defined in prior functions (equ. 1-3 in Streeck et al. 2022, part I)
-# no yield correction here, as this already occured during function hypothetical_transfer
+# calculate WIO-MFA end-use share matrix D_wio INCLUDING END-USE TRANSFER using mass filter matrices defined in prior functions (equ. 1-3 in Streeck et al. 2022, part I)
+# no yield correction here, as this already occured during function end_use_transfer
 def calc_WIO_noYieldCorr_exio(A, Y, filt_Amp, filt_App, filter_matrix, aggregation_matrix, extension_products):
     
     # filter technology matrix A according to WIO-MFA mass filters and partition into Amp (materials --> products), App (products --> products)
@@ -449,7 +449,7 @@ def save_to_excel(fileName, D, D_aggregated, check, total_split=pd.DataFrame(), 
     GhoshYfilter.to_excel(writer,'filt_Ghosh_Y')
     filt_ParGhosh.to_excel(writer,'filter_ParGhosh')
     MarketShares.to_excel(writer,'Direct_market_shares')
-    filter_transf.to_excel(writer,'filter_HypothTransfer')
-    Ztransferred.to_excel(writer,'Z_afterHypothTransfer')
-    Ytransferred.to_excel(writer,'Y_afterHypothTransfer')
+    filter_transf.to_excel(writer,'filter_EndUseTransfer')
+    Ztransferred.to_excel(writer,'Z_afterEndUseTransfer')
+    Ytransferred.to_excel(writer,'Y_afterEndUseTransfer')
     writer.save()

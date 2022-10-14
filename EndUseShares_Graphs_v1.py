@@ -21,7 +21,7 @@ path_input_data =  os.path.join(main_path, 'input_data/')
 data_path_usa = os.path.join(main_path, 'output/USA/')
 data_path_exio = os.path.join(main_path, 'output/Exiobase/')
 
-from EndUseShares_GraphsStatistics_FunctionsV1 import save_list2Excel, save_dict2Excel, calc_relDeviation, assemble_materialEndUse_df
+from EndUseShares_GraphsStatistics_functions_v1 import save_list2Excel, save_dict2Excel, calc_relDeviation, assemble_materialEndUse_df
 
 
 '''
@@ -68,23 +68,23 @@ for year in years:
         ParGhosh_single = pd.read_excel(file, sheet_name='EndUse_shares_agg',index_col=[0,1],header=[0,1])
     ParGhosh_dict[year] = ParGhosh_single
     
-HTWio_dict = {}
+EUTWio_dict = {}
 for year in years:
-    for file in glob.glob(os.path.join((data_path_usa + 'HT_WIOMF_' + str(year) + '_Base' + '*.xlsx'))):
-        HTWio_single = pd.read_excel(file, sheet_name='EndUse_shares_agg',index_col=[0,1],header=[0,1])
-    HTWio_dict[year] = HTWio_single
+    for file in glob.glob(os.path.join((data_path_usa + 'EUT_WIOMF_' + str(year) + '_Base' + '*.xlsx'))):
+        EUTWio_single = pd.read_excel(file, sheet_name='EndUse_shares_agg',index_col=[0,1],header=[0,1])
+    EUTWio_dict[year] = EUTWio_single
     
-HTWio_ext_dict = {}
+EUTWio_ext_dict = {}
 for year in years:
-    for file in glob.glob(os.path.join((data_path_usa + 'HT_WIOMF_' + str(year) + '_ExtAgg' + '*.xlsx'))):
-        HTWio_single = pd.read_excel(file, sheet_name='EndUse_shares_agg',index_col=[0,1],header=[0,1])
-    HTWio_ext_dict[year] = HTWio_single
+    for file in glob.glob(os.path.join((data_path_usa + 'EUT_WIOMF_' + str(year) + '_ExtAgg' + '*.xlsx'))):
+        EUTWio_single = pd.read_excel(file, sheet_name='EndUse_shares_agg',index_col=[0,1],header=[0,1])
+    EUTWio_ext_dict[year] = EUTWio_single
     
-HTWio_detail_dict = {}
+EUTWio_detail_dict = {}
 for year in years:
-    for file in glob.glob(os.path.join((data_path_usa + 'HT_WIOMF_' + str(year) + '_Base' + '*.xlsx'))):
-        HTWio_detail_single = pd.read_excel(file, sheet_name='EndUse_shares',index_col=[0,1],header=[0,1])
-    HTWio_detail_dict[year] = HTWio_detail_single 
+    for file in glob.glob(os.path.join((data_path_usa + 'EUT_WIOMF_' + str(year) + '_Base' + '*.xlsx'))):
+        EUTWio_detail_single = pd.read_excel(file, sheet_name='EndUse_shares',index_col=[0,1],header=[0,1])
+    EUTWio_detail_dict[year] = EUTWio_detail_single 
 
 # dictionary for industry shipments in physical units    
 phys_materials = ['pd_IronSteel','pd_Alu','pd_Copper','pd_Wood','pd_Cement','pd_Plastics']
@@ -104,7 +104,7 @@ Exio_dict = {}
 for region in regions:
     Region_dict = {}
     for year in years_exio:
-        for file in glob.glob(os.path.join((data_path_exio + 'Exio_HT_WIOMF_' + str(year) + '_' + region + '*.xlsx'))):
+        for file in glob.glob(os.path.join((data_path_exio + 'Exio_EUT_WIOMF_' + str(year) + '_' + region + '*.xlsx'))):
             Region_single = pd.read_excel(file, sheet_name='EndUse_shares_agg',index_col=[0,1],header=[0])
         Region_dict[year] = Region_single
     Exio_dict[region] = Region_dict
@@ -129,8 +129,8 @@ for region in regions:
 
 #SAVE method dictionaries to Excel (and calculate sum of all end-use shares to check if 100%)
 ##sum doesn't make sense for industry shipments
-# methods = [CBA_dict, Wio_dict, Ghosh_dict, ParGhosh_dict, HTWio_dict, phys_dict] 
-# method_names = ['CBA', 'WIO-MFA', 'Ghosh-IO AMC', 'Partial Ghosh-IO', 'HT-WIO', 'Industry_Shipments' ]
+# methods = [CBA_dict, Wio_dict, Ghosh_dict, ParGhosh_dict, EUTWio_dict, phys_dict] 
+# method_names = ['CBA', 'WIO-MFA', 'Ghosh-IO AMC', 'Partial Ghosh-IO', 'EUT-WIO', 'Industry_Shipments' ]
 # k=0
 # for k in range(0,len(methods)):
 #     for e,f in methods[k].items():
@@ -147,12 +147,12 @@ for region in regions:
 
 years = [1963,1967,1972,1977,1982,1987,1992,1997,2002,2007,2012]
 
-methods = [CBA_dict, Wio_dict, Ghosh_dict, ParGhosh_dict, HTWio_dict] 
-method_names = ['CBA', 'WIO-MFA', 'Ghosh-IO AMC', 'Partial Ghosh-IO', 'HT-WIO' ]
+methods = [CBA_dict, Wio_dict, Ghosh_dict, ParGhosh_dict, EUTWio_dict] 
+method_names = ['CBA', 'WIO-MFA', 'Ghosh-IO AMC', 'Partial Ghosh-IO', 'EUT-WIO' ]
 
 #optionally with ExtAgg and WIO_filter diff (choose this instead of two lines above if assembling FIGURE 2 SENSITIVITY; only works for this single plot!)
-# methods = [ Wio_dict, Wio_ext_dict , Wio_withServiceInput_dict,  HTWio_dict, HTWio_ext_dict] 
-# method_names = [ 'WIO-MFA', 'WIO-MFA_extAgg','WIO-MFA_filtDif', 'HT-WIO', 'HT-WIO_extAgg' ]
+# methods = [ Wio_dict, Wio_ext_dict , Wio_withServiceInput_dict,  EUTWio_dict, EUTWio_ext_dict] 
+# method_names = [ 'WIO-MFA', 'WIO-MFA_extAgg','WIO-MFA_filtDif', 'EUT-WIO', 'EUT-WIO_extAgg' ]
 
 
 # re-assemble data to dataframes per material and end-use
@@ -324,7 +324,7 @@ years =  [1963, 1967, 1972, 1977, 1982, 1987, 1992, 1997, 2002, 2007, 2012]
 # list2dict = dict(zip(mat_names, mat_items))
 # writer = pd.ExcelWriter(path + '_Run_{}.xlsx'.format(pd.datetime.today().strftime('%y%m%d-%H%M%S')))
 # for df_name, df in  list2dict.items():
-#     df.get('HT-WIO').to_excel(writer, sheet_name=df_name)
+#     df.get('EUT-WIO').to_excel(writer, sheet_name=df_name)
 # writer.save()
 
 
@@ -342,11 +342,11 @@ dummy_df[:] = 0
 pal = sns.color_palette("colorblind") 
 
 color_dict = {'CBA':pal[0], 'WIO-MFA': pal[1], 'Ghosh-IO AMC':pal[2],  \
-              'Partial Ghosh-IO': pal[3], 'HT-WIO': 'maroon', 'Exio_HT-WIO': pal[4],\
+              'Partial Ghosh-IO': pal[3], 'EUT-WIO': 'maroon', 'Exio_EUT-WIO': pal[4],\
             'Shipment_1':pal[7], 'Shipment_2':pal[0],'Shipment_3':pal[3]}
 
 marker_dict = {'CBA':'o', 'WIO-MFA': 'o', 'Ghosh-IO AMC':'o',  \
-              'Partial Ghosh-IO': 'o', 'HT-WIO': 'v', 'Exio_HT-WIO': '.'}
+              'Partial Ghosh-IO': 'o', 'EUT-WIO': 'v', 'Exio_EUT-WIO': '.'}
 
 name_list1 = ['(a) wood_construction_df','(b) wood_transport_df','(c) wood_packaging_food_df', '(d) wood_machinery_df', '(e) wood_furniture_df',\
               '(f) steel_construction_df', '(g) steel_transport_df',  '(h) steel_packaging_food_df', '(i) steel_machinery_df',  '(j) steel_furniture_df',\
@@ -362,7 +362,7 @@ fig, axs = plt.subplots(5,5 ,sharex=False, sharey=False, figsize=(33,20))
 for i in range(0,5):
     for j in range (0,5):
         plot_list1[k].plot(ax=axs[i,j], color = [color_dict.get(r) for r in plot_list1[k]], style = [marker_dict.get(r, '*') for r in plot_list1[k]], kind='line', title= name_list1[k][:-3], fontsize=16, legend = False)
-        plot_list1[k].xs('HT-WIO',axis=1).dropna().plot(ax=axs[i,j], color = 'maroon', style =  'v', kind='line', legend = False, linestyle='--')
+        plot_list1[k].xs('EUT-WIO',axis=1).dropna().plot(ax=axs[i,j], color = 'maroon', style =  'v', kind='line', legend = False, linestyle='--')
         axs[i,j].set_ylabel('%')
         axs[i,j].set_xticks([1963,1972,1982,1992,2002,2012])
         axs[i,j].title.set_fontsize(18)
@@ -395,7 +395,7 @@ def add_line(legend):
 add_line(lgd)
 fig.suptitle('Comparison of end-use shares - low sector resolution', y=1, fontsize = 22)
 fig.tight_layout()
-#fig.savefig('Figure2.pdf', format='pdf', dpi =1200, bbox_inches='tight', pad_inches=0)
+fig.savefig('Figure2.pdf', format='pdf', dpi =1200, bbox_inches='tight', pad_inches=0)
 
 # #SAVE plot data to Excel (optional)
 # path = './output/USA/FiguresStats/' + 'Data_Figure2'   
@@ -414,11 +414,11 @@ variables methods & method_names need to be changed above for this plot to work
 # dummy_df[:] = 0
 
 # #optionally with ExtAgg and WIO_filter diff
-# color_dict = {'WIO-MFA': pal[3], 'HT-WIO': 'maroon', 'WIO-MFA_extAgg': pal[3],'WIO-MFA_filtDif': pal[3], \
-#             'HT-WIO_extAgg': 'maroon','Exio_HT-WIO': pal[4], 'Shipment_1':pal[7], 'Shipment_2':pal[0],'Shipment_3':pal[3]}
+# color_dict = {'WIO-MFA': pal[3], 'EUT-WIO': 'maroon', 'WIO-MFA_extAgg': pal[3],'WIO-MFA_filtDif': pal[3], \
+#             'EUT-WIO_extAgg': 'maroon','Exio_EUT-WIO': pal[4], 'Shipment_1':pal[7], 'Shipment_2':pal[0],'Shipment_3':pal[3]}
 
-# marker_dict = {'WIO-MFA': 'o', 'HT-WIO': 'v', 'WIO-MFA_extAgg': 'X','WIO-MFA_filtDif': '+' ,\
-#             'HT-WIO_extAgg': 'X'}
+# marker_dict = {'WIO-MFA': 'o', 'EUT-WIO': 'v', 'WIO-MFA_extAgg': 'X','WIO-MFA_filtDif': '+' ,\
+#             'EUT-WIO_extAgg': 'X'}
 
 
 # name_list1 = ['(a) wood_construction_df','(b) wood_transport_df','(c) wood_packaging_food_df', '(d) wood_machinery_df', '(e) wood_furniture_df',\
@@ -435,7 +435,7 @@ variables methods & method_names need to be changed above for this plot to work
 # for i in range(0,5):
 #     for j in range (0,5):
 #         plot_list1[k].plot(ax=axs[i,j], color = [color_dict.get(r) for r in plot_list1[k]], style = [marker_dict.get(r, '*') for r in plot_list1[k]], kind='line', title= name_list1[k][:-3], legend = False)
-#         plot_list1[k].xs('HT-WIO',axis=1).dropna().plot(ax=axs[i,j], color = 'maroon', kind='line', legend = False, linestyle='--')
+#         plot_list1[k].xs('EUT-WIO',axis=1).dropna().plot(ax=axs[i,j], color = 'maroon', kind='line', legend = False, linestyle='--')
 #         k = k+1
 #         axs[i,j].set_ylabel('%')
 #         axs[i,j].set_xticks([1963,1972,1982,1992,2002,2012])
@@ -455,7 +455,7 @@ variables methods & method_names need to be changed above for this plot to work
 #     legend.set_title(legend.get_title().get_text())
     
 # add_line(lgd)
-# fig.suptitle('Sensitivity to extension choice & filter design (WIO-MFA, HT-WIO) - high sector aggregation', y=1, fontsize = 16)
+# fig.suptitle('Sensitivity to extension choice & filter design (WIO-MFA, EUT-WIO) - high sector aggregation', y=1, fontsize = 16)
 # fig.tight_layout()
 
 # ### ADD differences of sensitivity and base cases and SAVE to EXCEL
@@ -463,10 +463,10 @@ variables methods & method_names need to be changed above for this plot to work
 # for frame in analysis_list_eval:
 #     try:
 #         frame['Diff_WIO-MFA_extAgg'] = frame['WIO-MFA'] - frame['WIO-MFA_extAgg']
-#         frame['Diff_HT-WIO_extAgg'] = frame['HT-WIO'] - frame['HT-WIO_extAgg']
+#         frame['Diff_EUT-WIO_extAgg'] = frame['EUT-WIO'] - frame['EUT-WIO_extAgg']
 #         frame['Diff_WIO-MFA_filtDif'] = frame['WIO-MFA'] - frame['WIO-MFA_filtDif']
 #         frame['rel_Diff_WIO-MFA_extAgg'] = (frame['WIO-MFA'] - frame['WIO-MFA_extAgg']) / frame['WIO-MFA'] 
-#         frame['rel_Diff_HT-WIO_extAgg'] = (frame['HT-WIO'] - frame['HT-WIO_extAgg']) / frame['HT-WIO']
+#         frame['rel_Diff_EUT-WIO_extAgg'] = (frame['EUT-WIO'] - frame['EUT-WIO_extAgg']) / frame['EUT-WIO']
 #         frame['rel_Diff_WIO-MFA_filtDif'] = (frame['WIO-MFA'] - frame['WIO-MFA_filtDif']) / frame['WIO-MFA'] 
 #     except:
 #         pass
@@ -485,17 +485,17 @@ variables methods & method_names need to be changed above for this plot to work
 '''
 # isolate construction sector sub-sectors and save in excel for manual processing
 # (no automatic processing as different for each year)
-# constr_1963 = HTWio_detail_dict.get(1963).iloc[19:26,:]
-# constr_1967 = HTWio_detail_dict.get(1967).iloc[26:76,:]
-# constr_1972 = HTWio_detail_dict.get(1972).iloc[26:76,:]
-# constr_1977 = HTWio_detail_dict.get(1977).iloc[30:83,:]
-# constr_1982 = HTWio_detail_dict.get(1982).iloc[30:83,:]
-# constr_1987 = HTWio_detail_dict.get(1987).iloc[30:83,:]
-# constr_1992 = HTWio_detail_dict.get(1992).iloc[30:45,:] #checl if to add to this and the above minign stuff
-# constr_1997 = HTWio_detail_dict.get(1997).iloc[26:45,:]
-# constr_2002 = HTWio_detail_dict.get(2002).iloc[27:40,:]
-# constr_2007 = HTWio_detail_dict.get(2007).iloc[19:36,:] 
-# constr_2012 = HTWio_detail_dict.get(2012).iloc[19:36,:] 
+# constr_1963 = EUTWio_detail_dict.get(1963).iloc[19:26,:]
+# constr_1967 = EUTWio_detail_dict.get(1967).iloc[26:76,:]
+# constr_1972 = EUTWio_detail_dict.get(1972).iloc[26:76,:]
+# constr_1977 = EUTWio_detail_dict.get(1977).iloc[30:83,:]
+# constr_1982 = EUTWio_detail_dict.get(1982).iloc[30:83,:]
+# constr_1987 = EUTWio_detail_dict.get(1987).iloc[30:83,:]
+# constr_1992 = EUTWio_detail_dict.get(1992).iloc[30:45,:] #checl if to add to this and the above minign stuff
+# constr_1997 = EUTWio_detail_dict.get(1997).iloc[26:45,:]
+# constr_2002 = EUTWio_detail_dict.get(2002).iloc[27:40,:]
+# constr_2007 = EUTWio_detail_dict.get(2007).iloc[19:36,:] 
+# constr_2012 = EUTWio_detail_dict.get(2012).iloc[19:36,:] 
 
 # # save to Excel, including used filter matrices
 # writer = pd.ExcelWriter(data_path_usa + '/Construction_detail' + '_Run_{}.xlsx'.format(pd.datetime.today().strftime('%y%m%d-%H%M%S')))
@@ -531,10 +531,10 @@ cement_detail = pd.read_excel(data_path_usa + 'Construction_detail_Run_220317-10
 
 pal = sns.color_palette("colorblind") 
 color_dict = {'CBA':pal[0], 'WIO-MFA': pal[1], 'Ghosh-IO AMC':pal[2],  \
-              'Partial Ghosh-IO': pal[3], 'HT-WIO': 'maroon', 'Exio_HT-WIO': pal[4],\
+              'Partial Ghosh-IO': pal[3], 'EUT-WIO': 'maroon', 'Exio_EUT-WIO': pal[4],\
             'Shipment_1':pal[7], 'Shipment_2':pal[0],'Shipment_3':pal[3]}
 marker_dict = {'CBA':'o', 'WIO-MFA': 'o', 'Ghosh-IO AMC':'o',  \
-              'Partial Ghosh-IO': 'o', 'HT-WIO': 'v', 'Exio_HT-WIO': '.'}
+              'Partial Ghosh-IO': 'o', 'EUT-WIO': 'v', 'Exio_EUT-WIO': '.'}
 name_list1 = ['(a) wood_construction_df', '(b) wood_nonresidential_df','(a) wood_residential_df', '(x) dummy_df',
               '(x) dummy_df', '(x) dummy_df', '(e) cement_civil_engineering_df' , '(d) cement_nonresidential_df', '(c) cement_residential_df', '(x) dummy_df']
 plot_list1 = [eval(e[4:]) for e in name_list1]
@@ -548,7 +548,7 @@ for i in range(0,5):
     for j in range (0,2):
         try:
             plot_list1[k].plot(ax=axs[i,j], color = [color_dict.get(r,pal[0]) for r in plot_list1[k]], style = [marker_dict.get(r, '*') for r in plot_list1[k]], kind='line', title= name_list1[k][:-3], legend = False)
-            plot_list1[k].xs('HT-WIO',axis=1).dropna().plot(ax=axs[i,j], color = 'maroon', style =  'v', kind='line', legend = False, linestyle='--')
+            plot_list1[k].xs('EUT-WIO',axis=1).dropna().plot(ax=axs[i,j], color = 'maroon', style =  'v', kind='line', legend = False, linestyle='--')
             axs[i,j].set_ylabel('%')
             axs[i,j].set_xticks([1963,1972,1982,1992,2002,2012])
         except:
@@ -641,16 +641,16 @@ axs[4,1].xaxis.label.set_visible(False)
 axs[0,0].set_title('(a) wood construction')
 axs[0,1].set_title('(b) wood construction: non-residential')
 axs[1,0].set_title('(c) wood construction: residential')
-axs[1,1].set_title('(d) wood residential: housing types & repairs (HT-WIO)')
+axs[1,1].set_title('(d) wood residential: housing types & repairs (EUT-WIO)')
 
 axs[3,0].set_title('(e) cement construction: civil engineering')
 axs[3,1].set_title('(f) cement construction: non-residential')
 axs[4,0].set_title('(g) cement construction: residential')
-axs[4,1].set_title('(h) cement residential: housing types & repairs (HT-WIO)')
+axs[4,1].set_title('(h) cement residential: housing types & repairs (EUT-WIO)')
 
 fig.suptitle('Construction end-use shares wood & cement - low to high sector resolution', y=1, fontsize = 16)
 fig.tight_layout()
-#fig.savefig('Figure3.pdf', format='pdf', dpi =1200, bbox_inches='tight', pad_inches=0)
+fig.savefig('Figure3.pdf', format='pdf', dpi =1200, bbox_inches='tight', pad_inches=0)
 
 # #SAVE FIGURE 3 data to Excel (optional)
 # path = './output/USA/FiguresStats/' + 'Data_Figure3'   
@@ -696,13 +696,14 @@ Exio_dict = {}
 for region in regions:
     Region_dict = {}
     for year in years_exio:
-        for file in glob.glob(os.path.join((data_path_exio + 'Exio_HT_WIOMF_' + str(year) + '_' + region + '*.xlsx'))):
+        for file in glob.glob(os.path.join((data_path_exio + 'Exio_EUT_WIOMF_' + str(year) + '_' + region + '*.xlsx'))):
             Region_single = pd.read_excel(file, sheet_name='EndUse_shares_agg',index_col=[0,1],header=[0])
         Region_dict[year] = Region_single
     Exio_dict[region] = Region_dict
 
 # assemble EXIOBASE dictionary per material
-materials = ['steel', 'wood', 'Plastic', 'glass', 'alumin', 'tin', 'Copper']
+materials = ['steel', 'Wood', 'Plastic', 'alumin', 'Lead, zinc and tin', 'Copper', 'non-ferrous metal', 'Precious metals',
+             'Cement, lime and plaster', 'Bricks, tiles', 'Glass', 'Bitumen', 'Pulp', 'Sand and clay', 'Stone']
 region_dict ={}
 
 for region in regions:
@@ -716,6 +717,18 @@ for region in regions:
         material_dict.append(material_df)        
         dict_1 = dict(zip(materials,material_dict))
     region_dict.update({region:dict_1})
+
+
+# #SAVE dictionary for selected regions and all defined materials (optional)
+# save_regions = ['PT']
+# save_materials = materials
+# path = 'C:/Users/jstreeck/Desktop/2021_Portugal/'
+# writer = pd.ExcelWriter(path + 'EXIOBASE_EndUse_Portugal' + '_Run_{}.xlsx'.format(pd.datetime.today().strftime('%y%m%d-%H%M%S')))
+# for region in save_regions:
+#     for material in  save_materials:
+#         df = region_dict.get(region).get(material)
+#         df.to_excel(writer, sheet_name = material)
+#     writer.save() 
 
 
 ### LOAD PHYSICAL SHIPMENT DATA FOR COUNTRIES OTHER THAN USA
@@ -735,7 +748,7 @@ plotRegions = ['CN', 'IN','GB', 'AT', 'AU', 'DE', 'BE', 'BR', 'JP', 'IT', 'ZA', 
 EU28 = ['GB', 'AT', 'DE', 'BE', 'IT', 'PT', 'NL', 'FR', 'NO', 'ES'] #might require expansion
 plotMaterials = [ 'Plastic', 'steel', 'Copper', 'alumin']
 
-lala_dict = {}
+material_region_dict = {}
 for plotMaterial in plotMaterials:
     Exio_region_plotDict = []
     for plotRegion in plotRegions:
@@ -818,16 +831,16 @@ for plotMaterial in plotMaterials:
         
         Exio_region_plotDict.append(plot_frame) 
         dict_2 = dict(zip(plotRegions,Exio_region_plotDict))
-    lala_dict.update({plotMaterial:dict_2})   
+    material_region_dict.update({plotMaterial:dict_2})   
     
     
 
-# ## FULL DETAIL: assemble dictionary for single countries to structure material end-uses for calling in plots and statistics
+# ## FULL DETAIL material_region DICT: assemble dictionary for single countries to structure material end-uses for calling in plots and statistics
 # plotRegions = ['CN', 'IN','GB', 'AT', 'AU', 'DE', 'BE', 'BR', 'JP', 'IT', 'ZA', 'PT', 'RU', 'NL', 'FR', 'NO', 'ES', 'CH']#['US', 'JP', 'GB', 'FR','IT','DE', 'PT', 'RU', 'IN','CN', 'ID', 'ZA']
 # EU28 = ['GB', 'AT', 'DE', 'BE', 'IT', 'PT', 'NL', 'FR', 'NO', 'ES'] #might require expansion
 # plotMaterials = [ 'Plastic', 'steel', 'Copper', 'alumin']
 
-# lala_dict = {}
+# material_region_dict = {}
 # for plotMaterial in plotMaterials:
 #     Exio_region_plotDict = []
 #     for plotRegion in plotRegions:
@@ -838,12 +851,12 @@ for plotMaterial in plotMaterials:
 #             plot_frame['Medical, precision and optical instruments, watches and clocks']
 #         plot_frame['Electrical machinery & appliances'] =  plot_frame['Office machinery and computers'] + \
 #             plot_frame['Radio, television and communication equipment and apparatus']+ \
-#                plot_frame['Electrical machinery and apparatus n.e.c.']
+#                 plot_frame['Electrical machinery and apparatus n.e.c.']
 #         plot_frame['Transportation'] = plot_frame['Motor vehicles, trailers and semi-trailers'] + \
 #             plot_frame['Other transport equipment']
 #         plot_frame['All other'] = plot_frame['Printed matter and recorded media'] + plot_frame['Other raw materials']+\
-#              + plot_frame['Secondary materials'] + plot_frame['Energy carriers']  \
-#                  + plot_frame[ 'Other'] + plot_frame[ 'Products nec'] + plot_frame['Services']
+#               + plot_frame['Secondary materials'] + plot_frame['Energy carriers']  \
+#                   + plot_frame[ 'Other'] + plot_frame[ 'Products nec'] + plot_frame['Services']
         
 #         if plotMaterial == 'Plastic':
 #             try:
@@ -909,15 +922,15 @@ for plotMaterial in plotMaterials:
         
 #         Exio_region_plotDict.append(plot_frame) 
 #         dict_2 = dict(zip(plotRegions,Exio_region_plotDict))
-#     lala_dict.update({plotMaterial:dict_2})   
+#     material_region_dict.update({plotMaterial:dict_2})   
     
     
-# SAVE dictionary for selected materials and all defined countries (optional)
+# #SAVE dictionary for selected materials and all defined countries (optional)
 # comp_mats = ['alumin', 'Plastic']
 # path = './output/Exiobase/FiguresStats/' + 'Exiobase_18Countries_Alu_Plastic'
 # writer = pd.ExcelWriter(path + '_Run_{}.xlsx'.format(pd.datetime.today().strftime('%y%m%d-%H%M%S')))
 # for material in comp_mats:
-#     for region, df in  lala_dict.get(material).items():
+#     for region, df in  material_region_dict.get(material).items():
 #         df.to_excel(writer, sheet_name= material + '_' + region)
 #     writer.save()   
 
@@ -955,7 +968,7 @@ FIGURE4 : EXIOBASE - combined region-level with all-region plots, swarmplots ann
 
 '''
    
-#AGGREGATED lala DICTIONARY       
+#AGGREGATED material_region DICTIONARY       
 dropped_sectors_aluSteel = ['Machinery and equipment n.e.c. ', 'Medical, precision and optical instruments, watches and clocks', \
                    'Office machinery and computers','Radio, television and communication equipment and apparatus',\
                     'Electrical machinery and apparatus n.e.c.', 'Office machinery and computers',  'Motor vehicles, trailers and semi-trailers',
@@ -968,9 +981,9 @@ dropped_sectors_plast = ['Machinery and equipment n.e.c. ', 'Medical, precision 
                     'Other transport equipment', 'Secondary materials', 'Printed matter and recorded media', 'Other raw materials',\
                       'Energy carriers','Other','Products nec', 'Services','Textiles','Furniture; other manufactured goods n.e.c.']
 
-# ##FULL lala DICTIONARY    
+# ##FULL material_region DICTIONARY    
 # dropped_sectors = ['Machinery and equipment n.e.c. ', 'Medical, precision and optical instruments, watches and clocks', \
-#                    'Office machinery and computers','Radio, television and communication equipment and apparatus',\
+#                     'Office machinery and computers','Radio, television and communication equipment and apparatus',\
 #                     'Electrical machinery and apparatus n.e.c.', 'Office machinery and computers',  'Motor vehicles, trailers and semi-trailers',
 #                     'Other transport equipment', 'Secondary materials', 'Printed matter and recorded media', 'Other raw materials',\
 #                       'Energy carriers','Other','Products nec', 'Services' ]
@@ -993,16 +1006,26 @@ marker_dict = {'Construction':'.-', 'Electrical machinery & appliances':'.-', 'T
                'Textiles':'.-', 'Food':'.-', 'All other':'.-' }
 
 
-china_steel = lala_dict.get('steel').get('CN').replace(0,np.nan).drop(dropped_sectors_aluSteel,axis=1).drop('Wang_Other',axis=1)
-india_steel = lala_dict.get('steel').get('IN').replace(0,np.nan).drop(dropped_sectors_aluSteel,axis=1)
-britain_steel= lala_dict.get('steel').get('GB').replace(0,np.nan).drop(dropped_sectors_aluSteel,axis=1) 
-china_alumin = lala_dict.get('alumin').get('CN').replace(0,np.nan).drop(dropped_sectors_aluSteel,axis=1).drop('Liu_Others',axis=1)
-india_alumin = lala_dict.get('alumin').get('IN').replace(0,np.nan).drop(dropped_sectors_aluSteel,axis=1).drop('Liu_Others',axis=1)
-britain_alumin= lala_dict.get('alumin').get('GB').replace(0,np.nan).drop(dropped_sectors_aluSteel,axis=1).drop('Liu_Others',axis=1)
-china_Plastic = lala_dict.get('Plastic').get('CN').replace(0,np.nan).drop(dropped_sectors_plast,axis=1)
-india_Plastic = lala_dict.get('Plastic').get('IN').replace(0,np.nan).drop(dropped_sectors_plast,axis=1)
-britain_Plastic= lala_dict.get('Plastic').get('GB').replace(0,np.nan).drop(dropped_sectors_plast,axis=1)
+china_steel = material_region_dict.get('steel').get('CN').replace(0,np.nan).drop(dropped_sectors_aluSteel,axis=1).drop('Wang_Other',axis=1)
+india_steel = material_region_dict.get('steel').get('IN').replace(0,np.nan).drop(dropped_sectors_aluSteel,axis=1)
+britain_steel= material_region_dict.get('steel').get('GB').replace(0,np.nan).drop(dropped_sectors_aluSteel,axis=1) 
+china_alumin = material_region_dict.get('alumin').get('CN').replace(0,np.nan).drop(dropped_sectors_aluSteel,axis=1).drop('Liu_Others',axis=1)
+india_alumin = material_region_dict.get('alumin').get('IN').replace(0,np.nan).drop(dropped_sectors_aluSteel,axis=1).drop('Liu_Others',axis=1)
+britain_alumin= material_region_dict.get('alumin').get('GB').replace(0,np.nan).drop(dropped_sectors_aluSteel,axis=1).drop('Liu_Others',axis=1)
+china_Plastic = material_region_dict.get('Plastic').get('CN').replace(0,np.nan).drop(dropped_sectors_plast,axis=1)
+india_Plastic = material_region_dict.get('Plastic').get('IN').replace(0,np.nan).drop(dropped_sectors_plast,axis=1)
+britain_Plastic= material_region_dict.get('Plastic').get('GB').replace(0,np.nan).drop(dropped_sectors_plast,axis=1)
 
+# # ##FULL material_region DICTIONARY    
+# china_steel = material_region_dict.get('steel').get('CN').replace(0,np.nan).drop(dropped_sectors,axis=1).drop('Wang_Other',axis=1)
+# india_steel = material_region_dict.get('steel').get('IN').replace(0,np.nan).drop(dropped_sectors,axis=1)
+# britain_steel= material_region_dict.get('steel').get('GB').replace(0,np.nan).drop(dropped_sectors,axis=1) 
+# china_alumin = material_region_dict.get('alumin').get('CN').replace(0,np.nan).drop(dropped_sectors,axis=1).drop('Liu_Others',axis=1)
+# india_alumin = material_region_dict.get('alumin').get('IN').replace(0,np.nan).drop(dropped_sectors,axis=1).drop('Liu_Others',axis=1)
+# britain_alumin= material_region_dict.get('alumin').get('GB').replace(0,np.nan).drop(dropped_sectors,axis=1).drop('Liu_Others',axis=1)
+# china_Plastic = material_region_dict.get('Plastic').get('CN').replace(0,np.nan).drop(dropped_sectors,axis=1)
+# india_Plastic = material_region_dict.get('Plastic').get('IN').replace(0,np.nan).drop(dropped_sectors,axis=1)
+# britain_Plastic= material_region_dict.get('Plastic').get('GB').replace(0,np.nan).drop(dropped_sectors,axis=1) 
 dummy_df = china_steel.copy()
 dummy_df[:] = 0
 ########
@@ -1012,7 +1035,7 @@ fig, axs = plt.subplots(5,3 ,sharex=False, sharey=False, figsize=(14,18),gridspe
 #axs[3,2].axis('off')
 
 #check if summing up to 100%
-#lafa = lala_dict.get('steel').get('CN').drop(dropped_sectors,axis=1)
+#lafa = material_region_dict.get('steel').get('CN').drop(dropped_sectors,axis=1)
 
 china_steel.plot(ax=axs[0,0], kind='line', title= '(a) Steel China', legend = False, color= [color_dict.get(r) for r in china_steel], style=[marker_dict.get(r, '*') for r in china_steel])
 india_steel.plot(ax=axs[0,1], kind='line',title= '(b) Steel India', legend = False, color= [color_dict.get(r) for r in india_steel], style=[marker_dict.get(r, '*') for r in india_steel])
@@ -1029,9 +1052,9 @@ dummy_df.plot(ax=axs[2,2], legend = False)
 china_Plastic.plot(ax=axs[3,0], kind='line', title= '(g) Plastics China', legend = False, color= [color_dict.get(r) for r in china_Plastic], style=[marker_dict.get(r, '*') for r in china_Plastic])
 india_Plastic.plot(ax=axs[3,1], kind='line',title= '(h) Plastics India', legend = False, color= [color_dict.get(r) for r in india_Plastic], style=[marker_dict.get(r, '*') for r in india_Plastic])
 britain_Plastic.plot(ax=axs[3,2], kind='line', title= '(i) Plastics UK', legend = False, color= [color_dict.get(r) for r in britain_Plastic], style=[marker_dict.get(r, '*') for r in britain_Plastic])
-# axs[0,0].set_ylim(5,lala_dict.get('steel').get('CN').max().max()+5)
-# axs[0,1].set_ylim(5,lala_dict.get('steel').get('IN').max().max()+5)
-# axs[0,2].set_ylim(5,lala_dict.get('steel').get('GB').max().max()+5)
+# axs[0,0].set_ylim(5,material_region_dict.get('steel').get('CN').max().max()+5)
+# axs[0,1].set_ylim(5,material_region_dict.get('steel').get('IN').max().max()+5)
+# axs[0,2].set_ylim(5,material_region_dict.get('steel').get('GB').max().max()+5)
 
 
 sns.boxplot(ax=axs[4,0],data=end_use_all_aluConst.T,whis=[0, 100], width=.6, palette="vlag")
@@ -1204,7 +1227,7 @@ save_list2Excel(path, figure_4_plotNames, figure_4_plots)
 ADDITIONAL PLOTS: EXIOBASE plots in SI 1.3.3 (comparison of country-level industry shipments with MIOT-based results for aluminum and plastics
                                               
 '''
-##FULL lala DICTIONARY    
+##to be run with FULL DETAIL material_region DICTIONARY (lines 835-933) and figure 4 implementation with full dictionary (lines 982-987, 1017-1026)
 dropped_sectors = ['Machinery and equipment n.e.c. ', 'Medical, precision and optical instruments, watches and clocks', \
                     'Office machinery and computers','Radio, television and communication equipment and apparatus',\
                     'Electrical machinery and apparatus n.e.c.', 'Office machinery and computers',  'Motor vehicles, trailers and semi-trailers',
@@ -1213,6 +1236,6 @@ dropped_sectors = ['Machinery and equipment n.e.c. ', 'Medical, precision and op
 
 comp_mats = ['alumin', 'Plastic']
 for material in comp_mats:
-    for region, df in  lala_dict.get(material).items():
+    for region, df in  material_region_dict.get(material).items():
         df = df.replace(0,np.nan).drop(dropped_sectors,axis=1)
         df.plot( ylabel = '%', title= material + '_' + region, kind='line', color= [color_dict.get(r) for r in df], style=[marker_dict.get(r, '*') for r in df], legend=False)

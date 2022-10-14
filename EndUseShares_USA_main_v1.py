@@ -15,10 +15,10 @@ module_path = os.path.join(main_path, 'modules')
 sys.path.insert(0, module_path)
 data_path = os.path.join(main_path, 'input_data/USA/')
 
-from EndUseShares_functions_v5 import calc_CBA,create_WIOMassFilter_plain, create_WIOMassFilter_withServiceRawMatInput,\
+from EndUseShares_functions_v1 import calc_CBA,create_WIOMassFilter_plain, create_WIOMassFilter_withServiceRawMatInput,\
      calc_WIO, create_GhoshIoAmcMassFilter_plain, create_GhoshIoAmcMassFilter_delServiceRawMat, calc_GhoshIO_AMC, \
      create_GhoshIoAmcMassFilter_delServiceOutput, create_PartialGhoshIO_filter_plain, create_PartialGhoshIO_filter_noServiceInput, \
-     calc_PartialGhoshIO, hypothetical_transfer, calc_WIO_noYieldCorr, assemble_yield_filter, save_to_excel
+     calc_PartialGhoshIO, end_use_transfer, calc_WIO_noYieldCorr, assemble_yield_filter, save_to_excel
 
 
 extensions = ['_Base', '_ExtAgg'] # choose scenario out of ['_Base','_ExtAgg']; _Base = Z,A,Y matrices as derived from Information of US BEA, _ExtAgg = in comparison to _Base, some IOT sectors were aggregated  (e.g. paper mills + paperboard mills), filter matrix _Base
@@ -162,7 +162,7 @@ for extension in extensions:
                
         '''
         
-        # Hypothetical Transfer (HT) WIO-MFA 
+        # End-Use Transfer (EUT) WIO-MFA 
 
         
         ''' 
@@ -174,24 +174,24 @@ for extension in extensions:
         filter_transf = (np.ones_like(Z) * filt_packaging).T
         filter_transf = (filter_transf + filt_prod2service).replace(2,1)
         
-        Y_transferred, Z_transferred, A_ht = hypothetical_transfer(Z, Y, A, filter_transf, yield_filter)
+        Y_transferred, Z_transferred, A_eut = end_use_transfer(Z, Y, A, filter_transf, yield_filter)
         filt_Amp, filt_App, filt_Amp_label, filt_App_label = create_WIOMassFilter_plain(A,raw_materials, materials,products,intermediates, non_service)
-        D_ht_WIO,D_ht_WIO_aggregated,HT_WIO_split,check_ht_WIO = calc_WIO_noYieldCorr(A_ht, Y_transferred, filt_Amp, filt_App, filter_matrix,aggregation_matrix,extension_products)
+        D_eut_WIO,D_eut_WIO_aggregated,EUT_WIO_split,check_eut_WIO = calc_WIO_noYieldCorr(A_eut, Y_transferred, filt_Amp, filt_App, filter_matrix,aggregation_matrix,extension_products)
         
         # save
-        fileName_HTWIOMF= 'USA/HT_WIOMF_' + year + extension
-        save_to_excel(fileName_HTWIOMF,D=D_ht_WIO,D_aggregated=D_ht_WIO_aggregated,total_split = HT_WIO_split, \
+        fileName_EUTWIOMF= 'USA/EUT_WIOMF_' + year + extension
+        save_to_excel(fileName_EUTWIOMF,D=D_eut_WIO,D_aggregated=D_eut_WIO_aggregated,total_split = EUT_WIO_split, \
                       massFilterName=filter_matrix,   Ztransferred=pd.DataFrame(), Ytransferred=pd.DataFrame(), 
-                      filter_transf=filter_transf, check = check_ht_WIO)
+                      filter_transf=filter_transf, check = check_eut_WIO)
                         
-        del fileName_HTWIOMF, filt_packaging, filt_prod2service, filter_transf, Y_transferred, Z_transferred, A_ht, filt_Amp, filt_App, filt_Amp_label, filt_App_label,\
-            D_ht_WIO,D_ht_WIO_aggregated,HT_WIO_split,check_ht_WIO
+        del fileName_EUTWIOMF, filt_packaging, filt_prod2service, filter_transf, Y_transferred, Z_transferred, A_eut, filt_Amp, filt_App, filt_Amp_label, filt_App_label,\
+            D_eut_WIO,D_eut_WIO_aggregated,EUT_WIO_split,check_eut_WIO
                   
             
             
         '''
         
-        # Hypothetical Transfer (HT) WIO-MFA_filtDif
+        # End-Use Transfer (EUT) WIO-MFA_filtDif
         
         ''' 
         
@@ -202,18 +202,18 @@ for extension in extensions:
         filter_transf = (np.ones_like(Z) * filt_packaging).T
         filter_transf = (filter_transf + filt_prod2service).replace(2,1)
         
-        Y_transferred, Z_transferred, A_ht = hypothetical_transfer(Z, Y, A, filter_transf, yield_filter)
+        Y_transferred, Z_transferred, A_eut = end_use_transfer(Z, Y, A, filter_transf, yield_filter)
         filt_Amp, filt_App, filt_Amp_label, filt_App_label = create_WIOMassFilter_withServiceRawMatInput(A,raw_materials, materials,products,intermediates, non_service)
-        D_ht_WIO,D_ht_WIO_aggregated,HT_WIO_split,check_ht_WIO = calc_WIO_noYieldCorr(A_ht, Y_transferred, filt_Amp, filt_App, filter_matrix,aggregation_matrix,extension_products)
+        D_eut_WIO,D_eut_WIO_aggregated,EUT_WIO_split,check_eut_WIO = calc_WIO_noYieldCorr(A_eut, Y_transferred, filt_Amp, filt_App, filter_matrix,aggregation_matrix,extension_products)
         
         # save
-        fileName_HTWIOMF= 'USA/HT_WIOMF_fildDif_' + year + extension
-        save_to_excel(fileName_HTWIOMF,D=D_ht_WIO,D_aggregated=D_ht_WIO_aggregated,total_split = HT_WIO_split, \
+        fileName_EUTWIOMF= 'USA/EUT_WIOMF_fildDif_' + year + extension
+        save_to_excel(fileName_EUTWIOMF,D=D_eut_WIO,D_aggregated=D_eut_WIO_aggregated,total_split = EUT_WIO_split, \
                       massFilterName=filter_matrix,   Ztransferred=pd.DataFrame(), Ytransferred=pd.DataFrame(), 
-                      filter_transf=filter_transf, check = check_ht_WIO)
+                      filter_transf=filter_transf, check = check_eut_WIO)
                         
-        del fileName_HTWIOMF, filt_packaging, filt_prod2service, filter_transf, Y_transferred, Z_transferred, A_ht, filt_Amp, filt_App, filt_Amp_label, filt_App_label,\
-            D_ht_WIO,D_ht_WIO_aggregated,HT_WIO_split,check_ht_WIO
+        del fileName_EUTWIOMF, filt_packaging, filt_prod2service, filter_transf, Y_transferred, Z_transferred, A_eut, filt_Amp, filt_App, filt_Amp_label, filt_App_label,\
+            D_eut_WIO,D_eut_WIO_aggregated,EUT_WIO_split,check_eut_WIO
         
         del Z_orig, A_orig, Y_orig, filter_matrix, raw_yield_df, yield_filter, aggregation_matrix, extension_products, raw_materials,\
             materials, intermediates, products_p1, products_p2, products, non_service, Y, Z, x, A, I, L

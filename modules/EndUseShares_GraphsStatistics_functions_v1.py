@@ -22,28 +22,28 @@ def save_dict2Excel(path, diction):
     writer.save()
 
 
-'''function calculating deviation per dataframe for HT-WIO and Industry Shipments'''
+'''function calculating deviation per dataframe for EUT-WIO and Industry Shipments'''
 def calc_relDeviation(frame):
     import statistics 
     
     frame_cop = frame.copy()
     rel_deviation = []
     try:
-        frame_cop['HT-Shipment1'] = frame_cop['HT-WIO'] - frame_cop['Shipment_1']
-        frame_cop['HT-Shipment1_rel']  = (frame_cop['HT-WIO'] - frame_cop['Shipment_1'])/frame_cop['Shipment_1']
-        rel_deviation.append(frame_cop['HT-Shipment1_rel'].dropna().values.tolist())
+        frame_cop['EUT-Shipment1'] = frame_cop['EUT-WIO'] - frame_cop['Shipment_1']
+        frame_cop['EUT-Shipment1_rel']  = (frame_cop['EUT-WIO'] - frame_cop['Shipment_1'])/frame_cop['Shipment_1']
+        rel_deviation.append(frame_cop['EUT-Shipment1_rel'].dropna().values.tolist())
     except Exception:
         pass   
     try:
-        frame_cop['HT-Shipment2']  = frame_cop['HT-WIO'] - frame_cop['Shipment_2']
-        frame_cop['HT-Shipment2_rel']  = (frame_cop['HT-WIO'] - frame_cop['Shipment_2'])/frame_cop['Shipment_2']
-        rel_deviation.append(frame_cop['HT-Shipment2_rel'].dropna().values.tolist())
+        frame_cop['EUT-Shipment2']  = frame_cop['EUT-WIO'] - frame_cop['Shipment_2']
+        frame_cop['EUT-Shipment2_rel']  = (frame_cop['EUT-WIO'] - frame_cop['Shipment_2'])/frame_cop['Shipment_2']
+        rel_deviation.append(frame_cop['EUT-Shipment2_rel'].dropna().values.tolist())
     except Exception:
         pass
     try:
-        frame_cop['HT-Shipment3']  = frame_cop['HT-WIO'] - frame_cop['Shipment_3']
-        frame_cop['HT-Shipment3_rel']  = (frame_cop['HT-WIO'] - frame_cop['Shipment_3'])/frame_cop['Shipment_3']
-        rel_deviation.append(frame_cop['HT-Shipment3_rel'].dropna().values.tolist())
+        frame_cop['EUT-Shipment3']  = frame_cop['EUT-WIO'] - frame_cop['Shipment_3']
+        frame_cop['EUT-Shipment3_rel']  = (frame_cop['EUT-WIO'] - frame_cop['Shipment_3'])/frame_cop['Shipment_3']
+        rel_deviation.append(frame_cop['EUT-Shipment3_rel'].dropna().values.tolist())
     except Exception:
         pass
     
@@ -79,7 +79,7 @@ def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict
     for method_name in method_names:
         wood_construction_df[method_name] = Wood_dict.get(method_name).loc['Residential'] + Wood_dict.get(method_name).loc['Non-Residential'] + Wood_dict.get(method_name).loc['Other buildings'] + Wood_dict.get(method_name ).loc['Infrastructure'] + Wood_dict.get(method_name).loc['Other construction']
     wood_construction_df['Shipment_1'] = phys_dict.get('pd_Wood').T.loc['Construction total']*100 #'McKeever_constr.
-    wood_construction_df['Exio_HT-WIO'] = region_dict.get('US').get('wood').loc['Construction']
+    wood_construction_df['Exio_EUT-WIO'] = region_dict.get('US').get('wood').loc['Construction']
     # wood_construction_df.plot(kind='line',marker='o', title= 'Wood in Construction', legend = False)
     # plt.legend(bbox_to_anchor=(1,1), loc="upper left")
     # plt.xticks(years)
@@ -105,7 +105,7 @@ def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict
     for method_name in method_names:
         wood_furniture_df[method_name] = Wood_dict.get(method_name).loc['Furniture']
     wood_furniture_df['Shipment_1'] = phys_dict.get('pd_Wood').T.loc['Furniture']*100 #'McKeever_furnit.'
-    wood_furniture_df['Exio_HT-WIO'] = region_dict.get('US').get('wood').loc['Furniture; other manufactured goods n.e.c.']
+    wood_furniture_df['Exio_EUT-WIO'] = region_dict.get('US').get('wood').loc['Furniture; other manufactured goods n.e.c.']
     
     
     #packaging
@@ -113,14 +113,14 @@ def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict
     for method_name in method_names:
         wood_packaging_food_df[method_name] = Wood_dict.get(method_name).loc['Packaging']  + Wood_dict.get(method_name).loc['Food products']
     wood_packaging_food_df['Shipment_1'] = phys_dict.get('pd_Wood').T.loc['Packaging and shippling']*100 #'McKeever_packag.'
-    wood_packaging_food_df['Exio_HT-WIO'] = region_dict.get('US').get('wood').loc['Food']
+    wood_packaging_food_df['Exio_EUT-WIO'] = region_dict.get('US').get('wood').loc['Food']
     
     
     #transport
     wood_transport_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
     for method_name in method_names:
         wood_transport_df[method_name] = Wood_dict.get(method_name).loc['Motor vehicles'] + Wood_dict.get(method_name).loc['Other transport equipment']
-    wood_transport_df['Exio_HT-WIO'] = region_dict.get('US').get('wood').loc['Motor vehicles, trailers and semi-trailers'] +\
+    wood_transport_df['Exio_EUT-WIO'] = region_dict.get('US').get('wood').loc['Motor vehicles, trailers and semi-trailers'] +\
         region_dict.get('US').get('wood').loc['Other transport equipment']
     
     
@@ -128,7 +128,7 @@ def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict
     wood_machinery_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
     for method_name in method_names:
         wood_machinery_df[method_name] = Wood_dict.get(method_name).loc['Electronic machinery'] + Wood_dict.get(method_name).loc['Other machinery']
-    wood_machinery_df['Exio_HT-WIO'] = region_dict.get('US').get('wood').loc['Machinery and equipment n.e.c. '] +\
+    wood_machinery_df['Exio_EUT-WIO'] = region_dict.get('US').get('wood').loc['Machinery and equipment n.e.c. '] +\
         region_dict.get('US').get('wood').loc['Electrical machinery and apparatus n.e.c.']
     
     
@@ -152,7 +152,7 @@ def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict
         alu_construction_df[method_name] = alu_dict.get(method_name).loc['Residential'] + alu_dict.get(method_name).loc['Non-Residential'] + alu_dict.get(method_name).loc['Other buildings'] + alu_dict.get(method_name ).loc['Infrastructure'] + alu_dict.get(method_name).loc['Other construction']
     alu_construction_df['Shipment_1'] = phys_dict.get('pd_Alu').T.loc['USGS Construction']*100
     alu_construction_df['Shipment_2'] = phys_dict.get('pd_Alu').T.loc['Liu Building & Construction']*100
-    alu_construction_df['Exio_HT-WIO'] = region_dict.get('US').get('alumin').loc['Construction']
+    alu_construction_df['Exio_EUT-WIO'] = region_dict.get('US').get('alumin').loc['Construction']
     
     #transport
     alu_transport_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
@@ -160,7 +160,7 @@ def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict
         alu_transport_df[method_name] = alu_dict.get(method_name).loc['Motor vehicles'] + alu_dict.get(method_name).loc['Other transport equipment']
     alu_transport_df['Shipment_1'] = phys_dict.get('pd_Alu').T.loc['USGS Transportation']*100
     alu_transport_df['Shipment_2'] = phys_dict.get('pd_Alu').T.loc['Liu Transportation']*100
-    alu_transport_df['Exio_HT-WIO'] = region_dict.get('US').get('alumin').loc['Motor vehicles, trailers and semi-trailers'] +\
+    alu_transport_df['Exio_EUT-WIO'] = region_dict.get('US').get('alumin').loc['Motor vehicles, trailers and semi-trailers'] +\
         region_dict.get('US').get('alumin').loc['Other transport equipment']
     
     #packaging (assuming that also material in 'food products' is packaging)
@@ -169,7 +169,7 @@ def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict
         alu_packaging_food_df[method_name] = alu_dict.get(method_name).loc['Packaging'] + alu_dict.get(method_name).loc['Food products']
     alu_packaging_food_df['Shipment_1'] = phys_dict.get('pd_Alu').T.loc['USGS Containers and packaging']*100
     alu_packaging_food_df['Shipment_2'] = phys_dict.get('pd_Alu').T.loc['Liu Containers and packaging']*100
-    alu_packaging_food_df['Exio_HT-WIO'] = region_dict.get('US').get('alumin').loc['Food']
+    alu_packaging_food_df['Exio_EUT-WIO'] = region_dict.get('US').get('alumin').loc['Food']
     
     #machinery
     alu_machinery_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
@@ -177,7 +177,7 @@ def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict
         alu_machinery_df[method_name] = alu_dict.get(method_name).loc['Electronic machinery'] + alu_dict.get(method_name).loc['Other machinery']
     alu_machinery_df['Shipment_1'] = phys_dict.get('pd_Alu').T.loc['USGS Electrical']*100 +phys_dict.get('pd_Alu').T.loc['USGS Machinery and equipment']*100 #USGS_mach.&equipm.+electrical'
     alu_machinery_df['Shipment_2'] = phys_dict.get('pd_Alu').T.loc['Liu Electrical']*100 +phys_dict.get('pd_Alu').T.loc['Liu Machinery and equipment']*100 #Liu_mach.&equipm.+electrical'
-    alu_machinery_df['Exio_HT-WIO'] = region_dict.get('US').get('alumin').loc['Machinery and equipment n.e.c. '] +\
+    alu_machinery_df['Exio_EUT-WIO'] = region_dict.get('US').get('alumin').loc['Machinery and equipment n.e.c. '] +\
         region_dict.get('US').get('alumin').loc['Electrical machinery and apparatus n.e.c.']
     
     #machinery electrical
@@ -198,7 +198,7 @@ def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict
     alu_furniture_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
     for method_name in method_names:
         alu_furniture_df[method_name] = alu_dict.get(method_name).loc['Furniture']
-    alu_furniture_df['Exio_HT-WIO'] = region_dict.get('US').get('alumin').loc['Furniture; other manufactured goods n.e.c.']
+    alu_furniture_df['Exio_EUT-WIO'] = region_dict.get('US').get('alumin').loc['Furniture; other manufactured goods n.e.c.']
     
     
     
@@ -222,7 +222,7 @@ def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict
     steel_construction_df['Shipment_1'] = phys_dict.get('pd_IronSteel').T.loc['Construction USGS+Trade']*100
     steel_construction_df['Shipment_2'] = phys_dict.get('pd_IronSteel').T.loc['Construction YSTAFB']*100
     steel_construction_df['Shipment_3'] = phys_dict.get('pd_IronSteel').T.loc['Construction Pauliuk']*100
-    steel_construction_df['Exio_HT-WIO'] = region_dict.get('US').get('steel').loc['Construction']
+    steel_construction_df['Exio_EUT-WIO'] = region_dict.get('US').get('steel').loc['Construction']
     
     #transport
     steel_transport_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
@@ -232,7 +232,7 @@ def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict
     steel_transport_df['Shipment_2'] = phys_dict.get('pd_IronSteel').T.loc['Transport YSTAFB']*100
     steel_transport_df['Shipment_3'] = phys_dict.get('pd_IronSteel').T.loc['Automotive Pauliuk']*100 + phys_dict.get('pd_IronSteel').T.loc['Rail Transportation Pauliuk']*100\
         + phys_dict.get('pd_IronSteel').T.loc['Shipbuilding Pauliuk']*100 +  + phys_dict.get('pd_IronSteel').T.loc['Aircraft Pauliuk']*100
-    steel_transport_df['Exio_HT-WIO'] = region_dict.get('US').get('steel').loc['Motor vehicles, trailers and semi-trailers'] +\
+    steel_transport_df['Exio_EUT-WIO'] = region_dict.get('US').get('steel').loc['Motor vehicles, trailers and semi-trailers'] +\
         region_dict.get('US').get('steel').loc['Other transport equipment']
     
     #packaging (assuming that also material in 'food products' is packaging)
@@ -240,7 +240,7 @@ def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict
     for method_name in method_names:
         steel_packaging_food_df[method_name] = steel_dict.get(method_name).loc['Packaging'] + steel_dict.get(method_name).loc['Food products']
     steel_packaging_food_df['Shipment_1'] = phys_dict.get('pd_IronSteel').T.loc['Containers USGS+Trade']*100
-    steel_packaging_food_df['Exio_HT-WIO'] = region_dict.get('US').get('steel').loc['Food']
+    steel_packaging_food_df['Exio_EUT-WIO'] = region_dict.get('US').get('steel').loc['Food']
     steel_packaging_food_df['Shipment_3'] = phys_dict.get('pd_IronSteel').T.loc['Containers, shipping materials Pauliuk']*100
     
     #machinery
@@ -248,7 +248,7 @@ def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict
     for method_name in method_names:
         steel_machinery_df[method_name] = steel_dict.get(method_name).loc['Other machinery'] + steel_dict.get(method_name).loc['Electronic machinery']
     steel_machinery_df['Shipment_2'] = phys_dict.get('pd_IronSteel').T.loc['Machinery & Appliances YSTAFB']*100
-    steel_machinery_df['Exio_HT-WIO'] = region_dict.get('US').get('steel').loc['Machinery and equipment n.e.c. '] +\
+    steel_machinery_df['Exio_EUT-WIO'] = region_dict.get('US').get('steel').loc['Machinery and equipment n.e.c. '] +\
         region_dict.get('US').get('steel').loc['Electrical machinery and apparatus n.e.c.']
     steel_machinery_df['Shipment_3'] = phys_dict.get('pd_IronSteel').T.loc['Machinery Pauliuk']*100 + phys_dict.get('pd_IronSteel').T.loc['Rail Transportation Pauliuk']*100\
             + phys_dict.get('pd_IronSteel').T.loc['Electrical Equipment Pauliuk']*100 +  + phys_dict.get('pd_IronSteel').T.loc['Appliances Pauliuk']*100
@@ -273,7 +273,7 @@ def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict
     steel_furniture_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
     for method_name in method_names:
         steel_furniture_df[method_name] = steel_dict.get(method_name).loc['Furniture']
-    steel_furniture_df['Exio_HT-WIO'] = region_dict.get('US').get('steel').loc['Furniture; other manufactured goods n.e.c.']
+    steel_furniture_df['Exio_EUT-WIO'] = region_dict.get('US').get('steel').loc['Furniture; other manufactured goods n.e.c.']
     
     
     '''USA - - COPPER (some problems assembling the material dict so took the easy way)''' 
@@ -312,7 +312,7 @@ def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict
         copper_construction_df[method_name] = copper_dict.get(method_name).loc['Residential'] + copper_dict.get(method_name).loc['Non-Residential'] + copper_dict.get(method_name).loc['Other buildings'] + copper_dict.get(method_name).loc['Infrastructure'] + copper_dict.get(method_name).loc['Other construction']
     copper_construction_df['Shipment_1'] = phys_dict.get('pd_Copper').T.loc['Building construction USGS+Trade']*100
     copper_construction_df['Shipment_2'] = phys_dict.get('pd_Copper').T.loc['Building construction CDA+Trade']*100
-    copper_construction_df['Exio_HT-WIO'] = region_dict.get('US').get('Copper').loc['Construction']
+    copper_construction_df['Exio_EUT-WIO'] = region_dict.get('US').get('Copper').loc['Construction']
     
     
     #transportation
@@ -321,7 +321,7 @@ def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict
         copper_transport_df[method_name] = copper_dict.get(method_name).loc['Motor vehicles'] + copper_dict.get(method_name).loc['Other transport equipment']
     copper_transport_df['Shipment_1'] = phys_dict.get('pd_Copper').T.loc['Transportation equipment USGS+Trade']*100
     copper_transport_df['Shipment_2'] = phys_dict.get('pd_Copper').T.loc['Transportation equipment CDA+Trade']*100
-    copper_transport_df['Exio_HT-WIO'] = region_dict.get('US').get('Copper').loc['Motor vehicles, trailers and semi-trailers'] +\
+    copper_transport_df['Exio_EUT-WIO'] = region_dict.get('US').get('Copper').loc['Motor vehicles, trailers and semi-trailers'] +\
         region_dict.get('US').get('Copper').loc['Other transport equipment']
     
     #machinery
@@ -330,7 +330,7 @@ def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict
         copper_machinery_df[method_name] = copper_dict.get(method_name).loc['Electronic machinery'] + copper_dict.get(method_name).loc['Other machinery']
     copper_machinery_df['Shipment_1'] = phys_dict.get('pd_Copper').T.loc['Electrical and electronic products USGS+Trade']*100 +phys_dict.get('pd_Copper').T.loc['Industrial machinery and equipment USGS+Trade']*100
     copper_machinery_df['Shipment_2'] = phys_dict.get('pd_Copper').T.loc['Electrical and electronic products CDA+Trade']*100 +phys_dict.get('pd_Copper').T.loc['Industrial machinery and equipment CDA+Trade']*100
-    copper_machinery_df['Exio_HT-WIO'] = region_dict.get('US').get('Copper').loc['Machinery and equipment n.e.c. '] +\
+    copper_machinery_df['Exio_EUT-WIO'] = region_dict.get('US').get('Copper').loc['Machinery and equipment n.e.c. '] +\
         region_dict.get('US').get('Copper').loc['Electrical machinery and apparatus n.e.c.']
     
     
@@ -353,7 +353,7 @@ def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict
     copper_furniture_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
     for method_name in method_names:
         copper_furniture_df[method_name] = copper_dict.get(method_name).loc['Furniture']
-    copper_furniture_df['Exio_HT-WIO'] = region_dict.get('US').get('Copper').loc['Furniture; other manufactured goods n.e.c.']
+    copper_furniture_df['Exio_EUT-WIO'] = region_dict.get('US').get('Copper').loc['Furniture; other manufactured goods n.e.c.']
     
     
     
@@ -418,7 +418,7 @@ def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict
         plastic_construction_df[method_name] = plastic_dict.get(method_name).loc['Residential'] + plastic_dict.get(method_name).loc['Non-Residential'] + plastic_dict.get(method_name).loc['Other buildings'] + plastic_dict.get(method_name).loc['Infrastructure'] + plastic_dict.get(method_name).loc['Other construction']
     plastic_construction_df['Shipment_1'] = phys_dict.get('pd_Plastics').T.loc['Construction industry Euromap USA']*100
     plastic_construction_df['Shipment_2'] = phys_dict.get('pd_Plastics').T.loc['Building and construction PE']*100 #'PlasticsEurope_EU_'
-    plastic_construction_df['Exio_HT-WIO'] = region_dict.get('US').get('Plastic').loc['Construction']
+    plastic_construction_df['Exio_EUT-WIO'] = region_dict.get('US').get('Plastic').loc['Construction']
     
     #packaging (assuming that also material in 'food products' is packaging)
     plastic_packaging_food_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
@@ -426,7 +426,7 @@ def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict
         plastic_packaging_food_df[method_name] = plastic_dict.get(method_name).loc['Packaging'] + plastic_dict.get(method_name).loc['Food products'] 
     plastic_packaging_food_df['Shipment_1'] = phys_dict.get('pd_Plastics').T.loc['Packaging Euromap USA']*100
     plastic_packaging_food_df['Shipment_2'] = phys_dict.get('pd_Plastics').T.loc['Packaging PE']*100 #'PlasticsEurope_EU_packag.'
-    plastic_packaging_food_df['Exio_HT-WIO'] = region_dict.get('US').get('Plastic').loc['Food']
+    plastic_packaging_food_df['Exio_EUT-WIO'] = region_dict.get('US').get('Plastic').loc['Food']
     
     #transport (assuming that also material in 'food products' is transport)
     plastic_transport_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
@@ -434,7 +434,7 @@ def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict
         plastic_transport_df[method_name] = plastic_dict.get(method_name).loc['Motor vehicles'] + plastic_dict.get(method_name).loc['Other transport equipment'] 
     plastic_transport_df['Shipment_1'] = phys_dict.get('pd_Plastics').T.loc['Automotive Euromap USA']*100
     plastic_transport_df['Shipment_2'] = phys_dict.get('pd_Plastics').T.loc['Automotive PE']*100
-    plastic_transport_df['Exio_HT-WIO'] = region_dict.get('US').get('Plastic').loc['Motor vehicles, trailers and semi-trailers'] +\
+    plastic_transport_df['Exio_EUT-WIO'] = region_dict.get('US').get('Plastic').loc['Motor vehicles, trailers and semi-trailers'] +\
         region_dict.get('US').get('Plastic').loc['Other transport equipment']
     
     #electronics (assuming that also material in 'food products' is transport)
@@ -448,7 +448,7 @@ def assemble_materialEndUse_df(methods, method_names, years, CBA_dict, phys_dict
     plastic_furniture_df = pd.DataFrame([], index=list(range(1963,2013)), columns=method_names)
     for method_name in method_names:
         plastic_furniture_df[method_name] = plastic_dict.get(method_name).loc['Furniture']
-    plastic_furniture_df['Exio_HT-WIO'] = region_dict.get('US').get('Plastic').loc['Furniture; other manufactured goods n.e.c.']
+    plastic_furniture_df['Exio_EUT-WIO'] = region_dict.get('US').get('Plastic').loc['Furniture; other manufactured goods n.e.c.']
     
     return plastic_packaging_food_df, plastic_transport_df, plastic_construction_df, plastic_electrical_df, plastic_furniture_df, alu_transport_df, \
         alu_construction_df, alu_packaging_food_df, alu_machinery_df, alu_machineryElectric_df, alu_machineryOther_df, alu_furniture_df, copper_construction_df, copper_transport_df,\
