@@ -7,6 +7,7 @@ Created on Mon Oct 24 15:52:32 2022
 import os
 import sys
 import pandas as pd
+import glob
 
 #define working directory and data paths
 main_path = os.getcwd()
@@ -157,7 +158,7 @@ fig.savefig('Figure4.png', format='png', dpi =600, bbox_inches='tight', pad_inch
 '''EXIOBASE results for EUT-WIO - shipment comparison 
 for additional countries'''
 
-data_path_exio = os.path.join(main_path, 'output/Exiobase/FiguresStats/')
+data_path_exio = os.path.join(main_path, 'output/Exiobase/')
 data_path_shipments = path_input_data + '/Industry_Shipments/Other_Countries/'
 years_exio = list(range(1995,2012))
 target_materials = ['alumin', 'Plastic']
@@ -168,5 +169,5 @@ material_region_dict, end_use_all_aluConst, end_use_all_steelConst, end_use_all_
 plots_exiobase_shipment_add_countries(material_region_dict, target_materials)
 
 #save plot data to spreadsheet
-file_name = 'Exiobase_18Countries_Alu_Plastic'
+file_name = '/FiguresStats/Exiobase_18Countries_Alu_Plastic'
 save_exiobase_shipment_results(data_path_exio, file_name, target_materials, material_region_dict)
