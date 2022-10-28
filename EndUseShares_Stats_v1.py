@@ -248,7 +248,7 @@ writer.save()
 
 
 '''
-STATS 2: calculate the relative deviation of USA national official MIOTs to EXIOBASE US data for FIGURE2 plots (for EUT-WIO)
+STATS 2: calculate the relative deviation of USA national official MIOTs to EXIOBASE data for FIGURE2 plots (for EUT-WIO)
 '''
 
 analysis_list_eval = []
@@ -296,4 +296,4 @@ writer.save()
 
 
 ##### for EXIOBASE, differences of industry shipments and MIOT-based results are directly added to FIGURE 4 dataframes and can be found in 
-##### script 'EndUseShares_Graphs_v1'
+##### script 'EndUseShares_Graphs__Outputs_v1'

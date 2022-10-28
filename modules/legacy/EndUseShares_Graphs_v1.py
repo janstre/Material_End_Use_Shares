@@ -136,7 +136,7 @@ for region in regions:
 #     for e,f in methods[k].items():
 #         f.loc['sum'] = f.sum(axis=0)
 #     path = './output/USA/FiguresStats/' + method_names[k] + '_fullResults_USA'  
-#     save_dict2Excel(path, methods[k] )
+#     save_dict2Excel(path, methods[k])
 #     k = k+1
 
 
@@ -395,7 +395,7 @@ def add_line(legend):
 add_line(lgd)
 fig.suptitle('Comparison of end-use shares - low sector resolution', y=1, fontsize = 22)
 fig.tight_layout()
-fig.savefig('Figure2.pdf', format='pdf', dpi =1200, bbox_inches='tight', pad_inches=0)
+fig.savefig('Figure2.pdf', format='pdf', dpi =600, bbox_inches='tight', pad_inches=0)
 
 # #SAVE plot data to Excel (optional)
 # path = './output/USA/FiguresStats/' + 'Data_Figure2'   
@@ -650,7 +650,7 @@ axs[4,1].set_title('(h) cement residential: housing types & repairs (EUT-WIO)')
 
 fig.suptitle('Construction end-use shares wood & cement - low to high sector resolution', y=1, fontsize = 16)
 fig.tight_layout()
-fig.savefig('Figure3.pdf', format='pdf', dpi =1200, bbox_inches='tight', pad_inches=0)
+fig.savefig('Figure3.pdf', format='pdf', dpi =600, bbox_inches='tight', pad_inches=0)
 
 # #SAVE FIGURE 3 data to Excel (optional)
 # path = './output/USA/FiguresStats/' + 'Data_Figure3'   
@@ -1132,7 +1132,7 @@ add_line(lgd)
 fig.suptitle('Exiobase all end-uses for selected regions and all regions for selected end-uses', y=1, fontsize = 16)
 #fig.suptitle('Comparison of end-use shares - high sector aggregation', y=1, fontsize = 16)
 fig.tight_layout()
-#fig.savefig('Figure4.pdf', format='pdf', dpi =1200, bbox_inches='tight', pad_inches=0)
+fig.savefig('Figure4.pdf', format='pdf', dpi =600, bbox_inches='tight', pad_inches=0)
 
 
 #SAVE FIGURE 4 data to Excel (option 2: save after added the difference between MIOT and shipment results (below))
