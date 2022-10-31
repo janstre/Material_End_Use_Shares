@@ -7,7 +7,6 @@ Created on Mon Oct 24 15:52:32 2022
 import os
 import sys
 import pandas as pd
-import glob
 
 #define working directory and data paths
 main_path = os.getcwd()
