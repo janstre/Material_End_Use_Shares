@@ -102,7 +102,7 @@ cement_detail = pd.read_excel(data_path_usa + 'Construction_detail_Run_220317-10
 fig, element_dict = plot_USA_medium_resolution(methods, method_names, CBA_dict, phys_dict, region_dict, years, wood_detail, cement_detail)
 
 ##save figure (to working directory)
-fig.savefig('Figure3.pdf', format='pdf', dpi =600, bbox_inches='tight', pad_inches=0)
+fig.savefig('Figure3_corrected.pdf', format='pdf', dpi =600, bbox_inches='tight', pad_inches=0)
 
 ##SAVE plot data to Excel (includes deviation of sensitivity scenarios)
 # path = './output/USA/FiguresStats/' + 'Data_Figure3'   
@@ -117,10 +117,11 @@ EUT-WIO for selected countries and save'''
 data_path_exio = os.path.join(main_path, 'output/Exiobase/')
 data_path_shipments = path_input_data + '/Industry_Shipments/Other_Countries/'
 years_exio = list(range(1995,2012))
-plotMaterials = ['Plastic', 'steel', 'Copper', 'alumin']
-save_regions = ['PT']
+plotMaterials = ['Plastic', 'steel', 'Copper', 'alumin', 'Wood', 'glass', 'Lead, zinc and tin', 'non-ferrous metal', 'Precious metals', 'Cement, lime and plaster', 'Bricks, tiles',  
+                 'Bitumen', 'Pulp', 'Sand and clay', 'Stone']
+save_regions = ['AT']
 materials, region_transl, region_dict = assemble_exiobase_results(data_path_exio, years_exio, save_regions)
-file_name = 'EXIOBASE_EndUse_Portugal'
+file_name = 'EXIOBASE_EndUse_Austria'
 save_exiobase_country_results(data_path_exio, file_name, materials, region_dict, save_regions)
 
 ##########################
