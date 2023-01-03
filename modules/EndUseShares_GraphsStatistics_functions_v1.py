@@ -1131,8 +1131,8 @@ def plot_USA_medium_resolution(methods, method_names, CBA_dict, phys_dict, regio
     lgd_low = fig.legend(loc='center', bbox_to_anchor=(0.5, 0.471),fontsize=12, ncol = 3) 
     
     def add_line(legend):
-        a = axs[1,1].get_legend_handles_labels()[0][:9] + axs[4,1].get_legend_handles_labels()[0][4:9]
-        b = axs[1,1].get_legend_handles_labels()[1][:9] + axs[4,1].get_legend_handles_labels()[1][4:9]
+        a = axs[1,1].get_legend_handles_labels()[0][:8] + axs[4,1].get_legend_handles_labels()[0][4:9]
+        b = axs[1,1].get_legend_handles_labels()[1][:8] + axs[4,1].get_legend_handles_labels()[1][4:9]
         c = tuple((a,b))
         handles, labels = c
         legend._legend_box = None
